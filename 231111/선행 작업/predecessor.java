@@ -37,6 +37,8 @@ public class Main {
 			}
 		}
 		
+		dp = new int[n+1];
+		
 		for(int i = 1; i<=n; i++) {
 			if(inDegree[i] == 0) {
 				q.add(i);
