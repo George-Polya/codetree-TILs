@@ -8,10 +8,11 @@
 
 |총 문제수|획득 경험치|연속 학습|
 |---:|---:|---|
-1|60xp|1일째🔥|
+2|60xp|1일째🔥|
 
 |교재|이름|난이도|상태|최근 제출 코드|
 |---|---|:---:|:---:|---|
+|[Intermediate High / 위상정렬 / Graph DP](https://www.codetree.ai/missions?missionId=9)|[[연습]갈 수 있는 경우의 수](https://www.codetree.ai/missions/9/problems/possible-path-of-travel)|![쉬움][easy]|![Passed][passed]|[링크](https://github.com/George-Polya/codetree-TILs/blob/main/231113/%EA%B0%88%20%EC%88%98%20%EC%9E%88%EB%8A%94%20%EA%B2%BD%EC%9A%B0%EC%9D%98%20%EC%88%98/possible-path-of-travel.java)|
 |[Intermediate High / 위상정렬 / Graph DP](https://www.codetree.ai/missions?missionId=9)|[[연습]지질 연구](https://www.codetree.ai/missions/9/problems/geological-research)|![쉬움][easy]|![Passed][passed]|[링크](https://github.com/George-Polya/codetree-TILs/blob/main/231113/%EC%A7%80%EC%A7%88%20%EC%97%B0%EA%B5%AC/geological-research.java)|
 
 
