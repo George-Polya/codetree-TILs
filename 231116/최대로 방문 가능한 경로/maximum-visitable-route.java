@@ -6,6 +6,7 @@ public class Main {
 	static StringTokenizer st;
 	static int dp[], inDegree[], prev[];
 	static ArrayList<Integer> adj[];
+	static int INT_MIN = Integer.MIN_VALUE;
 	static Queue<Integer> q = new LinkedList<>();
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
@@ -18,7 +19,8 @@ public class Main {
 		adj = new ArrayList[n+1];
 		for(int i = 1; i <=n;i++) {
 			adj[i]= new ArrayList<>();
-			dp[i] = prev[i] = -1;
+			dp[i] = INT_MIN;
+			prev[i] = -1;
 		}
 		inDegree = new int[n+1];
 		
@@ -27,43 +29,45 @@ public class Main {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
 			int b = Integer.parseInt(st.nextToken());
-			adj[a].add(b);
-			inDegree[b]++;
+			adj[b].add(a);
+			inDegree[a]++;
 		}
 		
 		for(int i = 1; i<=n;i++) {
-			Collections.sort(adj[i]);
+//			Collections.sort(adj[i]);
 			if(inDegree[i] == 0)
 				q.add(i);
 		}
 		
 		
-		dp[1] = 1;
+		dp[n] = 0;
 		
 		while(!q.isEmpty()) {
 			int cur = q.poll();
 			
 			for(int nxt : adj[cur]) {
-				inDegree[nxt]--;
-				if(dp[cur] == -1)
-					continue;
-				if(dp[nxt] < dp[cur] + 1) {
-					dp[nxt] = dp[cur] + 1;
-					prev[nxt] = cur;
+				if(dp[cur] != INT_MIN) {
+					if(dp[nxt] < dp[cur] + 1) {
+						dp[nxt] = dp[cur] + 1;
+						prev[nxt] = cur;
+					}else if(dp[nxt] == dp[cur] +1 && prev[nxt] > cur) {
+						prev[nxt] = cur;
+					}
 				}
+				inDegree[nxt]--;
 				
 				if(inDegree[nxt] == 0)
 					q.add(nxt);
 			}
 		}
 		
-		if(dp[n] == -1) {
+		if(dp[1] == INT_MIN) {
 			System.out.println(-1);
 		}else {
 			StringBuilder sb = new StringBuilder();
 			sb.append(dp[n]).append('\n');
 			
-			int end = n;
+			int end = 1;
 			Stack<Integer> stk = new Stack<>();
 			while(end != -1) {
 				stk.push(end);
