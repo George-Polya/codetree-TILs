@@ -46,8 +46,6 @@ public class Main {
 		visited = new boolean[n+1];
 		while(!q.isEmpty()) {
 			int cur = q.poll();
-			if(visited[cur])
-				continue;
 			visited[cur] = true;
 			
 			for(int nxt : adj[cur]) {
