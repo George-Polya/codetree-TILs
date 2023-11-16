@@ -34,7 +34,7 @@ public class Main {
 		}
 		
 		for(int i = 1; i<=n;i++) {
-			Collections.sort(adj[i]);
+//			Collections.sort(adj[i]);
 			if(inDegree[i] == 0)
 				q.add(i);
 		}
@@ -49,6 +49,8 @@ public class Main {
 				if(dp[cur] != INT_MIN) {
 					if(dp[nxt] < dp[cur] + 1) {
 						dp[nxt] = dp[cur] + 1;
+						prev[nxt] = cur;
+					}else if(dp[nxt] == dp[cur] + 1 && prev[nxt] > cur) {
 						prev[nxt] = cur;
 					}
 				}
