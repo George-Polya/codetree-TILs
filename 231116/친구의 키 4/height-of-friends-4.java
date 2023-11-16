@@ -4,7 +4,6 @@ import java.util.*;
 public class Main {
 	static int n,m;
 	static StringTokenizer st;
-	static ArrayList<Integer> adj[];
 	static int inDegree[];
 	static boolean visited[];
 	static Queue<Integer> q = new LinkedList<>();
