@@ -65,15 +65,17 @@ public class Main {
 			System.out.println(-1);
 		}else {
 			StringBuilder sb = new StringBuilder();
-			sb.append(dp[1]).append('\n');
+			ArrayList<Integer> result = new ArrayList<>();
+			int cur = 1;
+			result.add(cur);
 			
-			int end = 1;
-			while(end != -1) {
-				sb.append(end).append(' ');
-				end = prev[end];
+			while(cur != n) {
+				cur = prev[cur];
+				result.add(cur);
 			}
-			
-			
+			sb.append(result.size()).append('\n');
+			for(int i : result)
+				sb.append(i).append(' ');
 			System.out.println(sb);
 		}
 		
