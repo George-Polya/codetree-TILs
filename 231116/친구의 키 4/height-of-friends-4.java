@@ -81,7 +81,7 @@ public class Main {
 		
 		
 		int left = 1;
-		int right = n;
+		int right = m;
 		int ans = 0;
 		
 		while(left <= right) {
