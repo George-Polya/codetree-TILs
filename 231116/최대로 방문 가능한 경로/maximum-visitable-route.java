@@ -65,19 +65,14 @@ public class Main {
 			System.out.println(-1);
 		}else {
 			StringBuilder sb = new StringBuilder();
-			sb.append(dp[n]).append('\n');
+			sb.append(dp[1]).append('\n');
 			
 			int end = 1;
-			Stack<Integer> stk = new Stack<>();
 			while(end != -1) {
-				stk.push(end);
+				sb.append(end).append(' ');
 				end = prev[end];
 			}
 			
-//			System.out.println(stk);
-			while(!stk.isEmpty()) {
-				sb.append(stk.pop()).append(' ');
-			}
 			
 			System.out.println(sb);
 		}
