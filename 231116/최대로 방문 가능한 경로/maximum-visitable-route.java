@@ -29,18 +29,18 @@ public class Main {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
 			int b = Integer.parseInt(st.nextToken());
-			adj[b].add(a);
-			inDegree[a]++;
+			adj[a].add(b);
+			inDegree[b]++;
 		}
 		
 		for(int i = 1; i<=n;i++) {
-//			Collections.sort(adj[i]);
+			Collections.sort(adj[i]);
 			if(inDegree[i] == 0)
 				q.add(i);
 		}
 		
 		
-		dp[n] = 0;
+		dp[1] = 0;
 		
 		while(!q.isEmpty()) {
 			int cur = q.poll();
@@ -50,10 +50,9 @@ public class Main {
 					if(dp[nxt] < dp[cur] + 1) {
 						dp[nxt] = dp[cur] + 1;
 						prev[nxt] = cur;
-					}else if(dp[nxt] == dp[cur] +1 && prev[nxt] > cur) {
-						prev[nxt] = cur;
 					}
 				}
+				
 				inDegree[nxt]--;
 				
 				if(inDegree[nxt] == 0)
@@ -61,21 +60,27 @@ public class Main {
 			}
 		}
 		
-		if(dp[1] == INT_MIN) {
+		if(dp[n] == INT_MIN) {
 			System.out.println(-1);
 		}else {
 			StringBuilder sb = new StringBuilder();
-			ArrayList<Integer> result = new ArrayList<>();
-			int cur = 1;
-			result.add(cur);
+			Stack<Integer> stk = new Stack<>();
+			int end = n;
 			
-			while(cur != n) {
-				cur = prev[cur];
-				result.add(cur);
+			while(end != -1) {
+				stk.push(end);
+				end = prev[end];
 			}
-			sb.append(result.size()).append('\n');
-			for(int i : result)
-				sb.append(i).append(' ');
+			
+//			System.out.println(stk);
+			sb.append(stk.size()).append('\n');
+			
+			while(!stk.isEmpty()) {
+				sb.append(stk.pop()).append(' ');
+			}
+			
+			
+			
 			System.out.println(sb);
 		}
 		
