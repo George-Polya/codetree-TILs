@@ -44,7 +44,7 @@ public class Main {
 			}
 		}
 		
-		int ans = 0;
+		long ans = 0;
 		for(int i = 0; i < n ;i++) {
 			int max = 2 * A[i] + 1;
 			int l = max / 2;
