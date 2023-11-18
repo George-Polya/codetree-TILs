@@ -24,17 +24,17 @@ public class Main {
 		
 		int r = -1;
 		int p = -1;
-		for(int i = 0; i < n ;i++) {
+		
+		for(int i = 0; i <n ;i++) {
 			if(r < i)
 				A[i] = 0;
 			else {
 				int ii = 2 * p - i;
-				A[i] = Math.min(r - i, A[ii]);
+				A[i] = Math.min(r - i , A[ii]);
 			}
 			
-			
-			while(i - A[i] - 1 >=0 && i + A[i] + 1 < n &&
-					(inputStr[i - A[i] - 1] == inputStr[i+A[i]+1]))
+			while(i - A[i] - 1 >=0 && i + A[i] + 1 < n 
+					&& inputStr[i - A[i] -1] == inputStr[i + A[i] + 1])
 				A[i]++;
 			
 			
@@ -42,15 +42,15 @@ public class Main {
 				r = i + A[i];
 				p = i;
 			}
-			
 		}
 		
-//		System.out.println(Arrays.toString(A));
 		int ans = 0;
-		for(int i = 0; i <= n/2;i++)
-			ans += A[i];
+		for(int i = 0; i < n ;i++) {
+			int max = 2 * A[i] + 1;
+			int l = max / 2;
+			ans += (l + 1)/ 2;
+		}
 		System.out.println(ans);
-		
 		
 	}
 }
