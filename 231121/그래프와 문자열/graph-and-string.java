@@ -27,40 +27,36 @@ public class Main {
         return h1 * Math.max(mod[0], mod[1]) + h2;
     }
 
-    static HashSet<Long> set = new HashSet<>();
-    static void dfs(int cur, String str){
-        int m = str.length();
+    static char path[];
+    static void dfs(int cur, int cnt, long h1, long h2){
+        long tH[] = new long[]{h1,h2};
+
+        if(cnt == L){
+            for(int k = 0; k < 2; k++){
+                for(int i = 0; i < L; i++){
+                    tH[k] = (tH[k] + toInt(path[i]) * pPow[k][L-i-1]) % mod[k];
+                }
+            }
+        }else if(cnt > L){
+            for(int k =0; k<2 ;k++){
+                tH[k] = (tH[k] * p[k] - toInt(path[cnt - L - 1]) * pPow[k][L] + toInt(path[cnt - 1])) % mod[k];
+                if(tH[k] < 0)
+                    tH[k] += mod[k];
+            }
+        }
+
+
+        if(tH[0] == pH[0] && tH[1] == pH[1])
+            ans++;
+        
         
 
         for(Pair nxt : adj[cur]){
-            dfs(nxt.id, str + nxt.value);
+            path[cnt] = nxt.value;
+            dfs(nxt.id, cnt + 1, tH[0], tH[1]);
         }
 
-        if(m >= L && adj[cur].size() == 0){
-            long tH[] = new long[2];
 
-            for(int k = 0; k < 2; k++){
-                for(int i = 0; i < L ; i++){
-                    tH[k] = (tH[k] + toInt(str.charAt(i)) * pPow[k][L - i - 1]) % mod[k];
-                }
-            }
-
-            
-            if(tH[0] == pH[0] && tH[1] == pH[1])
-                ans++;
-            
-
-            for(int i = 1; i<= m - L; i++){
-                for(int k = 0; k < 2; k++){
-                    tH[k] = ((tH[k] * p[k] - toInt(str.charAt(i-1)) * pPow[k][L]) + toInt(str.charAt(i + L - 1))) % mod[k];
-                }
-
-                if(tH[0] == pH[0] && tH[1] == pH[1])
-                    ans++;
-                
-                
-            }
-        }
     }
     public static void main(String[] args) throws IOException{
         // 여기에 코드를 작성해주세요.
@@ -70,6 +66,7 @@ public class Main {
         pattern = st.nextToken();
         L = pattern.length();
         pPow = new long[2][n+1];
+        path = new char[n+1];
         for(int k =0 ; k< 2; k++){
             pPow[k][0] = 1;
             for(int i = 1; i<=n; i++){
@@ -98,7 +95,7 @@ public class Main {
             adj[a].add(new Pair(b, value));
         }
 
-        dfs(1, "");
+        dfs(1,0,0,0);
         
         System.out.println(ans);
     }
