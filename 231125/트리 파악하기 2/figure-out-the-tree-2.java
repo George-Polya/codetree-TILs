@@ -32,23 +32,22 @@ public class Main {
 		t.isEnd = true;
 	}
 	
-	static StringBuilder sb = new StringBuilder();
-	static void dfs(TrieNode cur, String str) {
-		if(cur != root) {
-//			sb.append(str + cur.value).append('\n');
-			System.out.println(str + cur.value);
-		}
+//	static StringBuilder sb = new StringBuilder();
+	static void dfs(TrieNode cur, StringBuilder sb, int depth) {
 		
-		if(cur.isEnd)
+		
+		if(cur.isEnd) {
+			System.out.println(sb);
 			return;
+		}
 		
 		for(TrieNode child : cur.children) {
 			if(child == null)
 				continue;
-			if(cur == root)
-				dfs(child, str);
-			else
-				dfs(child, str + "--");
+			
+			for(int i = 0; i < depth; i++)
+				sb.append("--");
+			dfs(child, sb.append(child.value).append('\n'), depth+1);
 		}
 	}
 	
@@ -69,8 +68,8 @@ public class Main {
     	}
     	
     	
-    	dfs(root, "");
-    	System.out.println(sb);
+    	dfs(root, new StringBuilder(), 0);
+//    	System.out.println(sb);
     }
 
   
