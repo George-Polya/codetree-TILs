@@ -11,7 +11,7 @@ public class Main {
 		
 		public TrieNode() {
 			num = 0;
-			for(int i = 0; i < n; i++)
+			for(int i = 0; i < 26; i++)
 				children[i] = null;
 		}
 	}
