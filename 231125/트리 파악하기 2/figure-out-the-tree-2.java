@@ -4,12 +4,12 @@ public class Main {
 	static int n;
 	static StringTokenizer st;
 	static class TrieNode{
-		char value;
+		String value;
 		boolean isEnd;
 		TrieNode[] children = new TrieNode[26];
 		
 		
-		public TrieNode(char value) {
+		public TrieNode(String value) {
 			this.value = value;
 			isEnd = false;
 			for(int i = 0; i < 26;i++) {
@@ -18,36 +18,41 @@ public class Main {
 		}
 	}
 	
-	static TrieNode root = new TrieNode('-');
+	static TrieNode root = new TrieNode("-");
 	
 	static void insertWord(String str) {
 		TrieNode t = root;
 		
-		for(int i = 0; i < str.length();i++) {
+		for(int i = 0; i < str.length(); i++) {
 			int idx = str.charAt(i) - 'A';
-			if(t.children[idx] == null)
-				t.children[idx] = new TrieNode(str.charAt(i));
+			if(t.children[idx] == null) {
+				String temp = "";
+				for(int j = 0; j < i; j++) {
+					temp += "--";
+				}
+				
+				t.children[idx] = new TrieNode(temp + str.charAt(i));
+			}
 			t = t.children[idx];
 		}
 		t.isEnd = true;
 	}
-	
-//	static StringBuilder sb = new StringBuilder();
-	static void dfs(TrieNode cur, StringBuilder sb, int depth) {
-		
-		
-		if(cur.isEnd) {
-			System.out.println(sb);
-			return;
+//	
+	static StringBuilder sb = new StringBuilder();
+	static void dfs(TrieNode cur) {
+		if(cur != root) {
+//			System.out.println(cur.value);
+			sb.append(cur.value).append('\n');
 		}
+	
 		
 		for(TrieNode child : cur.children) {
 			if(child == null)
 				continue;
 			
-			for(int i = 0; i < depth; i++)
-				sb.append("--");
-			dfs(child, sb.append(child.value).append('\n'), depth+1);
+			dfs(child);
+			
+			
 		}
 	}
 	
@@ -68,8 +73,8 @@ public class Main {
     	}
     	
     	
-    	dfs(root, new StringBuilder(), 0);
-//    	System.out.println(sb);
+    	dfs(root);
+    	System.out.println(sb);
     }
 
   
