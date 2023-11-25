@@ -74,7 +74,7 @@ public class Main {
     	}
     	
     	
-    	int l = 1, r = n;
+    	int l = 1, r = m;
     	
     	int ans = 0;
     	while(l<=r) {
