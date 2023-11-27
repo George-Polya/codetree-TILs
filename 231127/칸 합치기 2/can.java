@@ -38,24 +38,26 @@ public class Main{
 		for(int i = 1; i <= n; i++) {
 			uf[i] = i;
 		}
-		
+		int ans = n;
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < m; i++) {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
 			int b = Integer.parseInt(st.nextToken());
-//			union(a,b);
-			for(int j = a + 1; j<=b; j++)
-				union(a,j);
-//			System.out.println(Arrays.toString(uf));
-			int cnt = 0;
-			for(int x = 1; x<=n ;x++) {
-				int X = find(x);
-				if(x == X)
-					cnt++;
+			
+			while(true) {
+				a = find(a);
+				
+				if(a >= b)
+					break;
+				
+				uf[a] = a + 1;
+				a = a + 1;
+				ans--;
+				
 			}
-//			System.out.println(cnt);
-			sb.append(cnt).append('\n');
+			sb.append(ans).append('\n');
+			
 		}
 		
 		System.out.println(sb);
