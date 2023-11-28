@@ -22,12 +22,13 @@ public class Main{
 	static long pH[];
 	static int ans;
 	static char path[];
-	static void dfs(int cur,int depth, long h1, long h2) {
+	static void dfs(int cur,int depth, String str, long h1, long h2) {
 		long tH[] = new long[] {h1,h2};
 		if(depth == l) {
 			for(int k = 0; k < 2; k++) {
 				for(int i = 0; i < l; i++) {
-					tH[k] = (tH[k] + toInt(path[i]) * pPow[k][l - i - 1]) % mod[k];
+//					tH[k] = (tH[k] + toInt(path[i]) * pPow[k][l - i - 1]) % mod[k];
+					tH[k] = (tH[k] + toInt(str.charAt(i)) * pPow[k][l - i - 1]) % mod[k];
 				}
 			}
 			
@@ -35,7 +36,8 @@ public class Main{
 			
 		}else if(depth > l) {
 			for(int k = 0; k < 2; k++) {
-				tH[k] = (tH[k] * p[k] - toInt(path[depth - 1 - l]) * pPow[k][l] + toInt(path[depth - 1]) ) % mod[k];
+//				tH[k] = (tH[k] * p[k] - toInt(path[depth - 1 - l]) * pPow[k][l] + toInt(path[depth - 1]) ) % mod[k];
+				tH[k] = (tH[k] * p[k] - toInt(str.charAt(depth - 1 - l)) * pPow[k][l] + toInt(path[depth - 1]) ) % mod[k];
 				
 				if(tH[k] < 0 )
 					tH[k] += mod[k];
@@ -47,7 +49,7 @@ public class Main{
 		
 		for(Node nxt : adj[cur]) {
 			path[depth] = nxt.value;
-			dfs(nxt.id, depth + 1, tH[0], tH[1]);
+			dfs(nxt.id, depth + 1, str + nxt.value, tH[0], tH[1]);
 		}
 	}
 	
@@ -90,7 +92,7 @@ public class Main{
 		}
 		
 		path = new char[n+1];
-		dfs(1,0,0,0);
+		dfs(1,0,"",0,0);
 		System.out.println(ans);
 	}
 }
