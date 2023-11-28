@@ -37,7 +37,7 @@ public class Main{
 		}else if(depth > l) {
 			for(int k = 0; k < 2; k++) {
 //				tH[k] = (tH[k] * p[k] - toInt(path[depth - 1 - l]) * pPow[k][l] + toInt(path[depth - 1]) ) % mod[k];
-				tH[k] = (tH[k] * p[k] - toInt(str.charAt(depth - 1 - l)) * pPow[k][l] + toInt(path[depth - 1]) ) % mod[k];
+				tH[k] = (tH[k] * p[k] - toInt(str.charAt(depth - 1 - l)) * pPow[k][l] + toInt(str.charAt(depth - 1)) ) % mod[k];
 				
 				if(tH[k] < 0 )
 					tH[k] += mod[k];
