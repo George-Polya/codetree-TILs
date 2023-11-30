@@ -24,7 +24,7 @@ public class Main{
 		return h1 + Math.max(mod[0], mod[1]) * h2;
 	}
 	
-	static HashSet<Long> set = new HashSet<>();
+//	static HashSet<Long> set = new HashSet<>();
 	static long h[] = new long[2];
 	
 	public static void main(String[] args) throws IOException {
@@ -40,9 +40,12 @@ public class Main{
 			}
 		}
 		
+		
+		int ans = 0;
 		for(int len = 1; len <= n; len++) {
 			Arrays.fill(h, 0);
 			initialize(h, len);
+			HashSet<Long> set = new HashSet<>();
 			
 			long key = genUniqueKey(h[0],h[1]);
 			set.add(key);
@@ -58,8 +61,11 @@ public class Main{
 				key = genUniqueKey(h[0], h[1]);
 				set.add(key);
 			}
+			
+			ans += set.size();
+			
 		}
 		
-		System.out.println(set.size());
+		System.out.println(ans);
 	}
 }
