@@ -37,7 +37,7 @@ public class Main{
 	
 	static String words[];
 	
-	static int getAllChildCnt(String str) {
+	static int search(String str) {
 		TrieNode t = root;
 		
 		int ret = 0;
@@ -46,7 +46,7 @@ public class Main{
 			if(t.children[idx] == null)
 				continue;
 			
-			if(t.children[idx].childCnt == 1)
+			if(t == root || t.isEnd || t.childCnt > 1)
 				ret++;
 			t = t.children[idx];
 			
@@ -55,9 +55,7 @@ public class Main{
 	}
 	
 	
-	static int search(String str) {
-		return str.length() - getAllChildCnt(str); 
-	}
+	
 	
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
