@@ -25,6 +25,7 @@ public class Main{
 	}
 	
 	static HashSet<Long> set = new HashSet<>();
+	static long h[] = new long[2];
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -40,8 +41,7 @@ public class Main{
 		}
 		
 		for(int len = 1; len <= n; len++) {
-			long h[] = new long[2];
-			
+			Arrays.fill(h, 0);
 			initialize(h, len);
 			
 			long key = genUniqueKey(h[0],h[1]);
