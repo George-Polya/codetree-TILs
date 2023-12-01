@@ -25,7 +25,11 @@ public class Main {
 	
 	static void dfs(TrieNode node ,int depth) {
 		for(String key : node.children.keySet()) {
-			sb.append("-".repeat(2 * depth)).append(key).append('\n');
+//			sb.append("-".repeat(2 * depth)).append(key).append('\n');
+			for(int i = 0; i < depth;i++) {
+				sb.append("--");
+			}
+			sb.append(key).append('\n');
 			dfs(node.children.get(key), depth + 1);
 		}
 	}
