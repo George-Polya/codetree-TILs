@@ -72,9 +72,9 @@ public class Main {
 				len++;
 			}
 			
-//			else {
-//				break;
-//			}
+			else {
+				break;
+			}
 			
 			for(int dir = 0; dir < 8; dir++) {
 				int ny = cur.y + dy[dir];
