@@ -53,46 +53,29 @@ public class Main {
 		return y<=0 || y>m || x<=0 || x>m;
 	}
 	
+	static int ans;
 	
-	static int bfs(int y,int x) {
-		Queue<Pair> q = new LinkedList<>();
-		q.add(new Pair(y,x));
-		visited[y][x] = true;
+	static void dfs(int y, int x, TrieNode t, int len) {
+		ans = Math.max(ans, len);
+		char value = board[y][x];
+		int idx = value - 'a';
 		
-		TrieNode t = root;
-		int len = 0;
-		
-		while(!q.isEmpty()) {
-			Pair cur = q.poll();
-			
-			char value = board[cur.y][cur.x];
-			int idx = value - 'a';
-			if(t.children[idx] != null) {
-				t = t.children[idx];
-				len++;
-			}
-			
-			else {
-				break;
-			}
-			
+		if(t.children[idx] != null) {
+			t = t.children[idx];
 			for(int dir = 0; dir < 8; dir++) {
-				int ny = cur.y + dy[dir];
-				int nx = cur.x + dx[dir];
-				
+				int ny = y + dy[dir];
+				int nx = x + dx[dir];
 				if(OOB(ny,nx) || visited[ny][nx])
 					continue;
-				
-				q.add(new Pair(ny,nx));
 				visited[ny][nx] = true;
+				dfs(ny,nx,t, len + 1);
+				visited[ny][nx] = false;
 			}
-			
 		}
 		
-		
-		
-		return len;
 	}
+	
+	
 	public static void main(String[] args) throws IOException{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -112,12 +95,12 @@ public class Main {
 			}
 		}
 		
-		int ans = 0;
 		for(int y= 1; y<=m;y++) {
 			for(int x=1; x<=m; x++) {
-				initialize();
-				int len = bfs(y,x);
-				ans = Math.max(ans, len);
+				TrieNode t = root;
+				visited[y][x] = true;
+				dfs(y,x,t, 0);
+				visited[y][x] = false;
 			}
 		}
 		
