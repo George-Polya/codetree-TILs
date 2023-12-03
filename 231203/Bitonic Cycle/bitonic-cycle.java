@@ -43,7 +43,7 @@ public class Main{
 		}
 		
 		
-		Collections.sort(pairs, new Comparator<>() {
+		Collections.sort(pairs, new Comparator<Pair>() {
 			@Override
 			public int compare(Pair p1, Pair p2) {
 				return p1.x - p2.x;
