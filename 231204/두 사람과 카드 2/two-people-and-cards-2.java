@@ -5,7 +5,7 @@ public class Main {
 	static HashSet<Integer> set = new HashSet<>();
 	static int dp[][];
 	static StringTokenizer st;
-	static int INT_MAX = (int)1e9;
+	static int INT_MAX = (int)2e9;
 	static int arr[];
 	static int getDist(int x,int y) {
 		if(x == 0)
@@ -42,10 +42,8 @@ public class Main {
 				int next = Math.max(i, j) + 1;
 				if(next == n+1)
 					continue;
-				if(set.contains(next)) {
-					dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i,next));
-				}else {
-					dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i,next));
+				dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i, next));
+				if(!set.contains(next)) {
 					dp[i][next] = Math.min(dp[i][next], dp[i][j] + getDist(j,next));
 				}
 			}
@@ -54,6 +52,7 @@ public class Main {
 		int ans = INT_MAX;
 		for(int i = 1; i<=n; i++) {
 			ans = Math.min(ans, dp[i][n]);
+			ans = Math.min(ans, dp[n][i]);
 		}
 		System.out.println(ans);
 	}
