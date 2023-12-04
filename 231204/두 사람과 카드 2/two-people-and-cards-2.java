@@ -39,14 +39,15 @@ public class Main {
 		
 		for(int i = 0;i <=n; i++) {
 			for(int j = 0; j <=n; j++) {
-				if(set.contains(j))
-					continue;
-				
 				int next = Math.max(i, j) + 1;
 				if(next == n+1)
 					continue;
-				dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i,next));
-				dp[i][next] = Math.min(dp[i][next], dp[i][j] + getDist(j,next));
+				if(set.contains(next)) {
+					dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i,next));
+				}else {
+					dp[next][j] = Math.min(dp[next][j], dp[i][j] + getDist(i,next));
+					dp[i][next] = Math.min(dp[i][next], dp[i][j] + getDist(j,next));
+				}
 			}
 		}
 		
