@@ -6,6 +6,21 @@ public class Main {
 	static int n, arr[], merged[][], dp[][];
 	static StringTokenizer st;
 	static int INT_MAX = (int)2e9;
+	static int findMin(int i, int j) {
+		if(dp[i][j] != INT_MAX)
+			return dp[i][j];
+		
+		if(i == j)
+			return dp[i][j] = 0;
+		
+		int best = INT_MAX;
+		for(int k = i; k<j;k++) {
+			int cost = findMin(i,k) + findMin(k+1,j) + merged[i][k] + merged[k+1][j];
+			best = Math.min(best, cost);
+		}
+		
+		return dp[i][j] = best;
+	}
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
@@ -30,22 +45,7 @@ public class Main {
 			}
 		}
 		
-		for(int i = 1; i<=n; i++)
-			dp[i][i] = 0;
+		System.out.println(findMin(1,n));
 		
-		for(int len = 2; len <= n; len++) {
-			for(int start = 1; start <= n; start++) {
-				int end = start + len - 1;
-				if(end > n)
-					continue;
-				
-				for(int k = start; k < end; k++) {
-					int cost = dp[start][k] + dp[k+1][end] + merged[start][k] + merged[k+1][end];
-					dp[start][end] = Math.min(dp[start][end], cost);
-				}
-			}
-		}
-		
-		System.out.println(dp[1][n]);
 	}
 }
