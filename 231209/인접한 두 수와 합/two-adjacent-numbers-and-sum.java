@@ -6,23 +6,6 @@ public class Main{
 	static int arr[], sum[][], dp[][];
 	static StringTokenizer st;
 	static int INT_MIN = -(int)1e9;
-	
-	static int findMax(int i, int j) {
-		if(dp[i][j] != INT_MIN) {
-			return dp[i][j];
-		}
-		
-		if(i == j) {
-			return dp[i][j] = 0;
-		}
-		
-		int best = INT_MIN;
-		for(int k = i; k<j; k++) {
-			best = Math.max(best, findMax(i,k) + findMax(k+1, j) + Math.abs(sum[i][k] - sum[k+1][j]));
-		}
-		
-		return dp[i][j] = best;
-	}
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
@@ -45,11 +28,25 @@ public class Main{
 			Arrays.fill(dp[i], INT_MIN);
 		}
 //		
-//		for(int i = 0; i < n ;i++) {
-//			dp[i] = 0;
-//		}
+		for(int i = 0; i < n ;i++) {
+			dp[i][i] = 0;
+		}
 		
-		System.out.println(findMax(0, n-1));
+		
+		for(int len = 2; len <= n;len++) {
+			for(int i = 0; i <= n - len; i++) {
+				int j = i + len - 1;
+				
+				for(int k = i; k < j; k++) {
+					dp[i][j] = Math.max(dp[i][j], dp[i][k] + dp[k+1][j] + Math.abs(sum[i][k] - sum[k+1][j]));
+				}
+			}
+		}
+		
+		System.out.println(dp[0][n-1]);
+		
+		
+		
 		
 	}
 }
