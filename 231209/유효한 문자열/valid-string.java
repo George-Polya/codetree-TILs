@@ -46,11 +46,8 @@ public class Main{
 		}
 		
 		for(int len = 2; len<=n; len++) {
-			for(int i = 0; i<n; i++) {
+			for(int i = 0; i<= n - len; i++) {
 				int j = i + len - 1;
-				
-				if(j >=n)
-					continue;
 				
 				for(int k = i + 1; k<=j; k++) {
 					dp[i][j] += getPairNum(text.charAt(i), text.charAt(k)) * dp[i+1][k-1] * dp[k+1][j];
