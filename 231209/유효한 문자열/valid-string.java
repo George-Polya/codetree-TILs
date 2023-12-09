@@ -6,7 +6,7 @@ public class Main{
 	static int n;
 	static int dp[][];
 	
-	static int mod = (int)1e9 + 7;
+	static int mod = 10007;
 	
 	static int getPairNum(char left, char right) {
 		if(left == '(') {
