@@ -15,10 +15,12 @@ public class Main {
             switch(oper){
                 case "add":
                 int num = Integer.parseInt(st.nextToken());
+                if((x & (1<<num)) == 0)
                     x |= (1 << num);
                 break;                    
                 case "delete":
                 num = Integer.parseInt(st.nextToken());
+                if((x & (1<<num)) != 0)
                     x -= (1 << num);
                 break;
 
