@@ -24,10 +24,14 @@ public class Main {
 			arr[i] = Integer.parseInt(st.nextToken());
 		}
 		
+		
 		notUsed = new boolean[n+1];
-		st = new StringTokenizer(br.readLine());
-		for(int i = 1; i<=m; i++) {
-			notUsed[Integer.parseInt(st.nextToken())] = true;
+		if(m != 0) {
+			
+			st = new StringTokenizer(br.readLine());
+			for(int i = 1; i<=m; i++) {
+				notUsed[Integer.parseInt(st.nextToken())] = true;
+			}
 		}
 		
 		dp = new int[n+1][n+1];
