@@ -27,15 +27,13 @@ public class Main {
 		
 		for(int i = 0; i < 1 << n;i++) {
 			for(int j = 0; j < n;j++) {
-//				if( (i &(1<<j)) == 0)
-//					continue;
-				
-				if( ((i >>j) & 1) == 0)
+				if( (i &(1<<j)) == 0)
 					continue;
 				
+				
 				for(int k = 0; k <n;k++) {
-//					if((i & (1<<k)) == 1)
-//						continue;
+					if((i & (1<<k)) !=0 )
+						continue;
 					
 					if(( (i >> k) & 1) == 1)
 						continue;
