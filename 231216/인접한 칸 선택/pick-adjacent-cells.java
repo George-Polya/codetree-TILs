@@ -3,12 +3,15 @@ import java.util.*;
 
 public class Main{
 	static int n,m;
-	static int board[][], dp[][];
+	static int MAX_N = 10;
+	static int board[][];
+	static int dp[][] = new int[MAX_N+1][1 <<MAX_N];
 	static StringTokenizer st;
 	
 	static boolean isOverlap(int j, int k) {
-		if( (j & k) > 0)
+		if( (k & j) > 0)
 			return true;
+		
 		for(int x = 0; x < m-1; x++) {
 			if( (((k >> x) & 1) == 1) && (((k >> (x+1) ) & 1) == 1))
 				return true;
@@ -46,8 +49,7 @@ public class Main{
 			}
 		}
 		
-		dp = new int[n + 1][1 << n];
-		for(int i = 0; i <= n;i++) {
+		for(int i = 0; i < n;i++) {
 			Arrays.fill(dp[i], -1);
 		}
 		dp[0][0] = 0;
@@ -64,12 +66,13 @@ public class Main{
 					if(isWall(i, k))
 						continue;
 					
-					dp[i + 1][j] = Math.max(dp[i + 1][j], dp[i][j] + getNum(k));
+					
+					dp[i + 1][k] = Math.max(dp[i + 1][k], dp[i][j] + getNum(k));
 				}
 			}
 		}
 		
-		int ans = -1;
+		int ans = 0;
 		for(int i = 0; i < (1 << m);i++) {
 			ans = Math.max(ans, dp[n][i]);
 		}
