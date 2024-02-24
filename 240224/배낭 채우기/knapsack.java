@@ -4,7 +4,7 @@ public class Main{
 	static int T;
 	static int n,k;
 	static int MAX_N = 100;
-	static int MAX_K = 1000;
+	static int MAX_K = 10000;
 	static int dp[] = new int[MAX_K+1];
 	static int INT_MIN = Integer.MIN_VALUE;
 	static StringTokenizer st;
