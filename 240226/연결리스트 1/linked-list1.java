@@ -68,17 +68,11 @@ public class Main {
 				break;
 			case 3:
 				if(cur.prev != null) {
-					cur.prev.next = cur.next;
-					if(cur.next != null)
-						cur.next.prev = cur.prev;
 					cur = cur.prev;
 				}
 				break;
 			case 4:
 				if(cur.next != null) {
-					cur.next.prev = cur.prev;
-					if(cur.prev !=null)
-						cur.prev.next = cur.next;
 					cur = cur.next;
 				}
 				break;
