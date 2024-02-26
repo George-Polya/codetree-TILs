@@ -63,7 +63,7 @@ public class Main {
 		n = Integer.parseInt(br.readLine());
 		q = Integer.parseInt(br.readLine());
 		nodeList = new Node[n+1];
-//		StringBuilder sb = new StringB
+		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < q;i++) {
 			st = new StringTokenizer(br.readLine());
 			int oper = Integer.parseInt(st.nextToken());
@@ -93,13 +93,13 @@ public class Main {
 			case 4:
 				if(nodeList[u] != null) {
 					Node node = nodeList[u];
-					System.out.print(node.prev == null ? 0 : node.prev.id);
-					System.out.print(" ");
-					System.out.print(node.next == null ? 0 : node.next.id);
+					sb.append(node.prev == null ? 0 : node.prev.id).append(' ');
+					sb.append(node.next == null ? 0 : node.next.id);
+					
 				}else{
-                    System.out.print("0 0");
+					sb.append("0 0");
                 }
-				System.out.println();
+				sb.append('\n');
 				break;
 				
 			}
@@ -107,15 +107,14 @@ public class Main {
 
         for(int i = 1; i<=n; i++){
             if(nodeList[i] == null)
-                System.out.print(0+" ");
+            	sb.append(0).append(' ');
             else{
                 Node node = nodeList[i];
-                System.out.print(node.next == null ? 0 : node.next.id);
-                System.out.print(" ");
+                sb.append(node.next == null ? 0 : node.next.id).append(' ');
             }
             
         }
 		
-		
+        System.out.println(sb);
 	}
 }
