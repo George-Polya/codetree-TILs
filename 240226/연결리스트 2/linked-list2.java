@@ -93,10 +93,12 @@ public class Main {
 			case 4:
 				if(nodeList[u] != null) {
 					Node node = nodeList[u];
-					System.out.print(node.prev == null ? 0 : node.prev.id +" ");
-					System.out.print(node.next == null ? 0 : node.next.id+"\n");
+					System.out.print(node.prev == null ? 0 : node.prev.id);
+					System.out.print(" ");
+					System.out.print(node.next == null ? 0 : node.next.id);
+					System.out.println();
 				}else{
-                    System.out.println("0 0");
+                    System.out.println("0 0\n");
                 }
 				break;
 				
@@ -108,7 +110,8 @@ public class Main {
                 System.out.print(0+" ");
             else{
                 Node node = nodeList[i];
-                System.out.print(node.next == null ? 0 : node.next.id+" ");
+                System.out.print(node.next == null ? 0 : node.next.id);
+                System.out.print(" ");
             }
             
         }
