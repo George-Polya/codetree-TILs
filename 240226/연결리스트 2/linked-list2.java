@@ -96,10 +96,10 @@ public class Main {
 					System.out.print(node.prev == null ? 0 : node.prev.id);
 					System.out.print(" ");
 					System.out.print(node.next == null ? 0 : node.next.id);
-					System.out.println();
 				}else{
-                    System.out.println("0 0\n");
+                    System.out.print("0 0");
                 }
+				System.out.println();
 				break;
 				
 			}
