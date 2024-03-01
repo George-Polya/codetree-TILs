@@ -116,6 +116,12 @@ public class Main {
     		
     		targetNode.prev.next = startNode;
     		targetNode.prev = endNode;
+    		
+    		Node cur = startNode;
+    		while(cur != null) {
+    			cur.line = targetLine;
+    			cur = cur.next;
+    		}
     	}
     	
     }
