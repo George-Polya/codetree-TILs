@@ -111,7 +111,7 @@ public class Main {
         }
         
         Node cur = nodeA;
-        while(cur != nodeB) {
+        while(cur != nodeB.next) {
         	lines.put(cur.name, lineC);
         	cur = cur.next;
         }
