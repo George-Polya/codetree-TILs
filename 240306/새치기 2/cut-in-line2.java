@@ -100,14 +100,16 @@ public class Main {
         connect(nodeA.prev, nodeB.next);
         
         
-        if(head[lineC]  == nodeC)
+        if(head[lineC]  == nodeC) {
         	head[lineC] = nodeA;
-        else
+        }else {
         	connect(nodeC.prev, nodeA);
+        }
+        	
         	
         
         Node cur = nodeA;
-        while(cur != nodeB.next) {
+        while(cur != nodeB) {
         	lines.put(cur.name, lineC);
         	cur = cur.next;
         }
