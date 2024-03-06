@@ -51,24 +51,22 @@ public class Main {
         int lineB = lines.get(b);
         
 
-	    if(head[lineB] == nodeB){
-	        head[lineB] = nodeA;
-	    }
-	    
+
+        // if(head[lineB] == nodeB){
+        //     head[lineB] = nodeA;
+        // }
         pop(a);
-
-
-        connect(nodeB.prev, nodeA);
-        connect(nodeA, nodeB);
+        // connect(nodeB.prev, nodeA);
+        // connect(nodeA, nodeB);
         
-//        if(head[lineB] == nodeB) {
-//            connect(nodeA, nodeB);
-//            head[lineB] = nodeA;
-//            
-//        }else {
-//            connect(nodeB.prev, nodeA);
-//            connect(nodeA, nodeB);
-//        }
+        if(head[lineB] == nodeB) {
+            connect(nodeA, nodeB);
+            head[lineB] = nodeA;
+            
+        }else {
+            connect(nodeB.prev, nodeA);
+            connect(nodeA, nodeB);
+        }
 
         lines.put(a, lineB);
         
@@ -102,20 +100,19 @@ public class Main {
         connect(nodeA.prev, nodeB.next);
         
         
-        if(head[lineC]  == nodeC) {
+        
+        if(head[lineC]  == nodeC)
         	head[lineC] = nodeA;
-        }else {
+        else
         	connect(nodeC.prev, nodeA);
-        }
-        	
-        	
+        connect(nodeB, nodeC);	
         
         Node cur = nodeA;
-        while(cur != nodeB) {
+        while(cur != nodeB.next) {
         	lines.put(cur.name, lineC);
         	cur = cur.next;
         }
-    	connect(nodeB, nodeC);
+    	
         	
         
     }
