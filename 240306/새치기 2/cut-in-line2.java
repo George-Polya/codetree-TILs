@@ -52,21 +52,13 @@ public class Main {
         
 
 
-        // if(head[lineB] == nodeB){
-        //     head[lineB] = nodeA;
-        // }
+         if(head[lineB] == nodeB){
+             head[lineB] = nodeA;
+         }
         pop(a);
-        // connect(nodeB.prev, nodeA);
-        // connect(nodeA, nodeB);
+         connect(nodeB.prev, nodeA);
+         connect(nodeA, nodeB);
         
-        if(head[lineB] == nodeB) {
-            connect(nodeA, nodeB);
-            head[lineB] = nodeA;
-            
-        }else {
-            connect(nodeB.prev, nodeA);
-            connect(nodeA, nodeB);
-        }
 
         lines.put(a, lineB);
         
@@ -88,27 +80,38 @@ public class Main {
         int lineB = lines.get(b);
         int lineC = lines.get(c);
 
+        
         Node nodeA = name2Node.get(a);
         Node nodeB = name2Node.get(b);
         Node nodeC = name2Node.get(c);
         
         if(head[lineA] == nodeA)
-        	head[lineA] = nodeA.next;
-        if(tail[lineB] == nodeB)
-        	tail[lineB] = nodeB.prev;
+        	head[lineA] = nodeB.next;
+        if(tail[lineA] == nodeB)
+        	tail[lineA] = nodeA.prev;
+
+//        System.out.println(nodeA.prev.name);
+//        System.out.println(nodeA.prev.next.name);
+//        
+//        for(int i =1; i<=m; i++)
+//        	printLine(i);
+//        System.out.println("-----");
         
         connect(nodeA.prev, nodeB.next);
         
         
-        
-        if(head[lineC]  == nodeC)
+        if(head[lineC]  == nodeC) {
+        	connect(nodeB,nodeC);
         	head[lineC] = nodeA;
-        else
+        	nodeA.prev = null;
+        }
+        else {
         	connect(nodeC.prev, nodeA);
-        connect(nodeB, nodeC);	
+        	connect(nodeB, nodeC);	
+        }
         
         Node cur = nodeA;
-        while(cur != nodeB.next) {
+        while(cur != nodeB) {
         	lines.put(cur.name, lineC);
         	cur = cur.next;
         }
@@ -151,9 +154,6 @@ public class Main {
             
         }
         
-//        for(int line = 1; line<=m; line++)
-//            printLine(line);
-        
         for(int i = 0; i < q; i++) {
             st = new StringTokenizer(br.readLine());
             int oper = Integer.parseInt(st.nextToken());
@@ -172,6 +172,11 @@ public class Main {
                 popRangeAndInsertPrev(a,b,c);
                 
             }
+            
+//            for(int idx =1; idx<=m; idx++)
+//            	printLine(idx);
+//            System.out.println("-----");
+            
         }
         
         StringBuilder sb = new StringBuilder();
