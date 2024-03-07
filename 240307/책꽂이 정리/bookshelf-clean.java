@@ -31,6 +31,83 @@ public class Main {
 		System.out.println();
 	}
 	
+	static Node pop_front(int line) {
+		Node node = head[line];
+		if(node !=null) {
+			head[line] = head[line].next;
+			node.next = null;
+			
+			if(head[line] != null)
+				head[line].prev = null;
+			else
+				tail[line] = null;
+		}
+		return node;
+	}
+	
+	static void push_back(Node node, int line) {
+		if(head[line] == null) {
+			head[line] = tail[line] = node;
+		}else {
+			connect(tail[line], node);
+			tail[line] = node;
+		}
+	}
+	
+	static Node pop_back(int line) {
+		Node node = tail[line];
+		if(node != null) {
+			tail[line] = tail[line].prev;
+			node.prev = null;
+			
+			if(tail[line] != null){
+				tail[line].next = null;
+			}else {
+				head[line] = null;
+			}
+		}
+		return node;
+	}
+	
+	static void push_front(Node node, int line) {
+		if(head[line] == null) {
+			head[line] = tail[line] = node;
+		}else {
+			connect(node, head[line]);
+			head[line] = node;
+		}
+	}
+	
+	static void move_all_front(int line1, int line2) {
+		if(line1 == line2 || head[line1] == null)
+			return;
+		
+		if(head[line2] == null) {
+			head[line2] = head[line1];
+			tail[line2] = tail[line1];
+		}else {
+			connect(tail[line1], head[line2]);
+			head[line2] = head[line1];
+		}
+		head[line1] = tail[line1] = null;
+		
+	}
+	
+	static void move_all_back(int line1, int line2) {
+		if(line1 == line2 || head[line1] == null)
+			return;
+		
+		if(head[line2] == null) {
+			head[line2] = head[line1];
+			tail[line2] = tail[line1];
+		}else {
+			connect(tail[line2], head[line1]);
+			tail[line2] = tail[line1];
+		}
+		
+		head[line1] = tail[line1] = null;
+	}
+	
     public static void main(String[] args) throws IOException {
         // 여기에 코드를 작성해주세요.
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -64,48 +141,19 @@ public class Main {
         	int line2 = Integer.parseInt(st.nextToken());
         	
         	if(oper == 1) {
-        		if(head[line1] == null)
-        			continue;
-        		Node node = head[line1];
-        		head[line1] = head[line1].next;
-        		head[line1].prev = null;
-        		node.next = null;
-        		connect(tail[line2], node);
-        		tail[line2] = node;
-        		if(head[line2] == null)
-        			head[line2] = node;
-        		
+        		Node node = pop_front(line1);
+        		if(node != null)
+        			push_back(node, line2);
         	}else if(oper == 2) {
-        		if(head[line1] == null)
-        			continue;
-        		
-        		Node node = tail[line1];
-        		tail[line1] = tail[line1].prev;
-        		tail[line1].next = null;
-        		
-        		node.prev = null;
-        		connect(node, head[line2]);
-        		head[line2] = node;
-        		if(tail[line2] == null)
-        			tail[line2] = node;
-        		
+        		Node node = pop_back(line1);
+        		if(node != null)
+        			push_front(node, line2);
         	}else if(oper == 3) {
-        		if(line1 == line2 || head[line1]== null)
-        			continue;
-        		connect(tail[line1], head[line2]);
-        		head[line2] = head[line1];
-        		head[line1] = tail[line1] = null;
+        		move_all_front(line1, line2);
+        		
         	}else if(oper == 4) {
-        		if(line1 == line2 || head[line1] == null)
-        			continue;
-        		connect(tail[line2], head[line1]);
-        		tail[line2] = tail[line1];
-        		head[line1] = tail[line1] = null;
+        		move_all_back(line1, line2);
         	}
-//        	for(int line=1; line<=k;line++) {
-//        		printLine(line);
-//        	}
-//        	System.out.println("-----");
         }
         
         StringBuilder sb = new StringBuilder();
