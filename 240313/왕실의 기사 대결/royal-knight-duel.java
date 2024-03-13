@@ -34,7 +34,7 @@ public class Main {
     
     static Knight knights[];
     
-    static void addQ(Knight knight, int dir, Stack<Pair> stk) {
+    static void addQ(Knight knight, int dir, Queue<Pair> q) {
 //        if(knight == NO_KNIGHT)
 //            return;
         
@@ -47,18 +47,18 @@ public class Main {
         
         if(dir == 0) {
             for(int x= sx; x<=ex; x++)
-                stk.add(new Pair(sy,x));
+                q.add(new Pair(sy,x));
         }else if(dir == 1) {
             for(int y=sy;y<=ey;y++) {
-                stk.add(new Pair(y,ex));
+                q.add(new Pair(y,ex));
             }
         }else if(dir == 2) {
             for(int x= sx;x<=ex;x++) {
-                stk.add(new Pair(ey,x));
+                q.add(new Pair(ey,x));
             }
         }else if(dir == 3) {
             for(int y = sy; y<=ey; y++)
-                stk.add(new Pair(y,sx));
+                q.add(new Pair(y,sx));
         }
     }
     
@@ -103,15 +103,13 @@ public class Main {
     	boolean canMove = true;
     	if(knight == NO_KNIGHT)
     		canMove = false;
-//    	Queue<Pair> stk = new LinkedList<>();
-    	Stack<Pair> stk = new Stack<>();
+    	Queue<Pair> q = new LinkedList<>();
     	List<Integer> moveKnights = new ArrayList<>();
     	moveKnights.add(id);
-    	addQ(knight, dir, stk);
+    	addQ(knight, dir, q);
     	
-    	while(!stk.isEmpty()) {
-//    		Pair cur = stk.poll();
-    		Pair cur = stk.pop();
+    	while(!q.isEmpty()) {
+    		Pair cur = q.poll();
     		
     		int ny = cur.y + dy[dir];
     		int nx = cur.x + dx[dir];
@@ -125,7 +123,7 @@ public class Main {
     		
     		if(nxtId != -1) {
     			Knight nxt = knights[nxtId];
-    			addQ(nxt, dir, stk);
+    			addQ(nxt, dir, q);
     			moveKnights.add(nxtId);
     		}
     		
