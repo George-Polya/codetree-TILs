@@ -34,7 +34,7 @@ public class Main {
     
     static Knight knights[];
     
-    static void addQ(Knight knight, int dir, Queue<Pair> q) {
+    static void addQ(Knight knight, int dir, Stack<Pair> stk) {
 //        if(knight == NO_KNIGHT)
 //            return;
         
@@ -47,18 +47,18 @@ public class Main {
         
         if(dir == 0) {
             for(int x= sx; x<=ex; x++)
-                q.add(new Pair(sy,x));
+                stk.add(new Pair(sy,x));
         }else if(dir == 1) {
             for(int y=sy;y<=ey;y++) {
-                q.add(new Pair(y,ex));
+                stk.add(new Pair(y,ex));
             }
         }else if(dir == 2) {
             for(int x= sx;x<=ex;x++) {
-                q.add(new Pair(ey,x));
+                stk.add(new Pair(ey,x));
             }
         }else if(dir == 3) {
             for(int y = sy; y<=ey; y++)
-                q.add(new Pair(y,sx));
+                stk.add(new Pair(y,sx));
         }
     }
     
@@ -98,30 +98,34 @@ public class Main {
      * 이동가능하다면 이동되는 기사들의 id를 리턴
      * 이동불가능하다면 empty list를 리턴 
      */
-    static void canMove(int id, int dir) {
+    static void simulate(int id, int dir) {
     	Knight knight = knights[id];
-    	boolean flag = true;
+    	boolean canMove = true;
     	if(knight == NO_KNIGHT)
-    		flag = false;
-    	Queue<Pair> q = new LinkedList<>();
+    		canMove = false;
+//    	Queue<Pair> stk = new LinkedList<>();
+    	Stack<Pair> stk = new Stack<>();
     	List<Integer> moveKnights = new ArrayList<>();
     	moveKnights.add(id);
-    	addQ(knight, dir, q);
+    	addQ(knight, dir, stk);
     	
-    	while(!q.isEmpty()) {
-    		Pair cur = q.poll();
+    	while(!stk.isEmpty()) {
+//    		Pair cur = stk.poll();
+    		Pair cur = stk.pop();
     		
     		int ny = cur.y + dy[dir];
     		int nx = cur.x + dx[dir];
     		
-    		if(OOB(ny,nx) || board[ny][nx] == WALL)
-    			flag = false;
+    		if(OOB(ny,nx) || board[ny][nx] == WALL) {
+    			canMove = false;
+    			break;
+    		}
     		
     		int nxtId = getNxtKnight(ny,nx);
     		
     		if(nxtId != -1) {
     			Knight nxt = knights[nxtId];
-    			addQ(nxt, dir, q);
+    			addQ(nxt, dir, stk);
     			moveKnights.add(nxtId);
     		}
     		
@@ -129,7 +133,7 @@ public class Main {
     	
     	Arrays.fill(isMoved, false);
     	//이동가능하면 
-    	if(flag) {
+    	if(canMove) {
     		// 이동
     		
     		for(int i = moveKnights.size() - 1; i>=0 ;i --) {
@@ -213,7 +217,7 @@ public class Main {
             int dir = Integer.parseInt(st.nextToken());
             
             
-            canMove(id, dir);
+            simulate(id, dir);
         }
         
         for(int id = 1; id<=n;id++) {
