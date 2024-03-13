@@ -6,11 +6,9 @@ public class Main {
     static int board[][];
     
     static class Knight{
-    	int id;
     	int sy,sx,h,w;
     	int hp, damage;
-    	public Knight(int id,int sy,int sx, int h, int w, int hp, int damage) {
-    		this.id = id;
+    	public Knight(int sy,int sx, int h, int w, int hp, int damage) {
     		this.sy = sy;
     		this.sx = sx;
     		this.h = h;
@@ -20,7 +18,7 @@ public class Main {
     	}
     }
     
-    static Knight NO_KNIGHT = new Knight(-1,-1,-1,-1,-1,-1,-1);
+    static Knight NO_KNIGHT = new Knight(-1,-1,-1,-1,-1,-1);
     
     static class Pair{
     	int y,x;
@@ -83,16 +81,16 @@ public class Main {
         return sy <= y && y<= ey && sx<=x && x<=ex;
     }
     
-    static Knight getNxtKnight(int y, int x) {
+    static int getNxtKnight(int y, int x) {
         for(int id =1; id<=n; id++) {
             if(knights[id] == NO_KNIGHT)
                 continue;
             
             //생존한 기사들 중에서 
             if(inKnight(knights[id], y, x))
-            	return knights[id];
+            	return id;
         }
-        return NO_KNIGHT;
+        return -1;
     }
     
     /*
@@ -106,8 +104,8 @@ public class Main {
     	if(knight == NO_KNIGHT)
     		flag = false;
     	Queue<Pair> q = new LinkedList<>();
-    	List<Knight> moveKnights = new ArrayList<>();
-    	moveKnights.add(knight);
+    	List<Integer> moveKnights = new ArrayList<>();
+    	moveKnights.add(id);
     	addQ(knight, dir, q);
     	
     	while(!q.isEmpty()) {
@@ -119,11 +117,14 @@ public class Main {
     		if(OOB(ny,nx) || board[ny][nx] == WALL)
     			flag = false;
     		
-    		Knight nxt = getNxtKnight(ny,nx);
-    		if(nxt != NO_KNIGHT) {
-    			addQ(nxt,dir, q);
-    			moveKnights.add(nxt);
+    		int nxtId = getNxtKnight(ny,nx);
+    		
+    		if(nxtId != -1) {
+    			Knight nxt = knights[nxtId];
+    			addQ(nxt, dir, q);
+    			moveKnights.add(nxtId);
     		}
+    		
     	}
     	
     	Arrays.fill(isMoved, false);
@@ -132,9 +133,11 @@ public class Main {
     		// 이동
     		
     		for(int i = moveKnights.size() - 1; i>=0 ;i --) {
-    			Knight k = moveKnights.get(i);
-    			
-    			if(isMoved[k.id] || k == NO_KNIGHT)
+//    			Knight k = knights[moveKnights.get(i)];
+    			int knightId = moveKnights.get(i);
+    			Knight k = knights[knightId];
+    					
+    			if(isMoved[knightId] || k == NO_KNIGHT)
     				continue;
     			
     			// 이동 
@@ -145,11 +148,9 @@ public class Main {
     			int w = k.w;
     			int sy = k.sy;
     			int sx = k.sx;
-    			isMoved[k.id] = true;
+    			isMoved[knightId] = true;
     			
-    			if(id != k.id) {//명령받은 기사는 피해를 받지 않는
-    				
-    				
+    			if(id != knightId) {//명령받은 기사는 피해를 받지 않는다 
     				int ey = sy + h - 1;
     				int ex = sx + w - 1;
     				
@@ -162,7 +163,7 @@ public class Main {
     			}
     			
     			if(k.hp <= k.damage)
-    				knights[k.id] = NO_KNIGHT;
+    				knights[knightId] = NO_KNIGHT;
     			
     		}
     		
@@ -201,7 +202,7 @@ public class Main {
             int w = Integer.parseInt(st.nextToken());
             int hp = Integer.parseInt(st.nextToken());
             
-            knights[id] = new Knight(id, sy,sx,h,w,hp, 0);
+            knights[id] = new Knight(sy,sx,h,w,hp, 0);
             
         }
         
