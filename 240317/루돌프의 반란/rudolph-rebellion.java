@@ -33,7 +33,7 @@ public class Main {
 		}
 		
 		public String toString() {
-			return id+" "+y+" "+x;
+			return String.format("id: %d, y: %d, x: %d, score: %d, stun: %d", id,y,x,score, stun);
 		}
 	}
 	static Santa santas[];
@@ -137,7 +137,7 @@ public class Main {
 			push(santas[id], dir, c); // dir방향으로 c만큼 밀려남  
 			
 			// 기절 
-			santas[id].stun += 2;
+			santas[id].stun = 2;
 		}
 		
 	}
@@ -282,7 +282,6 @@ public class Main {
 		
 		
 		for(int turn = 1; turn <= m;turn++) {
-//			System.out.println("turn: "+(turn));
 			
 			//모든 산타 탈락 여부 확인 
 			
@@ -301,6 +300,7 @@ public class Main {
 			plusScore();
 			
 			
+//			System.out.println("turn: "+(turn));
 //			System.out.println("rudolf: "+rudolf);
 //			printSantas();
 //			printBoard(board);
