@@ -116,10 +116,13 @@ public class Main {
 				selected = santa;
 			}
 		}
+		if(selected == NO_SANTA)
+			return;
 		
 		
 		// 2. 가장 가까운 산타로 이동 
 		int dir = getNxtDir(rudolf, selected);
+		
 		rudolf.y = rudolf.y + dy[dir];
 		rudolf.x = rudolf.x + dx[dir];
 //		System.out.println("selected: "+ selected);
@@ -271,6 +274,11 @@ public class Main {
 			board[y][x] = id;
 			santas[id] = new Santa(id, y,x);
 		}
+		
+//		System.out.println("rudolf: "+rudolf);
+//		printSantas();
+//		printBoard(board);
+//		System.out.println("-----");
 		
 		
 		for(int turn = 1; turn <= m;turn++) {
