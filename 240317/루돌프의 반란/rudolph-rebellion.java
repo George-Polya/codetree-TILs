@@ -284,7 +284,8 @@ public class Main {
 		for(int turn = 1; turn <= m;turn++) {
 			
 			//모든 산타 탈락 여부 확인 
-			
+			if(allDead())
+				break;
 			
 			// 루돌프의 이동 
 			rudolfMove();
