@@ -90,6 +90,8 @@ public class Main {
 	static void attack() {
 		Tower attacker = towers.first();
 		Tower target = towers.last();
+		attacker.power += n+m;
+		attacker.time = turn;
 //		Tower attacker = towers.get(0);  // 공격자 
 //		Tower target = towers.get(towers.size() - 1); // 공격 대상 
 		
@@ -143,8 +145,7 @@ public class Main {
 		}
 		
 		// 공격 
-		attacker.power += n+m;
-		attacker.time = turn;
+		
 		related[attacker.y][attacker.x] = true; // 공격자는 유관하다 
 		
 		target.power -= attacker.power;
