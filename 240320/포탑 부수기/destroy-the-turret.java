@@ -89,8 +89,6 @@ public class Main {
 	static void attack() {
 		Tower attacker = towers.get(0);  // 공격자 
 		Tower target = towers.get(towers.size() - 1); // 공격 대상 
-//		System.out.println("attacker: "+attacker);
-//		System.out.println("target: "+ target);
 		
 		
 		
@@ -160,7 +158,6 @@ public class Main {
 			
 			// 경로에 있는 포탑들 
 			while(!(cur.y == attacker.y && cur.x == attacker.x)) {
-				
 				board[cur.y][cur.x].power -= attacker.power / 2;
 				
 				if(board[cur.y][cur.x].power <= 0) // 포탑 부서짐 
@@ -273,8 +270,13 @@ public class Main {
 		for(turn = 1; turn<=k; turn++) {
 //			System.out.println("turn: "+turn);
 			
+			
+			
 			// 공격자 선정을 위한 초기화 및 정렬 
 			init();
+			
+			if(towers.size() == 1)
+				break;
 			
 			// 공격 
 			attack();
@@ -282,8 +284,6 @@ public class Main {
 			// 포탑정비 
 			fix();
 //			printBoard(board);
-			
-//			System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 		}
 		
 		init();
