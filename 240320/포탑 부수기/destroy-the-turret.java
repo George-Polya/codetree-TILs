@@ -46,7 +46,8 @@ public class Main {
 	
 	static Tower board[][];
 	
-	static List<Tower> towers = new ArrayList<>();
+//	static List<Tower> towers = new ArrayList<>();
+	static TreeSet<Tower> towers = new TreeSet<>();
 	
 	static void init() {
 		towers.clear();
@@ -59,7 +60,7 @@ public class Main {
 			}
 		}
 		
-		Collections.sort(towers);
+//		Collections.sort(towers);
 	}
 	
 	static class Pair{
@@ -87,8 +88,10 @@ public class Main {
 	static boolean visited[][];
 	
 	static void attack() {
-		Tower attacker = towers.get(0);  // 공격자 
-		Tower target = towers.get(towers.size() - 1); // 공격 대상 
+		Tower attacker = towers.first();
+		Tower target = towers.last();
+//		Tower attacker = towers.get(0);  // 공격자 
+//		Tower target = towers.get(towers.size() - 1); // 공격 대상 
 		
 		
 		
@@ -287,7 +290,7 @@ public class Main {
 		}
 		
 		init();
-		System.out.println(towers.get(towers.size()-1).power);
+		System.out.println(towers.last().power);
 		
 	}
 }
