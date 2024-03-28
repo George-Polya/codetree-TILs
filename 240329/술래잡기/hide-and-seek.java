@@ -181,7 +181,6 @@ public class Main{
 			dir = 3;
 			police.dir = dir;
 			num = num + (flag? -1 : +1);
-			System.out.println("num: "+num);
 			moveNum = num;
 			flag = !flag;
 		}
