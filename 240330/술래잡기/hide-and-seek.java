@@ -114,11 +114,12 @@ public class Main{
 		}
 			
 		
-//		Tuple nxt = getNxt(y,x,dir);
-//		thief.y = nxt.y;
-//		thief.x = nxt.x;
-//		thief.dir = nxt.dir;
-		thieves[id] = getNxt(y,x,dir);
+		Tuple nxt = getNxt(y,x,dir);
+		thief.y = nxt.y;
+		thief.x = nxt.x;
+		thief.dir = nxt.dir;
+//		System.out.printf("id: %d, nxt: %s\n", id, nxt);		
+		nxtBoard[thief.y][thief.x] += (1<<id);
 	}
 	
 	static void moveAllThieves() {
@@ -129,6 +130,7 @@ public class Main{
 			move(id);
 		}
 		
+		copy(nxtBoard,board);
 		
 	}
 	
@@ -199,17 +201,21 @@ public class Main{
 			int nx = x + dx[dir] * dist;
 			if(OOB(ny,nx))
 				continue;
-			for(int id = 1; id<=m; id++) {
+			int value = board[ny][nx];
+			
+			if((value & 1) == 1) { // 나무가 있는 곳은 검거를 못함 
+				continue;
+			}
+			
+			for(int id = 1; id <= m; id++) {
 				Tuple thief = thieves[id];
 				if(thief == null)
 					continue;
-				
-				
-				if(thief.y == ny && thief.x == nx && board[ny][nx] == 0) {
-					cnt++;
+				if(((value & (1<<id)) != 0 ) &&(thief.y == ny && thief.x == nx) ) {
+					board[ny][nx] -= (1<<id);
 					thieves[id] = null;
+					cnt++;
 				}
-				
 			}
 		}
 		
@@ -235,6 +241,7 @@ public class Main{
 			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			thieves[i] = new Tuple(y,x,dir-1);
+			board[y][x] += (1 << i);
 		}
 		
 		trees = new Pair[h];
@@ -245,10 +252,20 @@ public class Main{
 			trees[i] = new Pair(y,x);
 			board[y][x] += (1<<0);
 		}
-
+		
 //		printBoard(board);
-
-//		
+//		System.out.println(Arrays.toString(thieves));
+//		System.out.println("------------");
+//		moveAllThieves();
+//		printBoard(board);
+//		System.out.println(Arrays.toString(thieves));
+//		System.out.println("------------");
+//		policeMove();
+//		arrest();
+//		printBoard(board);
+//		System.out.println(Arrays.toString(thieves));
+//		System.out.println("------------");
+		
 		for(turn = 1; turn<=k; turn++) {
 			moveAllThieves();
 			policeMove();
@@ -258,7 +275,7 @@ public class Main{
 //			System.out.println(Arrays.toString(thieves));
 //			System.out.println("------------");
 		}
-//		
+		
 		System.out.println(score);
 	}
 }
