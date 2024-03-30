@@ -37,8 +37,7 @@ public class Main{
 	
 	static Tuple police;
 	static Tuple thieves[];
-	static int board[][];
-	static boolean tree[][];
+	static int board[][], nxtBoard[][];
 	
 	static class Pair{
 		int y,x;
@@ -52,6 +51,24 @@ public class Main{
 		}
 	}
 	
+	static Pair trees[];
+	
+	static void init() {
+		for(int y=1; y<=n; y++) {
+			Arrays.fill(nxtBoard[y], 0);
+		}
+		
+		for(int i = 0; i < h; i++) {
+			Pair tree = trees[i];
+			nxtBoard[tree.y][tree.x] += (1 << 0);
+		}
+	}
+	
+	static void copy(int src[][], int dst[][]) {
+		for(int y=1; y<=n; y++) {
+			System.arraycopy(src[y],1, dst[y], 1, n);
+		}
+	}
 	
 	static Tuple getNxt(int y, int x, int dir) {
 		int ny = y + dy[dir];
@@ -92,20 +109,28 @@ public class Main{
 		int dir = thief.dir;
 		
 		if(!canMove(y,x,police.y, police.x)) {
+			nxtBoard[thief.y][thief.x] += (1<<id);
 			return;
 		}
 			
 		
-		thieves[id] = getNxt(y,x,dir);
+		Tuple nxt = getNxt(y,x,dir);
+		thief.y = nxt.y;
+		thief.x = nxt.x;
+		thief.dir = nxt.dir;
+//		System.out.printf("id: %d, nxt: %s\n", id, nxt);		
+		nxtBoard[thief.y][thief.x] += (1<<id);
 	}
 	
 	static void moveAllThieves() {
+		init();
 		
 		for(int id=1;id<=m;id++) {
 			
 			move(id);
 		}
 		
+		copy(nxtBoard,board);
 		
 	}
 	
@@ -176,15 +201,23 @@ public class Main{
 			int nx = x + dx[dir] * dist;
 			if(OOB(ny,nx))
 				continue;
+			int value = board[ny][nx];
 			
-			for(int id = 1; id <=m ;id++) {
+			
+			for(int id = 1; id <= m; id++) {
 				Tuple thief = thieves[id];
-				if(thief==null)
+				if(thief == null)
 					continue;
-				if(thief.y == ny && thief.x == nx && !tree[ny][nx]) {
+				// (ny,nx)에 id에 해당하는 도둑이 있는지 검사하는건 비트마스킹으로 가능하지 않나..?
+				// (ny,nx) == (thief.y, thief.x)를 굳이 할 필요가 있나?
+				if(((value & 1) != 0) && (thief.y == ny && thief.x == nx)) {
+					board[ny][nx] -= (1<<id);
 					thieves[id] = null;
 					cnt++;
 				}
+				
+				
+				
 			}
 		}
 		
@@ -202,20 +235,24 @@ public class Main{
 		
 		police = new Tuple(cy,cx,3);
 		thieves = new Tuple[m+1];
-		tree = new boolean[n+1][n+1];
+		board = new int[n+1][n+1];
+		nxtBoard = new int[n+1][n+1];
 		for(int i=1;i<=m;i++) {
 			st = new StringTokenizer(br.readLine());
 			int y = Integer.parseInt(st.nextToken());
 			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			thieves[i] = new Tuple(y,x,dir-1);
+			board[y][x] += (1 << i);
 		}
 		
+		trees = new Pair[h];
 		for(int i=0; i<h;i++) {
 			st = new StringTokenizer(br.readLine());
 			int y= Integer.parseInt(st.nextToken());
 			int x= Integer.parseInt(st.nextToken());
-			tree[y][x] = true;
+			trees[i] = new Pair(y,x);
+			board[y][x] += (1<<0);
 		}
 		
 		
