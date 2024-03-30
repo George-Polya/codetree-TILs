@@ -109,7 +109,6 @@ public class Main{
 		int dir = thief.dir;
 		
 		if(!canMove(y,x,police.y, police.x)) {
-			nxtBoard[thief.y][thief.x] += (1<<id);
 			return;
 		}
 			
@@ -118,19 +117,15 @@ public class Main{
 		thief.y = nxt.y;
 		thief.x = nxt.x;
 		thief.dir = nxt.dir;
-//		System.out.printf("id: %d, nxt: %s\n", id, nxt);		
-		nxtBoard[thief.y][thief.x] += (1<<id);
 	}
 	
 	static void moveAllThieves() {
-		init();
 		
 		for(int id=1;id<=m;id++) {
 			
 			move(id);
 		}
 		
-		copy(nxtBoard,board);
 		
 	}
 	
@@ -203,21 +198,20 @@ public class Main{
 				continue;
 			int value = board[ny][nx];
 			
+			if((value & (1<<0)) != 0) // 나무 있는 곳 검사하는거 아닌가?  
+				continue;
 			
 			for(int id = 1; id <= m; id++) {
 				Tuple thief = thieves[id];
 				if(thief == null)
 					continue;
-				// (ny,nx)에 id에 해당하는 도둑이 있는지 검사하는건 비트마스킹으로 가능하지 않나..?
-				// (ny,nx) == (thief.y, thief.x)를 굳이 할 필요가 있나?
-				if(((value & 1) != 0) && (thief.y == ny && thief.x == nx)) {
+				// (ny,nx)에 id에 해당하는 도둑이 있는지 검사하는건 비트마스킹으로 가능하지 않나..? (value & (1<<id)) != 0으로 가능하지 않냐는 말임
+				// 1<<id하면 id가 100만 되도 2^100 >> 엄청커져서 스택오버플로우 
+				if(thief.y == ny && thief.x == nx) {
 					board[ny][nx] -= (1<<id);
 					thieves[id] = null;
 					cnt++;
 				}
-				
-				
-				
 			}
 		}
 		
@@ -236,14 +230,12 @@ public class Main{
 		police = new Tuple(cy,cx,3);
 		thieves = new Tuple[m+1];
 		board = new int[n+1][n+1];
-		nxtBoard = new int[n+1][n+1];
 		for(int i=1;i<=m;i++) {
 			st = new StringTokenizer(br.readLine());
 			int y = Integer.parseInt(st.nextToken());
 			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			thieves[i] = new Tuple(y,x,dir-1);
-			board[y][x] += (1 << i);
 		}
 		
 		trees = new Pair[h];
