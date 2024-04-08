@@ -36,18 +36,10 @@ public class Main {
 
     static Pair packMan;
 
-    static class Monster{
-        int dir;
-        boolean alive;
 
-        public Monster(int dir, boolean alive) {
-        	this.dir = dir;
-        	this.alive = alive;
-        }
-    }
 
     
-    static ArrayList<Monster> board[][], nxtBoard[][];
+    static ArrayList<Integer> board[][], nxtBoard[][], egg[][];
 
     /**
      * 1. 몬스터 복제
@@ -56,18 +48,15 @@ public class Main {
      *  
      */
     static void tryClone(){
+
+    	init();
+    	
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
     			if(board[y][x].isEmpty())
     				continue;
-    			int size = board[y][x].size();
-    			for(int i = 0; i < size; i++) {
-    				Monster monster = board[y][x].get(i);
-    				if(!monster.alive)
-    					continue;
-    				board[y][x].add(new Monster(monster.dir, false));
+    			egg[y][x].addAll(board[y][x]);
     			
-    			}
     		}
     	}
     }
@@ -89,12 +78,7 @@ public class Main {
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
     			nxtBoard[y][x].clear();
-    			for(int i = 0; i < board[y][x].size(); i++) {
-    				Monster monster = board[y][x].get(i);
-    				if(!monster.alive) {
-    					nxtBoard[y][x].add(monster);
-    				}
-    			}
+    			egg[y][x].clear();
     		}
     	}
     }
@@ -129,17 +113,13 @@ public class Main {
      *  2.3 몬스터 위치 업데이트 
      */
     static void move(int y, int x) {
-    	for(Monster monster : board[y][x]) {
-    		if(!monster.alive)
-    			continue;
-    		int dir = monster.dir;
-//    		System.out.printf("y: %d, x: %x, dir: %d\n",y,x,dir);
+    	for(int dir : board[y][x]) {
     		count[y][x] -= 1;
     		Tuple nxt = getNxtPos(y,x,dir);
-//    		System.out.println("nxt: "+nxt);
-    		nxtBoard[nxt.y][nxt.x].add(new Monster(nxt.dir, true));
+    		nxtBoard[nxt.y][nxt.x].add(nxt.dir);
     		count[nxt.y][nxt.x] += 1;
     	}
+    	
     }
     
     /*
@@ -149,7 +129,6 @@ public class Main {
      */
     static void moveAll() {
     	
-    	init();
     	
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
@@ -161,7 +140,7 @@ public class Main {
     	
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
-    			board[y][x] = (ArrayList<Monster>)nxtBoard[y][x].clone();
+    			board[y][x] = (ArrayList<Integer>)nxtBoard[y][x].clone();
     		}
     	}
     	
@@ -230,14 +209,19 @@ public class Main {
     			count[ny][nx] = 0; // 전부 죽임
     			dead[ny][nx] = 3; // 시체는 2턴 동안만 남는다 
     			
-    			int size = board[ny][nx].size();
+//    			int size = board[ny][nx].size();
     			
     			
     			// 팩맨이 몬스터를 먹음 
-    			for(int idx = size -1 ; idx >=0; idx--) {
-    				if(board[ny][nx].get(idx).alive) // 알은 먹지 않는다. 
-    					board[ny][nx].remove(idx);
-    			}
+//    			for(int idx = size -1 ; idx >=0; idx--) {
+//    				if(board[ny][nx].get(idx).alive) // 알은 먹지 않는다. 
+//    					board[ny][nx].remove(idx);
+//    			}
+    			
+//    			for(int idx = size - 1; idx>=0; idx--) {
+//    				board[ny][nx].remove(idx);
+//    			}
+    			board[ny][nx].clear();
     			
     		}
     		y = ny;
@@ -261,18 +245,20 @@ public class Main {
     static void completeClone() {
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
-    			for(int i = 0; i < board[y][x].size(); i++) {
-    				Monster monster = board[y][x].get(i);
-    				if(!monster.alive) {
-    					monster.alive = true;
-    					count[y][x] += 1;
-    				}
-    			}
+    			if(egg[y][x].isEmpty())
+    				continue;
+    			board[y][x].addAll(egg[y][x]);
+    			count[y][x] += egg[y][x].size();
+//    			for(int i = 0; i < egg[y][x].size();i++) {
+//    				int dir = egg[y][x].get(i);
+//    				board[y][x].add(dir);
+//    				count[y][x] += 1;
+//    			}
     		}
     	}
     }
     
-    static void printMonster() {
+    static void printMonster(ArrayList<Integer> board[][]) {
     	for(int y=1; y<=4; y++) {
     		for(int x=1; x<=4; x++) {
     			System.out.print(board[y][x].size() +" ");
@@ -294,10 +280,13 @@ public class Main {
         count = new int[4+1][4+1];
         board = new ArrayList[4+1][4+1];
         nxtBoard = new ArrayList[4+1][4+1];
+        egg = new ArrayList[4+1][4+1];
+        
         for(int y=1; y<=4; y++) {
         	for(int x=1; x<=4; x++) {
         		board[y][x] = new ArrayList<>();
         		nxtBoard[y][x] = new ArrayList<>();
+        		egg[y][x] = new ArrayList<>();
         	}
         }
         
@@ -309,59 +298,35 @@ public class Main {
             int x = Integer.parseInt(st.nextToken());
             int dir = Integer.parseInt(st.nextToken()) - 1;
             
-            board[y][x].add(new Monster(dir, true));
+//            board[y][x].add(new Monster(dir, true));
+            board[y][x].add(dir);
             count[y][x] += 1;
         }
         
-        
-//        dead[4][1] = 2;
-//        dead[4][2] = 2;
-//        dead[3][2] = 2;
-        
-        
-        // 복제 시도
-//        tryClone(); 
-//
-//        // 몬스터들의 이동
+
+//        tryClone();
+//        printMonster(egg);
 //        moveAll();
-//        
-//        
-//        // 팩맨의 이동
+////        printBoard(count);
+//        System.out.println("----");
+////        printMonster(board);
 //        movePackman();
-//        // 시체 소멸 
-//       
+////        printBoard(dead);
+////        printBoard(count);
 //        destroyDead();
-//
-//        // 몬스터 복제 완료 
 //        completeClone();
-        
-        
+//        printBoard(count);
         
         for(int turn = 1; turn <= t; turn++) {
-//        	System.out.println("turn: "+turn);
         	
         	tryClone();
-//        	printBoard(count);
-//        	printMonster();
         	
         	moveAll();
-//        	System.out.println("after monster move");
-//        	printBoard(count);
-//        	printMonster();
         	
         	movePackman();
-//        	System.out.println("after packman move");
-//        	printBoard(count);
-//        	printMonster();
-        	
         	destroyDead();
         	
         	completeClone();
-//        	System.out.println("after clone complete");
-//        	printBoard(count);
-//        	printMonster();
-//        	System.out.println("-------");
-//        	printBoard(dead);
         }
         
         int ans = 0;
