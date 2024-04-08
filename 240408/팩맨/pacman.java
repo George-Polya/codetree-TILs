@@ -367,11 +367,7 @@ public class Main {
         int ans = 0;
         for(int y=1; y<=4; y++) {
         	for(int x=1; x<=4; x++) {
-        		for(int i = 0; i < board[y][x].size(); i++) {
-        			Monster monster = board[y][x].get(i);
-        			if(monster.alive)
-        				ans++;
-        		}
+        		ans += count[y][x];
         	}
         }
         System.out.println(ans);
