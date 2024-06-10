@@ -186,10 +186,14 @@ public class Main {
 		}
 		
 		public void clear() {
+			if(OOB(cy,cx))
+				return;
 			board[cy][cx] = 0;
 			for(int dir = 0; dir < 4; dir++) {
 				int ny = cy + dy[dir];
 				int nx = cx + dx[dir];
+				if(OOB(ny,nx))
+					continue;
 				board[ny][nx] = 0;
 			}
 		}
