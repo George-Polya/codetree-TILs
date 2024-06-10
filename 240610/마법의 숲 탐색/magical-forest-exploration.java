@@ -35,37 +35,41 @@ public class Main {
 	}
 	
 	static class Tuple{
-		int y,x,dir;
-		public Tuple(int y,int x, int dir) {
-			this.y = y;
-			this.x = x;
-			this.dir = dir;
+		int first,second,third;
+		public Tuple(int first,int second, int third) {
+			this.first = first;
+			this.second = second;
+			this.third = third;
 		}
 		
 		public String toString() {
-			return y+" "+x+" "+dir;
+			return first+" "+second+" "+third;
+		}
+		
+		public boolean isSame(int first, int second) {
+			return this.first == first && this.second == second;
 		}
 	}
 	
-	static class Fairy{
-		int y,x,id;
-		public Fairy(int y,int x, int id) {
-			this.y = y;
-			this.x = x;
-			this.id = id;
-		}
-		
-		public boolean isSame(int y, int x) {
-			return this.y == y && this.x == x;
-		}
-	}
+//	static class Tuple{
+//		int first,second,third;
+//		public Tuple(int y,int x, int id) {
+//			this.first = y;
+//			this.second = x;
+//			this.third = id;
+//		}
+//		
+//		public boolean isSame(int first, int second) {
+//			return this.first == first && this.second == second;
+//		}
+//	}
 	
 	static Tuple NO_POS = new Tuple(-3,-3,-3);
 	static Tuple END = new Tuple(-4,-4,-4);
 	static class Golem{
 		int id;
 		int cy,cx,exitDir; // 골렘 중앙과 출구의 방향 
-		Fairy fairy;
+		Tuple fairy;
 		Pair exit;
 		public Golem(int id, int cy, int cx, int exitDir) {
 			this.id = id;
@@ -73,7 +77,7 @@ public class Main {
 			this.cx = cx;
 			this.exitDir = exitDir;
 			exit = new Pair(cy+dy[exitDir], cx+dx[exitDir]);
-			fairy = new Fairy(cy,cx,id);
+			fairy = new Tuple(cy,cx,id);
 		}
 		
 		private Tuple getNxtPos(int cy, int cx, int exitDir, int moveDirs[], int tempDir) {
@@ -105,13 +109,13 @@ public class Main {
 		
 		
 		private void update(Tuple nxt) {
-			cy = nxt.y;
-			cx = nxt.x;
-			exitDir = nxt.dir;
+			cy = nxt.first;
+			cx = nxt.second;
+			exitDir = nxt.third;
 			exit.y = cy + dy[exitDir];
 			exit.x = cx + dx[exitDir];
-			fairy.y = cy;
-			fairy.x = cx;
+			fairy.first = cy;
+			fairy.second = cx;
 		}
 		
 		private boolean OOR() {
@@ -130,7 +134,6 @@ public class Main {
 		public boolean move() {
 			Tuple nxt = null;
 			while(true) {
-//				System.out.printf("cy: %d cx: %d\n", cy,cx);
 				nxt = getNxtPos(cy,cx,exitDir, new int[] {1,2,3}, 2);
 				if(nxt != NO_POS) {
 					update(nxt);
@@ -156,28 +159,27 @@ public class Main {
 		}
 		
 		public int fairyMove() {
-			Queue<Fairy> q = new LinkedList<>();
+			Queue<Tuple> q = new LinkedList<>();
 			boolean visited[][]= new boolean[r+1][c+1];
 			q.add(fairy);
-			visited[fairy.y][fairy.x] = true;
-			int ret = fairy.y;
+			visited[fairy.first][fairy.second] = true;
+			int ret = fairy.first;
 			Pair useExit = exit;
 			
 			while(!q.isEmpty()) {
-				Fairy cur = q.poll();
-//				System.out.println(cur.y+" "+cur.x);
-				ret = Math.max(ret,  cur.y);
-				useExit = golems.get(cur.id-1).exit;
+				Tuple cur = q.poll();
+				ret = Math.max(ret,  cur.first);
+				useExit = golems.get(cur.third-1).exit;
 				
 				for(int dir = 0; dir<4;dir++) {
-					int ny = cur.y + dy[dir];
-					int nx = cur.x + dx[dir];
+					int ny = cur.first + dy[dir];
+					int nx = cur.second + dx[dir];
 					if(OOB(ny,nx) || board[ny][nx] == 0 || visited[ny][nx])
 						continue;
 					
-					if(board[ny][nx] == cur.id || cur.isSame(useExit.y, useExit.x)) {
+					if(board[ny][nx] == cur.third || cur.isSame(useExit.y, useExit.x)) {
 						visited[ny][nx] = true;
-						q.add(new Fairy(ny,nx, board[ny][nx]));
+						q.add(new Tuple(ny,nx, board[ny][nx]));
 					}
 				}
 			}
@@ -209,7 +211,6 @@ public class Main {
 		for(int i = 0; i < golems.size()-1;i++) {
 			golems.get(i).clear();
 		}
-//		golems.clear();
 	}
 	
 	public static void main(String[] args) throws IOException{
@@ -220,29 +221,21 @@ public class Main {
 		k = Integer.parseInt(st.nextToken());
 		board = new int[r+1][c+1];
 		for(int i = 1; i <= k ;i++) {
-//			System.out.println("turn: "+i);
 			st = new StringTokenizer(br.readLine());
 			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			
 			Golem golem = new Golem(i, -1,x, dir);
 			boolean oor = golem.move();
-//			System.out.println("oor: "+oor);
 			golems.add(golem);
-//			System.out.println("golem: "+golem);
-//			System.out.println("exit: "+golem.exit);
 			if(oor) {
 				clear();
 				continue;
 			}
 			
 			
-//			printBoard(board);
-//			
 			int score = golem.fairyMove();
-//			System.out.println("score: "+score);
 			ans += score;
-//			System.out.println("-----");
 		}
 		System.out.println(ans);
 	}
