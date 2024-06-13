@@ -4,9 +4,10 @@ public class Main {
 	
 	static int q,n,m,p;
 	static class Rabbit{
-		int jumpCnt, y,x,pid, score, d, idx;
+		int jumpCnt, y,x,pid, d, idx;
+		long score;
 		
-		public Rabbit(int jumpCnt, int y,int x, int pid, int score, int d, int idx) {
+		public Rabbit(int jumpCnt, int y,int x, int pid, long score, int d, int idx) {
 			this.jumpCnt = jumpCnt;
 			this.y = y;
 			this.x = x;
@@ -186,7 +187,7 @@ public class Main {
 	}
 	
 	static void bestPerformance() {
-		int _max = 0;
+		long _max = 0;
 		int idx = -1;
 		for(int i = 0; i < p;i++) {
 			Rabbit rabbit = rabbits[i];
