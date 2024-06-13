@@ -148,7 +148,7 @@ public class Main {
 		pq1.add(rabbits[idx]);
 	}
 	
-	static int totalSum;
+	static long totalSum;
 	static void scoring(int idx) {
 		rabbits[idx].score -= (rabbits[idx].y + rabbits[idx].x);
 		totalSum += (rabbits[idx].y + rabbits[idx].x);
