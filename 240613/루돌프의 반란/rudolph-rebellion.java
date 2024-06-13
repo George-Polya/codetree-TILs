@@ -137,7 +137,7 @@ public class Main {
             push(santas[id], dir, c); // dir방향으로 c만큼 밀려남  
             
             // 기절 
-            santas[id].stun += 2;
+            santas[id].stun = 2;
         }
         
     }
@@ -286,8 +286,7 @@ public class Main {
             
             //모든 산타 탈락 여부 확인 
 			if(allDead())
-                break;
-
+				break;
             
             // 루돌프의 이동 
             rudolfMove();
