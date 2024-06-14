@@ -20,7 +20,7 @@ public class Main {
 		}
 	}
 	
-	static int maze[][],nxtMaze[][], idBoard[][], nxtIdBoard[][];
+	static int maze[][],nxtMaze[][];
 	static Pair NO_POS = new Pair(-1,-1);
 	static Pair players[];
 	static Pair exit = new Pair(0,0);
@@ -76,7 +76,7 @@ public class Main {
 		if(nxtPos == NO_POS) // 움직일 수 없는 상황이면 움직이지 않는다. 
 			return;
 		
-		idBoard[player.y][player.x] -= 1<<id; // 이전 위치 삭제 
+//		idBoard[player.y][player.x] -= 1<<id; // 이전 위치 삭제 
 		
 		// 실제 이동 
 		player.y = nxtPos.y;
@@ -90,7 +90,7 @@ public class Main {
 			exited[id] = true;
 			return;
 		}
-		idBoard[player.y][player.x] += 1 << id;
+//		idBoard[player.y][player.x] += 1 << id;
 	}
 	
 	
@@ -129,48 +129,12 @@ public class Main {
 		if(exited[id])
 			return NO_SQUARE;
 		
-//		Square ret = NO_SQUARE;
 		int y1 = exit.y;
 		int x1 = exit.x;
 		
 		int y2 = players[id].y;
 		int x2 = players[id].x; 
 		
-		
-//		int minY = Math.min(y1, y2);
-//		int minX = Math.min(x1, x2);
-//		
-//		int maxY = Math.max(y1, y2);
-//		int maxX = Math.max(x1, x2);
-//		
-//		if(maxY - minY > maxX - minX) {
-//			int size = maxY - minY + 1;
-//			
-//			for(int x = maxX - size + 1; x<=minX;x++) {
-//				if(OOB(minY, x))
-//					continue;
-//				Square square = new Square(minY,x,size);
-//				if(square.isHigher(ret))
-//					ret = square;
-//			}
-//			
-//		}else if(maxY - minY < maxX - minX){
-//			int size = maxX - minX + 1;
-//			
-//			for(int  y= maxY - size + 1; y<=minY; y++) {
-//				if(OOB(y,minX))
-//					continue;
-//				Square square = new Square(y,minX, size);
-//				if(square.isHigher(ret))
-//					ret = square;
-//			}
-//		}else {
-//			ret = new Square(minY,minX, maxY - minY + 1);
-//		}
-//		
-//		return ret;
-		
-//		System.out.printf("player: %s exit: %s\n", players[id], exit);
 		int size = Math.max(Math.abs(y1-y2) + 1, Math.abs(x1-x2)+1);
 		
 		int y = Math.max(y1, y2) - size + 1;
@@ -191,7 +155,6 @@ public class Main {
 				continue;
 			
 			Square square = makeSquare(id);
-//			System.out.println("square: "+square);
 			if(square.isHigher(ret))
 				ret = square;
 		}
@@ -233,50 +196,54 @@ public class Main {
 		// 벽과 참가자들의 회전 
 		for(int y= sy; y<sy + size; y++) {
 			for(int x= sx; x < sx + size; x++) {
-				int y1 = y - sy;
-				int x1 = x - sx;
-				int y2 = x1;
-				int x2 = size - 1 - y1;
-				int _y = y2 + sy;
-				int _x = x2 + sx;
+				int _y = x - sx + sy;
+				int _x = size - 1 - y + sy + sx;
 				nxtMaze[_y][_x] = maze[y][x];
 				
 				if(nxtMaze[_y][_x] > 0) // 내구도 감소 
 					nxtMaze[_y][_x]--;
-				
-				if(idBoard[y][x] != 0) {
-					for(int id = 1; id <= m; id++) {
-						if( (idBoard[y][x] & (1<<id)) !=0 ) {
-							players[id].y = _y;
-							players[id].x = _x;
-						}
-					}
-				}
+//				
+//				if(idBoard[y][x] != 0) {
+//					for(int id = 1; id <= m; id++) {
+//						if( (idBoard[y][x] & (1<<id)) !=0 ) {
+//							players[id].y = _y;
+//							players[id].x = _x;
+//						}
+//					}
+//				}
 			}
 		}
 		
 		
-		for(int y = 1; y<=n; y++) {
-			Arrays.fill(idBoard[y], 0);
-		}
-		for(int id = 1; id<=m; id++) {
+//		for(int y = 1; y<=n; y++) {
+//			Arrays.fill(idBoard[y], 0);
+//		}
+//		for(int id = 1; id<=m; id++) {
+//			if(exited[id])
+//				continue;
+//			Pair player = players[id];
+//			idBoard[player.y][player.x] += (1<<id);
+//		}
+		
+		for(int id = 1; id<=m;id++) {
 			if(exited[id])
 				continue;
-			Pair player = players[id];
-			idBoard[player.y][player.x] += (1<<id);
+			int y = players[id].y;
+			int x = players[id].x;
+			
+			if(sy <= y && y < sy+ size && sx <= x && x < sx + size) {
+				int _y = x - sx + sy;
+				int _x = size - 1 - y + sy + sx;
+				players[id].y = _y;
+				players[id].x = _x;
+			}
 		}
 		
-//		System.out.println("players: "+Arrays.toString(players));
-		
-//		System.out.println("nxtMaze");
-//		printBoard(nxtMaze);
 		copy(nxtMaze, maze);
 	}
 	
 	static void mazeRotate() {
-		// 한명 이상의 참가자와 출구를 포함하는 가장 작은 정사각형 찾기 
 		Square best = findBestSquare();
-//		System.out.println("best sqaure: "+best);
 		rotateSquare(best);
 	}
 	
@@ -288,7 +255,7 @@ public class Main {
 		m = Integer.parseInt(st.nextToken());
 		k = Integer.parseInt(st.nextToken());
 		maze = new int[n+1][n+1];
-		idBoard = new int[n+1][n+1];
+//		idBoard = new int[n+1][n+1];
 		nxtMaze = new int[n+1][n+1];
 		moveDistances = new int[m+1];
 //		nxtIdBoard = new int[n+1][n+1];
@@ -306,7 +273,7 @@ public class Main {
 			int y = Integer.parseInt(st.nextToken());
 			int x = Integer.parseInt(st.nextToken());
 			players[id] = new Pair(y,x); 
-			idBoard[y][x] += 1 << id;
+//			idBoard[y][x] += 1 << id;
 		}
 		
 		
@@ -326,13 +293,8 @@ public class Main {
 			}
 			// 미로의 회전
 			mazeRotate();
-//			printBoard(idBoard);
-//			System.out.println("maze");
-//			printBoard(maze);
-//			System.out.println("exit: "+exit);
 		
 		}
-//		System.out.println(Arrays.toString(moveDistances));
 		System.out.println(totalMove);
 		System.out.println(exit.y+" "+exit.x);
 	}
