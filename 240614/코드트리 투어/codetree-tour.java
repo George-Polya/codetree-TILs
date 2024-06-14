@@ -144,6 +144,7 @@ public class Main {
 	public static void main(String args[]) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		q = Integer.parseInt(br.readLine());
+		StringBuilder sb = new StringBuilder();
 		for(int query=1; query<=q; query++) {
 			st = new StringTokenizer(br.readLine());
 			int cmd = Integer.parseInt(st.nextToken());
@@ -165,7 +166,8 @@ public class Main {
 			}
 			break;
 			case 400:{
-				System.out.println(sell());
+//				System.out.println(sell());
+				sb.append(sell()).append('\n');
 			}
 			break;
 			case 500:{
@@ -175,5 +177,6 @@ public class Main {
 			break;
 			}
 		}
+		System.out.println(sb);
 	}
 }
