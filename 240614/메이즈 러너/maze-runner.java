@@ -129,11 +129,47 @@ public class Main {
 		if(exited[id])
 			return NO_SQUARE;
 		
+//		Square ret = NO_SQUARE;
 		int y1 = exit.y;
 		int x1 = exit.x;
 		
 		int y2 = players[id].y;
 		int x2 = players[id].x; 
+		
+		
+//		int minY = Math.min(y1, y2);
+//		int minX = Math.min(x1, x2);
+//		
+//		int maxY = Math.max(y1, y2);
+//		int maxX = Math.max(x1, x2);
+//		
+//		if(maxY - minY > maxX - minX) {
+//			int size = maxY - minY + 1;
+//			
+//			for(int x = maxX - size + 1; x<=minX;x++) {
+//				if(OOB(minY, x))
+//					continue;
+//				Square square = new Square(minY,x,size);
+//				if(square.isHigher(ret))
+//					ret = square;
+//			}
+//			
+//		}else if(maxY - minY < maxX - minX){
+//			int size = maxX - minX + 1;
+//			
+//			for(int  y= maxY - size + 1; y<=minY; y++) {
+//				if(OOB(y,minX))
+//					continue;
+//				Square square = new Square(y,minX, size);
+//				if(square.isHigher(ret))
+//					ret = square;
+//			}
+//		}else {
+//			ret = new Square(minY,minX, maxY - minY + 1);
+//		}
+//		
+//		return ret;
+		
 //		System.out.printf("player: %s exit: %s\n", players[id], exit);
 		int size = Math.max(Math.abs(y1-y2) + 1, Math.abs(x1-x2)+1);
 		
@@ -197,8 +233,12 @@ public class Main {
 		// 벽과 참가자들의 회전 
 		for(int y= sy; y<sy + size; y++) {
 			for(int x= sx; x < sx + size; x++) {
-				int _y = x - sx + sy;
-				int _x = size -1 - y + sy + sx;
+				int y1 = y - sy;
+				int x1 = x - sx;
+				int y2 = x1;
+				int x2 = size - 1 - y1;
+				int _y = y2 + sy;
+				int _x = x2 + sx;
 				nxtMaze[_y][_x] = maze[y][x];
 				
 				if(nxtMaze[_y][_x] > 0) // 내구도 감소 
@@ -278,15 +318,17 @@ public class Main {
 		for(int turn =1; turn<=k;turn++) {
 //			System.out.println("------");
 //			System.out.println("turn: " + turn);
-			if(allExit()) {
-				break;
-			}
 			
 			// 참가자들의 이동 
 			moveAll();
-//			printBoard(idBoard);
+			if(allExit()) {
+				break;
+			}
 			// 미로의 회전
 			mazeRotate();
+//			printBoard(idBoard);
+//			System.out.println("maze");
+//			printBoard(maze);
 //			System.out.println("exit: "+exit);
 		
 		}
