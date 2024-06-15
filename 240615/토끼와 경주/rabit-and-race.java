@@ -51,7 +51,7 @@ public class Main {
 		}
 	}
 	
-	static int totalSum=0;
+	static long totalSum=0;
 	static int scores[];
 	
 	static class Pair{
@@ -138,6 +138,7 @@ public class Main {
 	
 	// 경기 시작 
 	static void race(int k, int s) {
+		pq2.clear();
 		// k턴 동안 
 		// 우선 순위가 가장 높은 토끼(best) 선택 
 		// 그 토끼의 다음 위치 구해서 이동 
@@ -175,8 +176,8 @@ public class Main {
 		rabbits[idx].dist *= l;
 	}
 	
-	static int maxScore() {
-		int ret = 0;
+	static long maxScore() {
+		long ret = 0;
 		for(int i = 0; i<p;i++) {
 			ret = Math.max(ret, scores[i] + totalSum);
 		}
