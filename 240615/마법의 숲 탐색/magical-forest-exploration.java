@@ -23,6 +23,16 @@ public class Main {
 		}
 	}
 	
+	static void printExit() {
+		for(int y=1; y<=r+3;y++) {
+			for(int x=1; x<=c;x++) {
+				System.out.printf("%3d", (isExit[y][x] ? 1 : 0));
+			}
+			System.out.println();
+		}
+	}
+	
+	
 	static class Golem{
 		int cy,cx, id, dir;
 		public Golem(int cy,int cx,int id, int dir) {
@@ -103,8 +113,14 @@ public class Main {
 					}
 					
 					isExit[cy + dy[dir]][cx+dx[dir]] = true;
-					
+//					System.out.println("board");
 //					printBoard(board);
+//					System.out.println("exit");
+//					printExit();
+//					sum += fairyMove();
+					int ret = fairyMove();
+//					System.out.println("ret: "+ret);
+					sum += ret;
 				}
 			}
 		}
@@ -119,7 +135,8 @@ public class Main {
 			while(!q.isEmpty()) {
 				Pair cur = q.poll();
 				ret = Math.max(ret,  cur.y);
-				
+				if(ret == r + 3)
+					break;
 				for(int moveDir=0; moveDir<4;moveDir++) {
 					int ny = cur.y + dy[moveDir];
 					int nx = cur.x + dx[moveDir];
@@ -142,6 +159,8 @@ public class Main {
 			return "id: "+id+"|"+cy+" "+cx+" "+dir;
 		}
 	}
+	
+	static int sum;
 	
 	static void reset() {
 		for(int y=1; y<=r+3; y++) {
@@ -169,21 +188,22 @@ public class Main {
 		
 		board = new int[r+3+1][c+1];
 		isExit = new boolean[r+3+1][c+1];
-		int sum = 0;
 		for(int id=1; id<=k; id++) {
 //			System.out.println("-----");
 //			System.out.println("id: "+id);
 			st = new StringTokenizer(br.readLine());
 			int cx = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
-			
+//			System.out.printf("cx: %d dir: %d\n", cx,dir);
 			Golem golem = new Golem(2,cx,id, dir);
 			
 			golem.recursiveMove(); // 골렘의 이동 
 			
 			// 정령의 이동 
 			
-			sum += golem.fairyMove();
+//			int ret = golem.fairyMove();
+//			System.out.println("ret: "+ret);
+//			sum += ret;
 		}
 		System.out.println(sum);
 	}
