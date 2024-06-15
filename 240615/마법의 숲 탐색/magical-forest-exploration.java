@@ -46,60 +46,39 @@ public class Main {
 			return 1<= x && x <=c && y <= r+3;
 		}
 		
-		private boolean canGo(int cy, int cx, int moveDir) {
+		private boolean canGo(int cy, int cx, int moveDir, int dirs[]) {
 			int y = cy + dy[moveDir];
 			int x = cx + dx[moveDir];
-			if(moveDir == 2) {
-				for(int dir : new int[] {1,2,3}) {
-					int ny = y + dy[dir];
-					int nx = x + dx[dir];
-					if(!canGo(ny,nx) || board[ny][nx] != 0) {
-						return false;
-					}
-				}
-				return true;
-				
-			}else if(moveDir == 3) {
-				
-				for(int dir : new int[] {0,2,3}) {
-					int ny = y + dy[dir];
-					int nx = x + dx[dir];
-					
-					if(!canGo(ny,nx) || board[ny][nx] != 0)
-						return false;
-				}
-				return canGo(y,x,2);
-				
-			}else if(moveDir == 1) {
-				for(int dir : new int[] {0,1,2}) {
-					int ny = y + dy[dir];
-					int nx = x + dx[dir];
-					
-					if(!canGo(ny,nx) || board[ny][nx] != 0)
-						return false;
-				}
-				return canGo(y,x,2);
+			
+			for(int dir : dirs) {
+				int ny = y + dy[dir];
+				int nx = x + dx[dir];
+				if(!canGo(ny,nx) || board[ny][nx] != 0)
+					return false;
 			}
-			return false;
+			
+			if(moveDir == 2)
+				return true;
+			return canGo(y,x,2, new int[] {1,2,3});
+			
 		}
 		
 		public void recursiveMove() {
-			if(canGo(cy,cx,2)) { // 남쪽으로 이동가능 
+			if(canGo(cy,cx,2, new int[] {1,2,3})) { // 남쪽으로 이동가능 
 				cy += dy[2];
 				cx += dx[2];
 				this.recursiveMove();
-			}else if(canGo(cy,cx,3)) { // 서쪽으로 이동가능 
+			}else if(canGo(cy,cx,3, new int[] {0,2,3})) { // 서쪽으로 이동가능 
 				cy += dy[3];
 				cx += dx[3];
 				dir = (dir + 3) % 4;
 				this.recursiveMove();
-			}else if(canGo(cy,cx,1)) { // 동쪽으로 이동 가능 
+			}else if(canGo(cy,cx,1, new int[] {0,1,2})) { // 동쪽으로 이동 가능 
 				cy += dy[1];
 				cx += dx[1];
 				dir = (dir + 1) % 4;
 				this.recursiveMove();
 			}else { // 전부 이동 불가 
-//				System.out.println(this);
 				if(OOB(cy-1,cx) || OOB(cy+1,cx)) { // 몸의 일부가 숲을 벗어남 
 					reset();
 				}else {
@@ -113,13 +92,7 @@ public class Main {
 					}
 					
 					isExit[cy + dy[dir]][cx+dx[dir]] = true;
-//					System.out.println("board");
-//					printBoard(board);
-//					System.out.println("exit");
-//					printExit();
-//					sum += fairyMove();
 					int ret = fairyMove();
-//					System.out.println("ret: "+ret);
 					sum += ret;
 				}
 			}
@@ -189,21 +162,13 @@ public class Main {
 		board = new int[r+3+1][c+1];
 		isExit = new boolean[r+3+1][c+1];
 		for(int id=1; id<=k; id++) {
-//			System.out.println("-----");
-//			System.out.println("id: "+id);
 			st = new StringTokenizer(br.readLine());
 			int cx = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
-//			System.out.printf("cx: %d dir: %d\n", cx,dir);
 			Golem golem = new Golem(2,cx,id, dir);
 			
 			golem.recursiveMove(); // 골렘의 이동 
 			
-			// 정령의 이동 
-			
-//			int ret = golem.fairyMove();
-//			System.out.println("ret: "+ret);
-//			sum += ret;
 		}
 		System.out.println(sum);
 	}
