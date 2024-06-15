@@ -1,84 +1,72 @@
 import java.util.*;
 import java.io.*;
 public class Main {
+	static StringTokenizer st;
+	static int n,m,q,p;
 	
-	static int q,n,m,p;
 	static class Rabbit{
-		int jumpCnt, y,x,pid, d, idx;
-		long score;
+		int jumpCnt; // 총 점프횟수
+		int y,x; // 현재 서있는 좌표 
+		int pid; // 고유 번호 
+		int dist; // 이동해야하는 거리 
 		
-		public Rabbit(int jumpCnt, int y,int x, int pid, long score, int d, int idx) {
-			this.jumpCnt = jumpCnt;
+		public Rabbit(int pid, int y, int x, int dist) {
+			this.pid = pid;
 			this.y = y;
 			this.x = x;
-			this.pid = pid;
-			this.score = score;
-			this.d = d;
-			this.idx = idx;
+			this.dist = dist;
 		}
 		
 		public String toString() {
-			return y+" "+x+" "+pid;
+			return "id: "+pid+" "+y+" "+x;
 		}
 	}
 	
-	static int INT_MAX = Integer.MAX_VALUE;
-	static Rabbit NO_RABBIT = new Rabbit(INT_MAX,-1,-1,-1,-1,-1, -1);
-	
-	static Map<Integer,Integer> pid2Idx = new HashMap<>();
-	
-	static PriorityQueue<Rabbit> pq1 = new PriorityQueue<>((r1,r2)->{
-		if(r1.jumpCnt != r2.jumpCnt)
-			return r1.jumpCnt - r2.jumpCnt;
-		if((r1.y + r1.x) != (r2.y+r2.x))
-			return (r1.y + r1.x) - (r2.y + r2.x);
-		if(r1.y != r2.y)
-			return r1.y - r2.y;
-		if(r1.x != r2.x)
-			return r1.x - r2.x;
-		return r1.pid - r2.pid;
-	});
-	
-	static PriorityQueue<Rabbit> pq2 = new PriorityQueue<>((r1,r2)->{
-		if((r1.y + r1.x) != (r2.y+r2.x))
-			return  -((r1.y + r1.x) - (r2.y + r2.x));
-		if(r1.y != r2.y)
-			return -(r1.y - r2.y);
-		if(r1.x != r2.x)
-			return -(r1.x - r2.x);
-		return -(r1.pid - r2.pid);
-	});
-	
-	static StringTokenizer st;
+	static Map<Integer, Integer> pid2Idx = new HashMap<>();
 	static Rabbit rabbits[];
+	static PriorityQueue<Rabbit> pq1 = new PriorityQueue<>((p1,p2)->{
+		if(p1.jumpCnt != p2.jumpCnt)
+			return p1.jumpCnt - p2.jumpCnt;
+		if((p1.y+p1.x) != (p2.y+p2.x))
+			return (p1.y+p1.x)- (p2.y+p2.x);
+		if(p1.y != p2.y)
+			return p1.y - p2.y;
+		if(p1.x != p2.x)
+			return p1.x - p2.x;
+		return p1.pid - p2.pid;
+	});
+	
 	static void init() {
 		n = Integer.parseInt(st.nextToken());
 		m = Integer.parseInt(st.nextToken());
 		p = Integer.parseInt(st.nextToken());
 		rabbits = new Rabbit[p];
-		for(int i = 0; i < p; i++) {
+		scores = new int[p];
+		for(int idx = 0; idx<p; idx++) {
 			int pid = Integer.parseInt(st.nextToken());
 			int d = Integer.parseInt(st.nextToken());
-			pid2Idx.put(pid,i);
-			rabbits[i] = new Rabbit(0,1,1,pid,0,d,i);
-			pq1.add(rabbits[i]);
+			rabbits[idx] = new Rabbit(pid, 1,1,d);
+			pid2Idx.put(pid, idx);
+			pq1.add(rabbits[idx]);
 		}
-		
 	}
 	
+	static int totalSum=0;
+	static int scores[];
+	
 	static class Pair{
-		int y, x;
+		int y,x;
 		public Pair(int y,int x) {
 			this.y = y;
 			this.x = x;
 		}
 		
 		public boolean isHigher(Pair p) {
-			if( (y+x) != (p.y+p.x))
-				return (p.y+p.x) < (y+x);
+			if((y+x) != (p.y + p.x))
+				return (y+x) > (p.y + p.x);
 			if(y != p.y)
-				return p.y < y;
-			return p.x < x;
+				return y > p.y;
+			return x > p.x;
 		}
 		
 		public String toString() {
@@ -86,150 +74,135 @@ public class Main {
 		}
 	}
 	
+	static PriorityQueue<Rabbit> pq2 = new PriorityQueue<>((r1,r2)->{
+		if((r1.y + r1.x) != (r2.y + r2.x))
+			return (r2.y + r2.x) - (r1.y + r1.x);
+		if(r1.y != r2.y)
+			return r2.y - r1.y;
+		if(r1.x != r2.x)
+			return r2.x - r1.x;
+		return r2.pid - r1.pid;
+	});
+	
 	static Pair NO_POS = new Pair(-1,-1);
+	static int dy[] = {-1,1,0,0};
+	static int dx[] = {0,0,-1,1};
 	
-	static int dy[] = {-1,0,1,0};
-	static int dx[] = {0,-1,0,1};
-	
-	static Pair getNxtPos(int y,int x, int dir, int dist) {
-		int yDist = dist % (2*(n-1));
-		int xDist = dist % (2*(m-1));
-		
-		Pair pair = null;
-		
-		switch(dir) {
-		case 0:
-		case 2:
-			int ny = y + dy[dir] * yDist;
-			while(ny<=0 || ny > n) {
-				if(ny >n)
-					ny = 2 * n - ny;
-				else if(ny<=0)
-					ny = n - 1 - ny;
-			}
-			pair = new Pair(ny,x);
-			break;
-		case 1:
-		case 3:
-			int nx = x + dx[dir] * xDist;
-			while(nx <=0 || nx > m) {
-				if(nx>m)
-					nx = 2 * m - nx;
-				else if(nx<=0)
-					nx = m - 1 - nx;			}
-			pair = new Pair(y,nx);
-			break;
-		}
-		return pair;
+	static boolean OOB(int y,int x) {
+		return y<= 0|| y>n || x<=0 || x>m;
 	}
 	
-	static Pair getBestPos(Rabbit rabbit) {
+	static Pair getNxtPos(int y,int x,int dist,int dir) {
+		int yDist = dist % (2 * (n-1));
+		int xDist = dist % (2 * (m-1));
+		
+		int ny = y + dy[dir] * yDist;
+		int nx = x + dx[dir] * xDist;
+		
+//			
+//		System.out.println("~~~~~");
+//		System.out.printf("ny: %d, nx:%d\n", ny,nx);
+		while(OOB(ny,nx)) {
+			if(ny <= 0)
+				ny = 2 - ny;
+			else if(ny > n)
+				ny = 2 * n - ny;
+			
+			if(nx <= 0)
+				nx = 2 - nx;
+			else if(nx > m)
+				nx = 2 * m - nx;
+		}
+		
+//		System.out.printf("ny: %d, nx:%d\n", ny,nx);
+		return new Pair(ny,nx);
+		
+	}
+	
+	static Pair findBestNxtPos(Rabbit rabbit) {
 		int y = rabbit.y;
 		int x = rabbit.x;
-		int d = rabbit.d;
-		Pair bestPos = NO_POS;
+		int dist = rabbit.dist;
+		
+		Pair ret = NO_POS;
 		
 		for(int dir = 0; dir < 4; dir++) {
-			Pair cur = getNxtPos(y,x,dir, d);
-			if(cur.isHigher(bestPos))
-				bestPos = cur;
+			Pair nxt = getNxtPos(y,x,dist, dir);
+			if(nxt.isHigher(ret))
+				ret = nxt;
 		}
 		
-//		System.out.println("bestPos: "+bestPos);
-		
-		return bestPos;
+		return ret;
 	}
 	
-	static void update(int idx, Pair nxtPos) {
-		rabbits[idx].y = nxtPos.y;
-		rabbits[idx].x = nxtPos.x;
-		rabbits[idx].jumpCnt+=1;
-		pq1.add(rabbits[idx]);
-	}
 	
-	static long totalSum;
-	static void scoring(int idx) {
-		rabbits[idx].score -= (rabbits[idx].y + rabbits[idx].x);
-		totalSum += (rabbits[idx].y + rabbits[idx].x);
-	}
-	
+	// 경기 시작 
 	static void race(int k, int s) {
-		pq2.clear();
-		for(int turn=1; turn<=k; turn++) {
+		// k턴 동안 
+		// 우선 순위가 가장 높은 토끼(best) 선택 
+		// 그 토끼의 다음 위치 구해서 이동 
+		// 선택된 토끼외에 다른 토끼들이 점수 획득 
+		// k턴 진행 후, 새로 우선순위를 골라서 S더함. 이 때 best로 선택된 적이 있는 토끼들에 대해서만 수  
+		for(int turn = 1; turn<=k; turn++) {
+//			System.out.println("------");
+//			System.out.println("turn: "+turn);
+			Rabbit bestRabbit = pq1.poll(); // 우선순위가 가장 높은 토끼 찾기
+//			System.out.println("bestRabbit: "+bestRabbit);
+			int idx = pid2Idx.get(bestRabbit.pid);
+			Pair nxtPos = findBestNxtPos(bestRabbit);
+//			System.out.println("nxtPos: " +nxtPos);
 			
-			// 우선순위가 가장 높은 토끼 
-			Rabbit bestRabbit = pq1.poll();
+			// 실제 이동 
+			bestRabbit.y = nxtPos.y;
+			bestRabbit.x = nxtPos.x;
+			bestRabbit.jumpCnt++;
 			
-			// bestRabbit가 이동할 bestPos
-			Pair nxtPos = getBestPos(bestRabbit);
-			
-			if(nxtPos == NO_POS)
-				continue;
-			
-			// 이동 
-			update(bestRabbit.idx, nxtPos);
-			
-			// 다론 토끼 점수 획득 
-			scoring(bestRabbit.idx);
-			pq2.add(bestRabbit);
+			totalSum += (bestRabbit.y + bestRabbit.x);
+			scores[idx] -= (bestRabbit.y + bestRabbit.x);
+			pq1.add(bestRabbit); // 동일한 토끼가 여러번 선택될 수 있음 
+			pq2.add(bestRabbit); // 
 		}
 		
-		Rabbit rabbit = pq2.peek();
-		rabbit.score += s;
-		
-		
+		// k 턴 모두 진행 
+		Rabbit rabbit = pq2.poll();
+		int idx = pid2Idx.get(rabbit.pid);
+		scores[idx] += s;
 	}
 	
-	static void changeDist(int pid, int l) {
+	
+	static void changeDistance(int pid, int l) {
 		int idx = pid2Idx.get(pid);
-		rabbits[idx].d *= l;
+		rabbits[idx].dist *= l;
 	}
 	
-	static void bestPerformance() {
-		long _max = 0;
-		int idx = -1;
-		for(int i = 0; i < p;i++) {
-			Rabbit rabbit = rabbits[i];
-			if(_max < rabbit.score) {
-				_max = rabbit.score;
-				idx = i;
-			}
+	static int maxScore() {
+		int ret = 0;
+		for(int i = 0; i<p;i++) {
+			ret = Math.max(ret, scores[i] + totalSum);
 		}
-		System.out.println(_max+totalSum);
+		return ret;
 	}
 	
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		q = Integer.parseInt(br.readLine());
-		
-		for(int query = 1; query<=q; query++) {
+		for(int query=1; query<=q; query++) {
+//			System.out.println("=======");
 			st = new StringTokenizer(br.readLine());
-			int cmd = Integer.parseInt(st.nextToken());
-			
-			switch(cmd) {
-			case 100:{
+			int cmd=  Integer.parseInt(st.nextToken());
+			if(cmd == 100) {
 				init();
-				break;
-			}
-			case 200:{
+			}else if(cmd==200) {
 				int k = Integer.parseInt(st.nextToken());
 				int s = Integer.parseInt(st.nextToken());
 				race(k,s);
-				break;
-			}
-			case 300:{
-				int pid = Integer.parseInt(st.nextToken());
+			}else if(cmd ==300) {
+				int pid  = Integer.parseInt(st.nextToken());
 				int l = Integer.parseInt(st.nextToken());
-				changeDist(pid, l);
-				break;
-			}
-			case 400:{
-				bestPerformance();
-				break;
-			}
-				
+				changeDistance(pid, l);
+			}else if(cmd == 400) {
+				System.out.println(maxScore());
 			}
 		}
-		
 	}
 }
