@@ -116,8 +116,7 @@ public class Main {
 				if(nx>m)
 					nx = 2 * m - nx;
 				else if(nx<=0)
-					nx = 2 * (m-1) + nx;
-			}
+					nx = m - 1 - nx;			}
 			pair = new Pair(y,nx);
 			break;
 		}
