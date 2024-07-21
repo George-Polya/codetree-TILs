@@ -219,18 +219,17 @@ public class Main {
 		k = Integer.parseInt(st.nextToken());
 		board = new int[r+1][c+1];
 		for(int id = 1; id <= k ;id++) {
-//			System.out.println("turn: "+i);
 			st = new StringTokenizer(br.readLine());
 			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			
 			Golem golem = new Golem(id, -1,x, dir);
 			boolean oor = golem.move();
-			golems.add(golem);
 			if(oor) { // 이동 후 골렘의 일부가 숲을 벗어난 경우 
 				clear();
 				continue;
 			}
+			golems.add(golem);
 			
 			
 			int score = golem.fairyMove();
