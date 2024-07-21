@@ -1,162 +1,16 @@
 import java.io.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Main {
-	static StringTokenizer st;
 	static int r,c,k;
+	static StringTokenizer st;
 	static int board[][];
-	static boolean isExit[][];
-	
 	static int dy[] = {-1,0,1,0};
 	static int dx[] = {0,1,0,-1};
-	
-	
-	static void printBoard(int board[][]) {
-		for(int y=1; y<=r+3;y++) {
-			for(int x=1; x<=c;x++) {
-				System.out.printf("%3d", board[y][x]);
-			}
-			System.out.println();
-		}
-	}
-	
-	static int ans;
-	
-	static class Golem{
-		int id, cy,cx,dir;
-		
-		public Golem(int id, int cy, int cx, int dir) {
-			this.id = id;
-			this.cy = cy;
-			this.cx = cx;
-			this.dir = dir;
-		}
-		
-		public String toString() {
-			return String.format("id: %d, (cy,cx): (%d,%d), dir: %d", id,cy,cx,dir);
-		}
-		
-		/*
-		 * (y,x)가 격자 밖을 벗어나는지 체크 
-		 */
-		boolean OOB(int y, int x) {
-			return  y<=0 || y>r+3 || x<=0 || x>c;
-		}
-		
-		/*
-		 * 골렘의 일부가 숲을 벗어나는지 체크 
-		 */
-		boolean OOB() {
-			return cx - 1<=0 || cx+1 >c || cy-1<=3;
-		}
-		
-		/*
-		 * cy, cx : 중심 좌표 
-		 * moveDir : 이동가능한지 확인하려는 방향 
-		 * dirs : 그 방향으로의 칸에서 주변 3칸을 가리키는 방향 
-		 */
-		
-		boolean canGo(int cy, int cx, int moveDir, int dirs[]) {
-			int y = cy + dy[moveDir];
-			int x = cx + dx[moveDir];
-			
-			for(int nDir : dirs) {
-				int ny = y + dy[nDir];
-				int nx = x + dx[nDir];
-				if(OOB(ny,nx) || board[ny][nx] != 0)
-					return false;
-			}
-			
-			// 남쪽으로 이동하는 경우라면 그냥 true 
-			if(moveDir == 2)
-				return true;
-			
-			// 동쪽, 서쪽인 경우, 그 방향으로 이동 후 남쪽으로 이동가능한지 한번 더 체크 
-			return canGo(y,x,2,new int[] {1,2,3});
-		}
-		
-		/*
-		 * 모든 골렘이 숲을 빠져나감 
-		 * 골렘이 점유하던 숲을 0으로 
-		 * 출구를 false로  
-		 */
-		void reset() {
-			for(int y=1; y<=r+3;y++) {
-				Arrays.fill(board[y], 0);
-				Arrays.fill(isExit[y], false);
-			}
-		}
-		
-		public void move() {
-			// 남쪽으로 이동가능한 경우 
-			if(canGo(cy,cx,2, new int[] {1,2,3})) {
-				cy += dy[2];
-				cx += dx[2];
-				this.move();
-			}else if(canGo(cy,cx,3, new int[] {2,3})) { // 남쪽으로 이동불가능하고 서쪽으로 회전해서 이동가능한 경우 
-				cy += dy[3];
-				cx += dx[3];
-				dir = (dir + 3) % 4; // 회전 
-				this.move();
-			}else if(canGo(cy,cx,1,new int[] {1,2})) { // 남쪽, 서쪽 불가능하고 동쪽으로 회전해서 이동가능한 경우 
-				cy += dy[1];
-				cx += dx[1];
-				dir = (dir + 1) % 4; // 회전 
-				this.move();
-			}else { 
-				// 어떤 방향으로도 이동 불가능한 경우 
-				if(OOB()) { // 골렘의 일부가 숲을 벗어난 경우 
-					reset();
-				}else {
-					// 골렘이 숲을 점유하고 출구위치를 지정 
-					board[cy][cx] = id;
-					for(int moveDir =0 ;moveDir<4;moveDir++) {
-						int ny = cy + dy[moveDir];
-						int nx = cx + dx[moveDir];
-						board[ny][nx] = id;
-					}
-					isExit[cy + dy[dir]][cx+dx[dir]] = true;
-					
-					
-					// 요정의 이동 
-					ans += fairyMove() - 3;
-				}
-			}
-		}
-		
-		int fairyMove() {
-			Queue<Pair> q = new LinkedList();
-			boolean visited[][] = new boolean[r+3+1][c+1];
-			q.add(new Pair(cy,cx));
-			visited[cy][cx] = true;
-			int value = board[cy][cx];
-			
-			int ret = 0;
-			
-			while(!q.isEmpty()) {
-				Pair cur = q.poll();
-				ret = Math.max(ret,  cur.y);
-				
-				for(int moveDir = 0; moveDir<4;moveDir++) {
-					int ny = cur.y + dy[moveDir];
-					int nx = cur.x + dx[moveDir];
-					
-					if(OOB(ny,nx) || visited[ny][nx] || board[ny][nx] == 0)
-						continue;
-					
-					// 현재위치와 다음 위치가 같은 골렘의 내부이거나 
-					// 현재위치가 출구라면 다른 골렘으로 갈 수 있다. 
-					if(board[cur.y][cur.x] == board[ny][nx] || isExit[cur.y][cur.x]) {
-						q.add(new Pair(ny,nx));
-						visited[ny][nx] = true;
-					}
-					
-				}
-			}
-			
-			return ret;
-			
-		}
+	static boolean OOB(int y, int x) {
+		return y<=0 || y> r || x<=0 || x>c;
 	}
 	
 	static class Pair{
@@ -171,6 +25,191 @@ public class Main {
 		}
 	}
 	
+	static void printBoard(int board[][]) {
+		for(int y=1; y<=r; y++) {
+			for(int x=1; x<=c; x++) {
+				System.out.printf("%3d", board[y][x]);
+			}
+			System.out.println();
+		}
+	}
+	
+	static class Tuple{
+		int y,x,dir;
+		public Tuple(int y,int x, int dir) {
+			this.y = y;
+			this.x = x;
+			this.dir = dir;
+		}
+		
+		public String toString() {
+			return y+" "+x+" "+dir;
+		}
+	}
+	
+	static class Fairy{
+		int y,x,id;
+		public Fairy(int y,int x, int id) {
+			this.y = y;
+			this.x = x;
+			this.id = id;
+		}
+		
+		public boolean isSame(int y, int x) {
+			return this.y == y && this.x == x;
+		}
+	}
+	
+	static Tuple NO_POS = new Tuple(-3,-3,-3);
+	static Tuple END = new Tuple(-4,-4,-4);
+	static class Golem{
+		int id;
+		int cy,cx,exitDir; // 골렘 중앙과 출구의 방향 
+		Fairy fairy;
+		Pair exit;
+		public Golem(int id, int cy, int cx, int exitDir) {
+			this.id = id;
+			this.cy = cy;
+			this.cx = cx;
+			this.exitDir = exitDir;
+			exit = new Pair(cy+dy[exitDir], cx+dx[exitDir]);
+			fairy = new Fairy(cy,cx,id);
+		}
+		
+		private Tuple getNxtPos(int cy, int cx, int exitDir, int moveDirs[], int tempDir) {
+			int y = cy + dy[tempDir];
+			int x = cx + dx[tempDir];
+			
+			for(int dir : moveDirs) {
+				int ny = y + dy[dir];
+				int nx = x + dx[dir];
+				if(OOB(ny,nx)) {
+					if(ny<=0)
+						continue;
+					else
+						return NO_POS;
+				}
+				
+				if(board[ny][nx]!=0)
+					return NO_POS;
+			}
+			
+			if(tempDir == 2) {
+				return new Tuple(y,x,exitDir);
+			}
+			
+			int moveDir = (exitDir + tempDir) % 4;
+			return getNxtPos(y,x,moveDir,new int[]{1,2,3}, 2);
+			
+		}
+		
+		
+		private void update(Tuple nxt) {
+			cy = nxt.y;
+			cx = nxt.x;
+			exitDir = nxt.dir;
+			exit.y = cy + dy[exitDir];
+			exit.x = cx + dx[exitDir];
+			fairy.y = cy;
+			fairy.x = cx;
+		}
+		
+		private boolean OOR() {
+			if(OOB(cy,cx))
+				return true;
+			
+			for(int dir = 0; dir < 4;dir++) {
+				int ny = cy + dy[dir];
+				int nx = cx + dx[dir];
+				if(OOB(ny,nx))
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean move() {
+			Tuple nxt = null;
+			while(true) {
+//				System.out.printf("cy: %d cx: %d\n", cy,cx);
+				nxt = getNxtPos(cy,cx,exitDir, new int[] {1,2,3}, 2);
+				if(nxt != NO_POS) {
+					update(nxt);
+				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,2,3},3)) != NO_POS) {
+					update(nxt);
+				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,1,2},1)) != NO_POS) {
+					update(nxt);
+				}
+				else
+					break;
+			}
+			if(OOR()) {
+				return true;
+			}
+
+			board[cy][cx] = id;
+			for(int dir = 0; dir<4;dir++) {
+				int y = cy + dy[dir];
+				int x = cx + dx[dir];
+				board[y][x] = id;
+			}
+			return false;
+		}
+		
+		public int fairyMove() {
+			Queue<Fairy> q = new LinkedList<>();
+			boolean visited[][]= new boolean[r+1][c+1];
+			q.add(fairy);
+			visited[fairy.y][fairy.x] = true;
+			int ret = fairy.y;
+			Pair useExit = exit;
+			
+			while(!q.isEmpty()) {
+				Fairy cur = q.poll();
+//				System.out.println(cur.y+" "+cur.x);
+				ret = Math.max(ret,  cur.y);
+				useExit = golems.get(cur.id-1).exit;
+				
+				for(int dir = 0; dir<4;dir++) {
+					int ny = cur.y + dy[dir];
+					int nx = cur.x + dx[dir];
+					if(OOB(ny,nx) || board[ny][nx] == 0 || visited[ny][nx])
+						continue;
+					
+					if(board[ny][nx] == cur.id || cur.isSame(useExit.y, useExit.x)) {
+						visited[ny][nx] = true;
+						q.add(new Fairy(ny,nx, board[ny][nx]));
+					}
+				}
+			}
+			
+			return ret;
+		}
+		
+		public void clear() {
+			if(OOB(cy,cx))
+				return;
+			board[cy][cx] = 0;
+			for(int dir = 0; dir < 4; dir++) {
+				int ny = cy + dy[dir];
+				int nx = cx + dx[dir];
+				if(OOB(ny,nx))
+					continue;
+				board[ny][nx] = 0;
+			}
+		}
+		
+		public String toString() {
+			return cy+" "+cx+" "+exitDir;
+		}
+	}
+	
+	static List<Golem> golems = new ArrayList<>();
+	static int ans;
+	static void clear() {
+		for(int i = 0; i < golems.size();i++) {
+			golems.get(i).clear();
+		}
+	}
 	
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -178,19 +217,24 @@ public class Main {
 		r = Integer.parseInt(st.nextToken());
 		c = Integer.parseInt(st.nextToken());
 		k = Integer.parseInt(st.nextToken());
-		
-		board = new int[r+3+1][c+1];
-		isExit = new boolean[r+3+1][c+1];
-		
-		for(int id = 1; id<=k; id++) {
+		board = new int[r+1][c+1];
+		for(int id = 1; id <= k ;id++) {
+//			System.out.println("turn: "+i);
 			st = new StringTokenizer(br.readLine());
-			int cx = Integer.parseInt(st.nextToken());
+			int x = Integer.parseInt(st.nextToken());
 			int dir = Integer.parseInt(st.nextToken());
 			
-			Golem golem = new Golem(id,2,cx,dir);
+			Golem golem = new Golem(id, -1,x, dir);
+			boolean oor = golem.move();
+			golems.add(golem);
+			if(oor) { // 이동 후 골렘의 일부가 숲을 벗어난 경우 
+				clear();
+				continue;
+			}
 			
-			golem.move();
 			
+			int score = golem.fairyMove();
+			ans += score;
 		}
 		System.out.println(ans);
 	}
