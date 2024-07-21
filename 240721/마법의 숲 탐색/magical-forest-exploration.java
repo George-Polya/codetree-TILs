@@ -130,13 +130,12 @@ public class Main {
 		public boolean move() {
 			Tuple nxt = null;
 			while(true) {
-//				System.out.printf("cy: %d cx: %d\n", cy,cx);
 				nxt = getNxtPos(cy,cx,exitDir, new int[] {1,2,3}, 2);
-				if(nxt != NO_POS) {
+				if(nxt != NO_POS) { // 남쪽 가능?  
 					update(nxt);
-				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,2,3},3)) != NO_POS) {
+				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,2,3},3)) != NO_POS) { // 서쪽 가능? 
 					update(nxt);
-				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,1,2},1)) != NO_POS) {
+				}else if((nxt = getNxtPos(cy,cx,exitDir, new int[]{0,1,2},1)) != NO_POS) { // 동쪽 가능? 
 					update(nxt);
 				}
 				else
@@ -165,7 +164,6 @@ public class Main {
 			
 			while(!q.isEmpty()) {
 				Fairy cur = q.poll();
-//				System.out.println(cur.y+" "+cur.x);
 				ret = Math.max(ret,  cur.y);
 				useExit = golems.get(cur.id-1).exit;
 				
@@ -175,6 +173,8 @@ public class Main {
 					if(OOB(ny,nx) || board[ny][nx] == 0 || visited[ny][nx])
 						continue;
 					
+					// 현재위치와 다음 위치가 같은 골렘의 내부이거나 
+					// 현재위치가 출구라면 다른 골렘으로 갈 수 있다. 
 					if(board[ny][nx] == cur.id || cur.isSame(useExit.y, useExit.x)) {
 						visited[ny][nx] = true;
 						q.add(new Fairy(ny,nx, board[ny][nx]));
@@ -185,19 +185,6 @@ public class Main {
 			return ret;
 		}
 		
-		public void clear() {
-			if(OOB(cy,cx))
-				return;
-			board[cy][cx] = 0;
-			for(int dir = 0; dir < 4; dir++) {
-				int ny = cy + dy[dir];
-				int nx = cx + dx[dir];
-				if(OOB(ny,nx))
-					continue;
-				board[ny][nx] = 0;
-			}
-		}
-		
 		public String toString() {
 			return cy+" "+cx+" "+exitDir;
 		}
@@ -205,9 +192,10 @@ public class Main {
 	
 	static List<Golem> golems = new ArrayList<>();
 	static int ans;
-	static void clear() {
-		for(int i = 0; i < golems.size();i++) {
-			golems.get(i).clear();
+	static void reset() {
+		
+		for(int y=1;y<=r;y++) {
+			Arrays.fill(board[y],0);
 		}
 	}
 	
@@ -224,12 +212,12 @@ public class Main {
 			int dir = Integer.parseInt(st.nextToken());
 			
 			Golem golem = new Golem(id, -1,x, dir);
-			boolean oor = golem.move();
+			boolean oor = golem.move(); 
+			golems.add(golem);
 			if(oor) { // 이동 후 골렘의 일부가 숲을 벗어난 경우 
-				clear();
+				reset();
 				continue;
 			}
-			golems.add(golem);
 			
 			
 			int score = golem.fairyMove();
