@@ -12,7 +12,7 @@ public class Main {
 	static void printBoard(int board[][]) {
 		for(int cnt = 0; cnt <= 3; cnt++) {
 			for(int i=0;i<=n;i++) {
-				System.out.printf("%3d", board[cnt][i] == INT_MIN ? 0 : board[cnt][i]);
+				System.out.printf("%-10d", board[cnt][i] < 0  ? 0 : board[cnt][i]);
 			}
 			System.out.println();
 		}
@@ -32,9 +32,10 @@ public class Main {
 			Arrays.fill(dp[i], INT_MIN);
 		}
 		
-		for(int i = 0; i<=n;i++) {
+		dp[0][0] = 0;
+		for(int i = 2; i<=n;i++) {
 			if(i % 2 ==0)
-				dp[0][i] = arr[i];
+				dp[0][i] = dp[0][i-2] +arr[i];
 		}
 		dp[1][1] = 1;
 		
@@ -44,9 +45,8 @@ public class Main {
 				dp[cnt][i] = Math.max(dp[cnt-1][i-1], dp[cnt][i-2]) + arr[i];
 			}
 		}
-//		printBoard(dp);
 		
-		int ans = 0;
+		int ans = INT_MIN;
 		for(int cnt = 0; cnt<=3;cnt++) {
 			for(int i = 0; i<=n; i++)
 				ans = Math.max(ans, dp[cnt][i]);
