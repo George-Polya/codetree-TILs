@@ -37,8 +37,17 @@ public class Main {
 		dp[2][2] = arr[1] + arr[2];
 		
 		
-		for(int i = 3; i<=n;i++) {
-			for(int cnt = 0; cnt<=3; cnt++) {
+//		for(int i = 3; i<=n;i++) {
+//			for(int cnt = 0; cnt<=3; cnt++) {
+//				if(dp[cnt][i-2] != INT_MIN)
+//					dp[cnt][i] = Math.max(dp[cnt][i], dp[cnt][i-2] + arr[i]);
+//				if(cnt >0 && dp[cnt - 1][i-1] != INT_MIN)
+//					dp[cnt][i] = Math.max(dp[cnt][i], dp[cnt-1][i-1]+arr[i]);
+//			}
+//		}
+		
+		for(int cnt = 0; cnt<=3;cnt++) {
+			for(int i =3; i<=n; i++) {
 				if(dp[cnt][i-2] != INT_MIN)
 					dp[cnt][i] = Math.max(dp[cnt][i], dp[cnt][i-2] + arr[i]);
 				if(cnt >0 && dp[cnt - 1][i-1] != INT_MIN)
