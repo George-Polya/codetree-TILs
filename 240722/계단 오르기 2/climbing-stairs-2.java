@@ -47,8 +47,9 @@ public class Main {
 //		printBoard(dp);
 		
 		int ans = 0;
-		for(int cnt = 0; cnt<=3; cnt++) {
-			ans = Math.max(ans, dp[cnt][n]);
+		for(int cnt = 0; cnt<=3;cnt++) {
+			for(int i = 0; i<=n; i++)
+				ans = Math.max(ans, dp[cnt][i]);
 		}
 		System.out.println(ans);
 	}
