@@ -37,7 +37,7 @@ public class Main {
 			if(i % 2 ==0)
 				dp[0][i] = dp[0][i-2] + arr[i];
 		}
-		dp[1][1] = 1;
+		dp[1][1] = arr[1];
 		
 		for(int cnt=1; cnt<=3;cnt++) {
 			for(int i = 2; i<=n; i++) {
