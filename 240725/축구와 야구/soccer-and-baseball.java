@@ -33,6 +33,11 @@ public class Main {
 		}
 		
 		
-		System.out.println(dp[n][11][9]);
+//		System.out.println(dp[n][11][9]);
+		int ans = 0;
+		for(int i=20; i<=n;i++) {
+			ans = Math.max(ans, dp[i][11][9]);
+		}
+		System.out.println(ans);
 	}
 }
