@@ -24,18 +24,21 @@ public class Main {
 				for(int b = 0; b<=9; b++) {
 					if(s + b <= i) {
 						if(s > 0) {
+							// i번째 사람을 축구 선수로 고른 경우 
 							dp[i][s][b][1] = Math.max(dp[i][s][b][1],
-									Math.max(dp[i-1][s-1][b][0], dp[i-1][s-1][b][1] + arr[i][0])
+									Math.max(dp[i-1][s-1][b][0], dp[i-1][s-1][b][1]) + arr[i][0]
 							);
 						}
 							
 						if(b > 0) {
+							// i번째 사람을 야구 선수로 고른 경우 
 							dp[i][s][b][1] = Math.max(dp[i][s][b][1],
-									Math.max(dp[i-1][s][b-1][0], dp[i-1][s][b-1][1] + arr[i][1])
+									Math.max(dp[i-1][s][b-1][0], dp[i-1][s][b-1][1]) + arr[i][1]
 							);
 						}
 							
 						
+						// i번째 사람을 스킵한 경우 
 						dp[i][s][b][0] = Math.max(
 								dp[i-1][s][b][0], dp[i-1][s][b][1]
 						);
