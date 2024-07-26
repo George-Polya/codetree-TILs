@@ -29,9 +29,9 @@ public class Main {
 			}
 		}
 		
-		int ans = 0;
+		long ans = 0;
 		for(int i = 0; i<=9;i++)
-			ans += dp[n][i];
+			ans = (ans + dp[n][i]) % MOD;
 		System.out.println(ans);
 		
 	}
