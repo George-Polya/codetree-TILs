@@ -4,13 +4,13 @@ import java.util.*;
 
 public class Main {
 	static int n;
-	static int dp[][];
+	static long dp[][];
 	static int MOD = (int)1e9+7;
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		n = Integer.parseInt(br.readLine());
 		
-		dp = new int[n+1][10];
+		dp = new long[n+1][10];
 		
 		for(int i=1;i<=9;i++)
 			dp[1][i] = 1;
