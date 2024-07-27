@@ -45,7 +45,7 @@ public class Main {
 					for(int c= 0; c<3;c++) {
 						if(b == c)
 							continue;
-						dp[i+1][a][c] = Math.max(dp[i+1][a][c], dp[i][a][b] + board[i][c]);
+						dp[i+1][a][c] = Math.max(dp[i+1][a][c], dp[i][a][b] + board[i+1][c]);
 					}
 				}
 			}
