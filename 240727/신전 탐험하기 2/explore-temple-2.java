@@ -39,17 +39,30 @@ public class Main {
 //			}
 //		}
 		
-		for(int i = 1; i < n; i++) {
-			for(int a= 0; a < 3; a++) {
-				for(int b= 0; b<3; b++) {
-					for(int c= 0; c<3;c++) {
+//		for(int i = 1; i < n; i++) {
+//			for(int a= 0; a < 3; a++) {
+//				for(int b= 0; b<3; b++) {
+//					for(int c= 0; c<3;c++) {
+//						if(b == c)
+//							continue;
+//						dp[i+1][a][c] = Math.max(dp[i+1][a][c], dp[i][a][b] + board[i+1][c]);
+//					}
+//				}
+//			}
+//		}
+
+		for(int i =2;i<=n; i++) {
+			for(int a = 0 ;a<3; a++) {
+				for(int b = 0; b< 3; b++) {
+					for(int c = 0; c<3; c++) {
 						if(b == c)
 							continue;
-						dp[i+1][a][c] = Math.max(dp[i+1][a][c], dp[i][a][b] + board[i+1][c]);
+						dp[i][a][c] = Math.max(dp[i][a][c], dp[i-1][a][b] + board[i][c]);
 					}
 				}
 			}
 		}
+		
 		
 		int ans = 0;
 		for(int y=0; y<3; y++) {
