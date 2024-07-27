@@ -26,11 +26,11 @@ public class Main {
 		for(int i = 2; i<=n; i++) {
 			for(int a = 0; a<3;a++) {
 				for(int b = 0; b<3; b++) {
-					if(a == b)
-						continue;
+					// if(a == b)
+					// 	continue;
 					
 					for(int c= 0; c<3; c++) {
-						if(a == c)
+						if(b == c)
 							continue;
 						
 						dp[i][a][c] = Math.max(dp[i][a][c], dp[i-1][b][c] + board[i][a]);
