@@ -8,6 +8,7 @@ public class Main {
 	static int dp[][][];
 	static String str;
 	static int L = 0, R = 1;
+	static int INF = 987654321;
  	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		st = new StringTokenizer(br.readLine());
@@ -17,26 +18,41 @@ public class Main {
 		dp = new int[n+1][k+1][2];
 		str = br.readLine();
 		str = "#" + str;
+		for(int i =0;i<=n;i++) {
+			for(int cnt = 0; cnt<=k; cnt++)
+				dp[i][cnt][0] = dp[i][cnt][1] = -INF;
+		}
 		
-		dp[1][0][L] = str.charAt(1) == 'L' ? 1 : 0;
-		dp[1][0][R] = str.charAt(1) == 'L' ? 0 : 1;
 		
-		for(int i = 2; i<=n; i++) {
+		dp[0][0][L] = 0;
+		dp[0][1][R] = 0;
+		
+		for(int i = 0; i<n; i++) {
 //			System.out.println("----");
 			for(int cnt = 0; cnt<=k; cnt++) {
-				if(str.charAt(i) == 'L') {
-					dp[i][cnt][L] = dp[i-1][cnt][L] + 1;
-					dp[i][cnt][R] = dp[i-1][cnt][R];
-					if(cnt > 0) {
-						dp[i][cnt][L] = Math.max(dp[i][cnt][L], dp[i-1][cnt-1][R] + 1);
+				if(dp[i][cnt][L] != -INF) {
+					if(str.charAt(i+1) == 'L') {
+						dp[i+1][cnt][L] = Math.max(dp[i+1][cnt][L], dp[i][cnt][L] + 1);
+						if(cnt < k)
+							dp[i+1][cnt+1][R] = Math.max(dp[i+1][cnt+1][R], dp[i][cnt][L]);
+					}else {
+						dp[i+1][cnt][L] = Math.max(dp[i+1][cnt][L], dp[i][cnt][L]);
+						if(cnt < k)
+							dp[i+1][cnt+1][R] = Math.max(dp[i+1][cnt+1][R], dp[i+1][cnt][L] + 1);
 					}
-				}else {
-					dp[i][cnt][L] = dp[i-1][cnt][L];
-					dp[i][cnt][R] = dp[i-1][cnt][R] + 1;
-					if(cnt > 0)
-						dp[i][cnt][R] = Math.max(dp[i][cnt][R], dp[i-1][cnt-1][L] + 1);
 				}
-//				System.out.printf("(i,cnt): (%d, %d) L : %d, R: %d\n", i,cnt,dp[i][cnt][L], dp[i][cnt][R]);
+				
+				if(dp[i][cnt][R] != -INF) {
+					if(str.charAt(i+1) == 'L') {
+						if(cnt < k)
+							dp[i+1][cnt+1][L] = Math.max(dp[i+1][cnt+1][L], dp[i][cnt][R] + 1);
+						dp[i+1][cnt][R] = Math.max(dp[i+1][cnt][R], dp[i][cnt][R]);
+					}else {
+						dp[i+1][cnt][R] = Math.max(dp[i+1][cnt][R], dp[i][cnt][R] + 1);
+						if(cnt < k)
+							dp[i+1][cnt+1][L] = Math.max(dp[i+1][cnt+1][L], dp[i][cnt][R]);
+					}
+				}
 			}
 		}
 		
