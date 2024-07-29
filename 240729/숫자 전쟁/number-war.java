@@ -47,7 +47,7 @@ public class Main{
 //				System.out.print(dp[y][x] +" ");
 				ans = Math.max(ans, dp[y][x]);
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		
 //		for(int x = 1; x<=n; x++)
