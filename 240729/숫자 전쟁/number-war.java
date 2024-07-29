@@ -19,8 +19,17 @@ public class Main{
 		for(int i = 1; i<=n; i++)
 			B[i] = Integer.parseInt(st.nextToken());
 		
+		for(int y = 0; y<=n;y++)
+			Arrays.fill(dp[y], -1);
+		
+		dp[0][0] = 0;
+		
 		for(int a = 0; a< n; a++) {
 			for(int b=0; b<n; b++) {
+				
+				if(dp[a][b] == -1)
+					continue;
+				
 				if(A[a+1] < B[b+1])
 					dp[a+1][b] = Math.max(dp[a+1][b], dp[a][b]);
 				else if(A[a+1]>B[b+1])
@@ -33,16 +42,17 @@ public class Main{
 		}
 		
 		int ans = 0;
-//		for(int y=0;y<=n; y++) {
-//			for(int x=0; x<=n; x++) {
+		for(int y=0;y<=n; y++) {
+			for(int x=0; x<=n; x++) {
 //				System.out.print(dp[y][x] +" ");
-//				ans = Math.max(ans, dp[y][x]);
-//			}
-//			System.out.println();
-//		}
+				ans = Math.max(ans, dp[y][x]);
+			}
+			System.out.println();
+		}
 		
-		for(int y = 1; y<=n; y++)
-			ans = Math.max(ans, dp[y][n]);
+//		for(int x = 1; x<=n; x++)
+//			ans = Math.max(ans, dp[n][x]);
+		
 		System.out.println(ans);
 	}
 }
