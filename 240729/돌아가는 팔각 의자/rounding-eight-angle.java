@@ -25,30 +25,17 @@ public class Main {
 		if(rotated[id])
 			return;
 		
-		if(id == 1) {
-			rotated[id] = true;
-			if(board[id][2] != board[id+1][6]) {
-				rotate(id + 1, -dir);
-			}
-			shift(id, dir);
-		}else if(id == 4) {
-			rotated[id] = true;
-			if(board[id][6] != board[id-1][2]) {
-				rotate(id - 1, -dir);
-			}
-			shift(id, dir);
-		}else {
-			rotated[id] = true;
-			if(board[id][6] != board[id-1][2]) {
-				rotate(id - 1, -dir);
-			}
-			
-			if(board[id][2] != board[id+1][6]) {
-				rotate(id + 1, -dir);
-			}
-			shift(id, dir);
+		rotated[id] = true;
+		
+		if(id > 1 && board[id][6] != board[id-1][2]) {
+			rotate(id - 1, -dir);
 		}
 		
+		if(id < 4 && board[id][2] != board[id+1][6]) {
+			rotate(id + 1, -dir);
+		}
+		
+		shift(id, dir);
 	
 	}
 	
