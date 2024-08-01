@@ -13,7 +13,7 @@ public class Main {
 	static int dy[] = {0,0,-1,1};
 	static int dx[] = {1,-1,0,0};
 	
-	static int turn = 1;
+	static int turn ;
 	
 	static void printBoard() {
 		for(int y=1; y<=n; y++) {
@@ -164,10 +164,17 @@ public class Main {
 		
 		
 //		moveAll();
-		while(moveAll()) {
+//		while(moveAll()) {
+//			turn++;
+////			printBoard();
+//		}
+		
+		while(!end()) {
 			turn++;
-//			printBoard();
+			if(!moveAll())
+				break;
 		}
+		
 		System.out.println(turn > 1000 ? -1 : turn);
 		
 	}
