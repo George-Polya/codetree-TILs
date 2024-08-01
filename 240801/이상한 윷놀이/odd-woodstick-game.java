@@ -42,16 +42,6 @@ public class Main {
 	
 	static Horse horses[];
 	
-	static boolean end() {
-		for(int y=1; y<=n; y++) {
-			for(int x=1; x<=n; x++) {
-				if(board[y][x].size() >= 4)
-					return true;
-			}
-		}
-		return false;
-	}
-	
 	static Horse getNxtPos(int y,int x,int dir) {
 		int ny = y + dy[dir];
 		int nx = x + dx[dir];
@@ -72,61 +62,77 @@ public class Main {
 		
 	}
 	
+	static String printStack(Stack<Integer> stk) {
+		List<Integer> list = new ArrayList<>(stk);
+		StringBuilder sb = new StringBuilder();
+		for(int id : list) {
+			sb.append(String.format("id: %d, dir: %d|", id, horses[id].dir));
+		}
+		return sb.toString();
+	}
+	
 	static boolean move(int id) {
-		System.out.println("==========");
 		Horse horse = horses[id];
 		int y = horse.y;
 		int x = horse.x;
 		int dir = horse.dir;
-		System.out.println("horse: "+horse);
-		Horse nxt = getNxtPos(y,x,dir);
-		System.out.println("nxt: "+nxt);
-		Stack<Integer> stk = board[y][x];
-		System.out.printf("board[%d][%d] : %s\n", y,x, board[y][x]);
+	
+		
+		int ny = y + dy[dir];
+		int nx = x + dx[dir];
+		
+//		System.out.printf("board[%d][%d] : %s\n", y,x, printStack(board[y][x]));
 		Stack<Integer> temp = new Stack<>();
+		while(board[y][x].peek() != id) {
+			temp.push(board[y][x].pop());
+		}
 		
+		int target = board[y][x].pop();
 		
-		temp = new Stack<>();
-		int size = stk.size();
-		
-		for(int i = 0; i < size;i++) {
-			int cur = stk.pop();
-			horses[cur].y = nxt.y;
-			horses[cur].x = nxt.x;
-			
-			if(cur != id) {
-				temp.add(cur);
-			}else {
-				horses[cur].dir = nxt.dir;
-				temp.add(cur);
-				break;
+		if(OOB(ny,nx) || color[ny][nx] == BLUE) {
+			dir = (dir %2 == 0) ? dir + 1 : dir - 1;
+			ny = y + dy[dir];
+			nx = x + dx[dir];
+			horses[id].dir = dir;
+			if(OOB(ny,nx) || color[ny][nx] == BLUE) {
+				temp.push(id);
+				
+				while(!temp.isEmpty()) {
+					int cur = temp.pop();
+					board[y][x].push(cur);
+				}
+//				System.out.printf("board[%d][%d] : %s\n", y,x, printStack(board[y][x]));
+				return false;
 			}
 		}
 		
-		stk = new Stack<>();
-		if(color[nxt.y][nxt.x] == RED) {
-			while(!temp.isEmpty())
-				stk.add(temp.pop());
-		}else {
-			stk = temp;
+		temp.push(target);
+//		System.out.printf("board[%d][%d] : %s\n", ny,nx, printStack(temp));
+		if(color[ny][nx] == RED) {
+			Collections.reverse(temp);
 		}
 		
-		boolean flag = false;
-		
-		while(!stk.isEmpty()) {
-			board[nxt.y][nxt.x].add(stk.pop());
-			if(board[nxt.y][nxt.x].size() >= 4)
-				flag = true;
+		while(!temp.isEmpty()) {
+			int idx = temp.pop();
+			Horse cur = horses[idx];
+			cur.y = ny;
+			cur.x = nx;
+			board[cur.y][cur.x].push(idx);
+			if(board[ny][nx].size() >= 4)
+				return true;
 		}
-		System.out.printf("board[%d][%d] : %s\n", nxt.y,nxt.x, board[nxt.y][nxt.x]);
-		return flag;
+		
+		
+		return false;
+		
 	}
 	
 	static boolean moveAll() {
-		System.out.println("-----");
-		System.out.println("turn: "+turn);
+//		System.out.println("-----");
+//		System.out.println("turn: "+turn);
 		for(int id = 1; id<=k; id++) {
-			System.out.println("id: "+id);
+//			System.out.println("==========");
+//			System.out.println("id: "+id);
 			boolean moved = move(id);
 			if(moved)
 				return false;
@@ -170,6 +176,7 @@ public class Main {
 //				ans = turn;
 			}
 		}
+//		moveAll();
 		
 		System.out.println(ans);
 		
