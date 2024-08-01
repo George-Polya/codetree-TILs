@@ -38,7 +38,7 @@ public class Main {
 		}
 	}
 	
-	static Stack<Integer> stks[][];
+	static List<Integer> stks[][];
 	
 	static Horse horses[];
 	
@@ -77,27 +77,24 @@ public class Main {
 		int y = horse.y;
 		int x = horse.x;
 		int dir = horse.dir;
-//		System.out.println("horse: "+horse);
 		Horse nxt = getNxtPos(y,x,dir);
-//		System.out.println("nxt: "+nxt);
-		Stack<Integer> stk = stks[y][x];
-		Stack<Integer> temp = new Stack<>();
-//		System.out.println("color: " + board[nxt.y][nxt.x]);
-//		if(board[nxt.y][nxt.x] == RED) {
-//			while(!stk.isEmpty())
-//				temp.add(stk.pop());
-//			
-//			stk = temp;
-//		}
-//		System.out.printf("stks[%d][%d] : %s\n", y,x, stk);
-		temp = new Stack<>();
+		
+		
+//		System.out.printf("stks[%d][%d] : %s\n", y,x, stks[y][x]);
+		List<Integer> stk = stks[y][x];
+//		Stack<Integer> temp = new Stack<>();
+		List<Integer> temp = new ArrayList<>();
+//		temp = new Stack<>();
 		int size = stk.size();
 		
-		for(int i = 0; i < size;i++) {
-			int cur = stk.pop();
+
+		
+		for(int i = size - 1; i >= 0; i--) {
+			
+			int cur = stk.get(i);
 			horses[cur].y = nxt.y;
 			horses[cur].x = nxt.x;
-			
+			stk.remove(i);
 			if(cur != id) {
 				temp.add(cur);
 			}else {
@@ -107,28 +104,25 @@ public class Main {
 			}
 		}
 		
-		stk = new Stack<>();
-		if(board[nxt.y][nxt.x] == RED) {
-			while(!temp.isEmpty())
-				stk.add(temp.pop());
-		}else {
-			stk = temp;
-		}
 		
-		while(!stk.isEmpty()) {
-			stks[nxt.y][nxt.x].add(stk.pop());
+		if(board[nxt.y][nxt.x] == RED) {
+			for(int i = 0; i<temp.size();i++)
+				stks[nxt.y][nxt.x].add(temp.get(i));
+		}else {
+			for(int i = temp.size() - 1; i>=0;i--)
+				stks[nxt.y][nxt.x].add(temp.get(i));
 		}
+//		
 //		System.out.printf("stks[%d][%d] : %s\n", nxt.y,nxt.x, stks[nxt.y][nxt.x]);
 	}
 	
 	static boolean moveAll() {
 		for(int id = 1; id<=k; id++) {
-			if (end())
+			if (end() || turn > 1000)
 				return false;
 //			System.out.println("-----");
 //			System.out.println("id: "+id);
 			move(id);
-//			printBoard();
 		}
 		return true;
 	}
@@ -140,12 +134,12 @@ public class Main {
 		k = Integer.parseInt(st.nextToken());
 		board = new int[n+1][n+1];
 		count = new int[n+1][n+1];
-		stks = new Stack[n+1][n+1];
+		stks = new List[n+1][n+1];
 		for(int y=1; y<=n; y++) {
 			st = new StringTokenizer(br.readLine());
 			for(int x=1; x<=n; x++) {
 				board[y][x] = Integer.parseInt(st.nextToken());
-				stks[y][x] = new Stack<>();
+				stks[y][x] = new ArrayList<>();
 			}
 		}
 		
@@ -159,18 +153,13 @@ public class Main {
 			Horse horse = new Horse(y,x,dir);
 			horses[id] = horse;
 			stks[y][x].add(id);
-//			count[y][x]++;
 		}
 		
 		
-//		moveAll();
-//		while(moveAll()) {
-//			turn++;
-////			printBoard();
-//		}
 		
-		while(!end()) {
+		while(!end() || turn > 1000) {
 			turn++;
+			
 			if(!moveAll())
 				break;
 		}
