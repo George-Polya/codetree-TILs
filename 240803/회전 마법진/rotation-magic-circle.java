@@ -24,8 +24,8 @@ public class Main {
 				if(dp[i][cnt] == INF)
 					continue;
 				
-				int cur = (a.charAt(i) - '0' + cnt) % 10;
-				int target = b.charAt(i) - '0';
+				int cur = (a.charAt(i+1) - '0' + cnt) % 10;
+				int target = b.charAt(i+1) - '0';
 				
 				int cost = (target - cur + 10) % 10;
 				
