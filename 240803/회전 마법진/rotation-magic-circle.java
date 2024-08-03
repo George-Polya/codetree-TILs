@@ -24,17 +24,20 @@ public class Main {
 				if(dp[i][cnt] == INF)
 					continue;
 				
+//				System.out.println("-----");
 				int cur = (a.charAt(i+1) - '0' + cnt) % 10;
 				int target = b.charAt(i+1) - '0';
 				
 				int cost = (target - cur + 10) % 10;
 				
-				int nj = (cnt + cost) % 10;
-				dp[i + 1][nj] = Math.min(dp[i + 1][nj], dp[i][cnt] + cost);
+				int nxt = (cnt + cost) % 10;
+				dp[i + 1][nxt] = Math.min(dp[i + 1][nxt], dp[i][cnt] + cost);
 				
-				cost = (cur - target + 10) % 10;
-				dp[i+1][cnt] = Math.min(dp[i + 1][cnt], dp[i][cnt] + cost);
-				
+				int cost2 = (cur - target + 10) % 10;
+				dp[i+1][cnt] = Math.min(dp[i + 1][cnt], dp[i][cnt] + cost2);
+//				System.out.printf("i+1: %d, nj: %d, cnt: %d, cost1: %d, cost2: %d\n", i+1,nj, cnt,cost, cost2);
+//				System.out.printf("i+1: %d, nj: %d, cost1: %d\n", i+1,nxt, cost);
+//				System.out.printf("i+1: %d, cnt: %d, cost2: %d\n", i+1, cnt, cost2);
 			}
 		}
 		int ans = INF;
