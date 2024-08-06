@@ -19,7 +19,7 @@ public class Main {
 	
 	static void copy(int src[][], int dst[][]) {
 		for(int y=1; y<=n; y++) {
-			System.arraycopy(src[y], 1, dst[y], 1, n);;
+			System.arraycopy(src[y], 1, dst[y], 1,m);
 		}
 	}
 	
