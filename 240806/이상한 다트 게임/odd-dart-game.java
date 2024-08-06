@@ -4,7 +4,7 @@ import java.io.*;
 public class Main {
 	static int n,m,q;
 	static StringTokenizer st;
-	static int board[][],nxtBoard[][];
+	static int board[][];
 	static int total;
 	static int size;
 	
@@ -45,32 +45,73 @@ public class Main {
 	 * 상하좌우 중 어느 방향으로든 한번이라도 인접한게 존재하면 한번만 지운다. 
 	 * 
 	 */
+	static boolean visited[][];
+	static class Pair{
+		int y,x;
+		public Pair(int y,int x) {
+			this.y = y;
+			this.x = x;
+		}
+	}
 	
-	static int remove() {
-		copy(board, nxtBoard);
-		int ret = 0;
+	static int dy[] = {-1,1,0,0};
+	static int dx[] = {0,0,-1,1};
+	static boolean OOB(int y,int x) {
+		return y<=0 || y>n|| x<=0 || x>m;
+	}
+	
+	static boolean bfs(int y,int x) {
+		Queue<Pair> q = new LinkedList<>();
+		q.add(new Pair(y,x));
+		visited[y][x] = true;
+		int value = board[y][x];
+		
+		boolean ret = false;
+		
+		while(!q.isEmpty()) {
+			Pair cur = q.poll();
+			
+			for(int dir = 0; dir < 4; dir++) {
+				int ny = cur.y + dy[dir];
+				int nx = (cur.x + dx[dir]) % m == 0 ? m : (cur.x + dx[dir]) % m;
+				if(OOB(ny,nx) || visited[ny][nx] || board[ny][nx] != value)
+					continue;
+				total -= board[ny][nx];
+				size--;
+				board[ny][nx] = 0;
+				visited[ny][nx] = true;
+				q.add(new Pair(ny,nx));
+				ret = true;
+			}
+		}
+		
+		if(ret) {
+			total -= board[y][x];
+			board[y][x] = 0;
+			size--;
+			
+		}
+		
+		return ret;
+		
+	}
+	
+	static boolean remove() {
+		boolean ret = false;
+		for(int y=1; y<=n; y++)
+			Arrays.fill(visited[y], false);
+		
 		for(int y=1; y<=n; y++) {
 			for(int x=1; x<=m; x++) {
-				int lx = (x-1) <= 0 ? m : x-1;
-				int rx = (x+1) > m ? 1 : x+1;
-//				System.out.printf("(y,x): (%d,%d), lx: %d, rx: %d\n", y,x,lx,rx);
-				boolean flag = board[y][x] != 0;
-				boolean left = board[y][x] == board[y][lx];
-				boolean right = board[y][x] == board[y][rx];
-				boolean down = y > 1 && board[y][x] == board[y-1][x];
-				boolean up = y < n && board[y][x] == board[y+1][x];
+				if(visited[y][x] || board[y][x] == 0)
+					continue;
 				
-				if(flag && (left || right || up || down)) {
-					total -= board[y][x];
-					size--;
-					nxtBoard[y][x] = 0;
-					ret++;
-				}
+				if(bfs(y,x))
+					ret = true;
 				
 			}
 		}
 		
-		copy(nxtBoard,board);
 		return ret;
 	}
 	
@@ -94,14 +135,14 @@ public class Main {
 		}
 	}
 	
-//	static int calcTotal() {
-//		int ret = 0;
-//		for(int y=1; y<=n; y++) {
-//			for(int x=1; x<=m; x++)
-//				ret += board[y][x];
-//		}
-//		return ret;
-//	}
+	static int calcTotal() {
+		int ret = 0;
+		for(int y=1; y<=n; y++) {
+			for(int x=1; x<=m; x++)
+				ret += board[y][x];
+		}
+		return ret;
+	}
 	
 	
 	static void simulate(int x, int dir, int k) {
@@ -115,21 +156,21 @@ public class Main {
 		
 		// 2. 원판에 수가 남아있으면 지운다. 
 		if(total != 0) {
-			int removeCnt = remove();
 //			System.out.println("after remove");
+//			System.out.printf("total: %d, size: %d, avg: %d\n", total, size, total/size);
+			boolean removed = remove();
 //			printBoard(board);
-			
+//			System.out.printf("total: %d, size: %d, avg: %d\n", total, size, total/size);
+//			System.out.printf("total: %d, calc: %d\n", total, calcTotal());
 			/*
 			 * 3. 지워지는 수가 없으면 정규화한다.
 			 * 만약 2에서 원판에 수가 남아있지 않아서 지우지 않으면? 역시 정규화한다. 
 			 * 다만, 원판에 수가 남아있지 않다는건 전부 0, 즉, total = 0이라는 건데, 평균보다 큰 수와 작은 수가 없을 것이다. 
 			 */
-			if(removeCnt == 0) {
+			if(!removed) {
 //				System.out.println("after normalize");
-//				System.out.printf("total: %d, size: %d, avg: %d\n", total, size, total/size);
 				normalize();
 //				printBoard(board);
-//				System.out.printf("total: %d, calc: %d\n", total, calcTotal());
 			}
 		}
 		
@@ -143,7 +184,8 @@ public class Main {
 		m = Integer.parseInt(st.nextToken());
 		q = Integer.parseInt(st.nextToken());
 		board = new int[n+1][m+1];
-		nxtBoard = new int[n+1][m+1];
+//		nxtBoard = new int[n+1][m+1];
+		visited = new boolean[n+1][m+1];
 		
 		for(int y=1; y<=n; y++) {
 			st = new StringTokenizer(br.readLine());
