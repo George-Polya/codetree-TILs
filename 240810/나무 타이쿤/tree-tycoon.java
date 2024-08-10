@@ -23,7 +23,7 @@ public class Main {
 		}
 	}
 	static int total;
-	static List<Pair> fertils = new ArrayList<>();
+	static Deque<Pair> fertils = new ArrayDeque<>();
 	static void printBoard(int board[][]) {
 		for(int y=1; y<=n; y++) {
 			for(int x=1; x<=n; x++) {
@@ -57,8 +57,11 @@ public class Main {
 		ny = ((ny - 1 + n) % n) + 1;
 		nx = ((nx - 1 + n) % n) + 1;
 		
-		pair.y = ny;
-		pair.x = nx;
+//		pair.y = ny;
+//		pair.x = nx;
+		
+		fertils.addLast(new Pair(ny,nx));
+		
 	}
 	
 	static void grow(int y, int x) {
@@ -84,30 +87,33 @@ public class Main {
 	static void simulate(int dir, int dist) {
 		
 		// 영양제의 이동과 나무의 성장 
-		for(int i = 0; i < fertils.size(); i++) {
-			
-			// 이동 
-			Pair pair = fertils.get(i);
+//		for(int i = 0; i < fertils.size(); i++) {
+//			
+//			// 이동 
+//			Pair pair = fertils.get(i);
+//			move(pair, dir, dist);
+//			fertilized[pair.y][pair.x] = true;
+//			// 투입해서 성장 
+//			grow(pair.y, pair.x);
+//			
+//		}
+		
+		int size = fertils.size();
+		for(int i = 0; i< size;i++) {
+			Pair pair = fertils.pollFirst();
 			move(pair, dir, dist);
-//			System.out.println(fertils.get(i));
-			fertilized[pair.y][pair.x] = true;
-			// 투입해서 성장 
 			grow(pair.y, pair.x);
-			
+			fertils.addFirst(pair);
 		}
-//		System.out.println("이동 및 성장 후 ");
-//		System.out.println("fertils: "+fertils);
-//		printBoard(board);
+		
 		
 		// 추가 성장
-		for(int i = 0 ; i < fertils.size();i++) {
-			Pair pair = fertils.get(i);
+		for(int i = 0 ; i < size;i++) {
+			Pair pair = fertils.pollFirst();
 			extraGrow(pair.y,pair.x);
 		}
 		
-//		System.out.println("추가 성장 후 ");
-//		printBoard(board);
-		fertils.clear(); // 영양제 소멸 
+//		fertils.clear(); // 영양제 소멸 
 		
 		// 영양제를 투입한 위치를 제외하고 높이 2이상인 리브로수 제거 후 특수영양제 추가 
 		for(int y=1; y<=n; y++) {
@@ -124,8 +130,6 @@ public class Main {
 			}
 		}
 	
-//		System.out.println("벌목 후 ");
-//		printBoard(board);
 		
 	}
 	public static void main(String[] args) throws IOException{
@@ -150,13 +154,10 @@ public class Main {
 		}
 		
 		for(int turn = 1; turn<=m; turn++) {
-//			System.out.println("------");
-//			System.out.println("turn: "+turn);
 			st = new StringTokenizer(br.readLine());
 			int d = Integer.parseInt(st.nextToken()) - 1;
 			int p = Integer.parseInt(st.nextToken());
 			simulate(d,p);
-//			System.out.println("fertils: "+fertils);
 		}
 		
 		System.out.println(total);
