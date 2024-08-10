@@ -33,8 +33,7 @@ public class Main {
 		}
 	}
 	
-	static void move(int idx, int dir, int dist) {
-		Pair pair = fertils.get(idx);
+	static void move(Pair pair, int dir, int dist) {
 		int y = pair.y;
 		int x = pair.x;
 
@@ -88,9 +87,9 @@ public class Main {
 		for(int i = 0; i < fertils.size(); i++) {
 			
 			// 이동 
-			move(i, dir, dist);
-//			System.out.println(fertils.get(i));
 			Pair pair = fertils.get(i);
+			move(pair, dir, dist);
+//			System.out.println(fertils.get(i));
 			fertilized[pair.y][pair.x] = true;
 			// 투입해서 성장 
 			grow(pair.y, pair.x);
@@ -108,7 +107,7 @@ public class Main {
 		
 //		System.out.println("추가 성장 후 ");
 //		printBoard(board);
-		fertils.clear();
+		fertils.clear(); // 영양제 소멸 
 		
 		// 영양제를 투입한 위치를 제외하고 높이 2이상인 리브로수 제거 후 특수영양제 추가 
 		for(int y=1; y<=n; y++) {
@@ -128,7 +127,6 @@ public class Main {
 //		System.out.println("벌목 후 ");
 //		printBoard(board);
 		
-		//
 	}
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
