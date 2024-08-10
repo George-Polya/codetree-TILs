@@ -1,220 +1,166 @@
 import java.io.*;
 import java.util.*;
 
-public class Main{
+
+public class Main {
 	static int n,m;
+	static int board[][];
+	static StringTokenizer st;
 	static int dy[] = {0,-1,-1,-1,0,1,1,1};
 	static int dx[] = {1,1,0,-1,-1,-1,0,1};
-	static boolean OOB(int y,int x) {
-		return y<=0 || y>n || x<= 0 || x>n;
+	static boolean OOB(int y, int x) {
+		return y<=0 || y>n || x<=0 || x>n;
 	}
-	static StringTokenizer st;
-	static boolean fertilized[][];
 	static class Pair{
 		int y,x;
 		public Pair(int y,int x) {
 			this.y = y;
 			this.x = x;
 		}
+		
 		public String toString() {
 			return y+" "+x;
 		}
 	}
-	static void printBoard() {
+	static int total;
+	static List<Pair> fertils = new ArrayList<>();
+	static void printBoard(int board[][]) {
 		for(int y=1; y<=n; y++) {
 			for(int x=1; x<=n; x++) {
-				System.out.print(board[y][x] +" ");
+				System.out.printf("%3d", board[y][x]);
 			}
 			System.out.println();
 		}
 	}
 	
-	static int board[][];
-	
-	static List<Pair> fertilizers = new ArrayList<>(); 
-	
-	/*
-	 * 영양제의 다음 위치 구하기 
-	 * 1. (ny,nx)를 구한다 
-	 * 2. OOB(ny,nx)면 반대편으로 
-	 * 3. OOB가 아니면 원래 그 위
-	 */
-	static Pair getNxtPos(int y,int x, int d, int p) {
+	static void move(int idx, int dir, int dist) {
+		Pair pair = fertils.get(idx);
+		int y = pair.y;
+		int x = pair.x;
 
-		// 여기는 좀 바꿔보자 
-		int ny = y + dy[d] * (p % n);
-		int nx = x + dx[d] * (p % n);
-
-		// 방법 1. 격자 밖을 벗어난 경우 처리 
-//		if(OOB(ny,nx)) {
-//			if (ny > n)
-//				ny -= n;
+		int ny = y + dy[dir] * (dist % n);
+		int nx = x + dx[dir] * (dist % n);
+		
+//		while(OOB(ny,nx)) {
 //			if(ny <= 0)
 //				ny += n;
+//			else if(ny > n)
+//				ny -= n;
 //			
-//			if(nx > n )
-//				nx -= n;
-//			if(nx<=0)
+//			if(nx <= 0)
 //				nx += n;
+//			else if(nx > n)
+//				nx -= n;
+//				
 //		}
-//		
 		
 		
-		// 방법 2. 모든 경우에 대해서 처리 
 		ny = ((ny - 1 + n) % n) + 1;
 		nx = ((nx - 1 + n) % n) + 1;
 		
-		return new Pair(ny,nx);
+		pair.y = ny;
+		pair.x = nx;
 	}
 	
-	/*
-	 * 1.1 idx에 해당하는 영양제가 주어진 방향과 거리만큼 이동한다 
-	 *  1.1.1 영양제의 다음 위치를 구한다 
-	 *  1.1.2 fertilizers[idx]를 해당 위치로 교체한다 
-	 */
-	
-	static void move(int idx, int d, int p) {
-		Pair fertilizer = fertilizers.get(idx);
-		
-		int y = fertilizer.y;
-		int x = fertilizer.x;
-		
-		Pair nxt = getNxtPos(y,x, d, p);
-//		System.out.println("nxt: "+nxt);
-		fertilizers.set(idx, nxt);
-	}
-	
-	/*
-	 * 1. 영양제 이동 
-	 *  1.1 각 영양제가 주어진 방향과 거리만큼 이동한다 
-	 */
-	
-	static void moveAll(int d, int p) {
-		for(int i = 0; i < fertilizers.size();i++) {
-			move(i, d, p);
-		}
-	}
-	
-	/*
-	 * 2.1 (y,x)의 나무 성장 
-	 */
-	static void grow(int y,int x) {
+	static void grow(int y, int x) {
+		total++;
 		board[y][x] += 1;
 	}
-	
-	/*
-	 * 2. 나무 성장 
-	 *  2.1 영양제가 위치한 곳의 나무가 성장함
-	 *  2.2 대각선 나무가 성장함  
-	 *  2.3 영양제 소멸 
-	 */
-	static void growAll() {
-		// 2.1
-		for(Pair fertilizer : fertilizers) {
-			grow(fertilizer.y, fertilizer.x);
-		}
-		
-		
-		List<Integer> counts = new ArrayList<>();
-		// 2.2 
-		for(int idx = 0; idx < fertilizers.size();idx++) {
-			Pair fertilizer = fertilizers.get(idx);
-			int y = fertilizer.y;
-			int x = fertilizer.x;
-			fertilized[y][x] = true;
-			int cnt = 0;
-			for(int dir : new int[] {1,3,5,7}) {
-				int ny = y + dy[dir];
-				int nx = x + dx[dir];
-				if(OOB(ny,nx) || board[ny][nx] <= 0)
-					continue;
+	static void extraGrow(int y, int x) {
+		int cnt = 0;
+		for(int dir = 1; dir <8; dir+=2) {
+			int ny = y + dy[dir];
+			int nx = x + dx[dir];
+			if(OOB(ny,nx))
+				continue;
+			if(board[ny][nx] >= 1)
 				cnt++;
-			}
-			counts.add(cnt);
 		}
-		
-		
-		for(int idx = 0; idx < fertilizers.size();idx++) {
-			Pair fertilizer = fertilizers.get(idx);
-			int y = fertilizer.y;
-			int x = fertilizer.x;
-			board[y][x] += counts.get(idx);
-		}
-		
-		fertilizers.clear();
-		
+		total+=cnt;
+		board[y][x] += cnt;
 	}
 	
-	static void cut() {
+	static boolean fertilized[][];
+	
+	static void simulate(int dir, int dist) {
+		
+		// 영양제의 이동과 나무의 성장 
+		for(int i = 0; i < fertils.size(); i++) {
+			
+			// 이동 
+			move(i, dir, dist);
+//			System.out.println(fertils.get(i));
+			Pair pair = fertils.get(i);
+			fertilized[pair.y][pair.x] = true;
+			// 투입해서 성장 
+			grow(pair.y, pair.x);
+			
+		}
+//		System.out.println("이동 및 성장 후 ");
+//		System.out.println("fertils: "+fertils);
+//		printBoard(board);
+		
+		// 추가 성장
+		for(int i = 0 ; i < fertils.size();i++) {
+			Pair pair = fertils.get(i);
+			extraGrow(pair.y,pair.x);
+		}
+		
+//		System.out.println("추가 성장 후 ");
+//		printBoard(board);
+		fertils.clear();
+		
+		// 영양제를 투입한 위치를 제외하고 높이 2이상인 리브로수 제거 후 특수영양제 추가 
 		for(int y=1; y<=n; y++) {
 			for(int x=1; x<=n; x++) {
-				if(fertilized[y][x]) { // 영양제를 투입한 나무는 제외한다 
+				if(fertilized[y][x]) {
 					fertilized[y][x] = false;
 					continue;
 				}
-				
-				// 높이 2이상인 나무는 베어내고 영양제를 올려둔
 				if(board[y][x] >= 2) {
 					board[y][x] -= 2;
-					fertilizers.add(new Pair(y,x));
+					fertils.add(new Pair(y,x));
+					total -= 2;
 				}
 			}
 		}
-	}
 	
-	static void simulate(int d, int p) {
-		// 1. 영양제 이동 
-		moveAll(d,p);
-		// 2. 영양제 투입 (나무 성장)  
-		growAll();
-//		System.out.println("after grow");
-//		printBoard();
+//		System.out.println("벌목 후 ");
+//		printBoard(board);
 		
-		// 3. 영양제 구매
-		cut();
-//		System.out.println("after cut");
-//		printBoard();
-//		System.out.println(fertilizers);
+		//
 	}
-	
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		st = new StringTokenizer(br.readLine());
 		n = Integer.parseInt(st.nextToken());
 		m = Integer.parseInt(st.nextToken());
-		
 		board = new int[n+1][n+1];
 		fertilized = new boolean[n+1][n+1];
 		for(int y=1; y<=n; y++) {
 			st = new StringTokenizer(br.readLine());
 			for(int x=1; x<=n; x++) {
 				board[y][x] = Integer.parseInt(st.nextToken());
+				total += board[y][x];
 			}
 		}
 		
-		fertilizers.add(new Pair(n-1,1));
-		fertilizers.add(new Pair(n-1,2));
-		fertilizers.add(new Pair(n,1));
-		fertilizers.add(new Pair(n,2));
 		
+		for(int y = n-1; y<=n; y++) {
+			for(int x=1; x<=2;x++)
+				fertils.add(new Pair(y,x));
+		}
 		
-		for(int turn=1;turn<=m;turn++) {
+		for(int turn = 1; turn<=m; turn++) {
+//			System.out.println("------");
 //			System.out.println("turn: "+turn);
 			st = new StringTokenizer(br.readLine());
 			int d = Integer.parseInt(st.nextToken()) - 1;
 			int p = Integer.parseInt(st.nextToken());
 			simulate(d,p);
-//			System.out.println("-----");
+//			System.out.println("fertils: "+fertils);
 		}
 		
-		int sum = 0;
-		for(int y=1; y<=n; y++) {
-			for(int x=1; x<=n; x++) {
-				sum += board[y][x];
-			}
-		}
-		System.out.println(sum);
-		
-		
+		System.out.println(total);
 	}
 }
