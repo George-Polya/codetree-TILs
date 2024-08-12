@@ -93,8 +93,6 @@ public class Main {
 		q.add(new Pair(attacker.y, attacker.x));
 		Pair prev[][] = new Pair[n+1][m+1];
 		prev[attacker.y][attacker.x] = NO_POS;
-		boolean visited[][] = new boolean[n+1][m+1];
-		visited[attacker.y][attacker.x] = true;
 		while(!q.isEmpty()) {
 			Pair cur = q.poll();
 			
@@ -109,10 +107,10 @@ public class Main {
 				ny = ((ny - 1 + n) % n) + 1;
 				nx = ((nx - 1 + m) % m) + 1;
 				
-				if(visited[ny][nx] || board[ny][nx] == BROKEN)
+				if(prev[ny][nx] != null || board[ny][nx] == BROKEN)
 					continue;
 				prev[ny][nx] = cur;
-				visited[ny][nx] = true;
+//				visited[ny][nx] = true;
 				q.add(new Pair(ny,nx));
 			}
 		}
@@ -150,7 +148,7 @@ public class Main {
 		int x = target.x;
 		
 		involved[y][x] = true;
-		target.power -= power;
+		
 		for(int dir = 0; dir < 8; dir++) {
 			int ny = y + dy[dir];
 			int nx = x + dx[dir];
@@ -211,7 +209,6 @@ public class Main {
 		
 	}
 	static int turn;
-	
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         st = new StringTokenizer(br.readLine());
