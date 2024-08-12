@@ -136,7 +136,7 @@ public class Main {
 			
 			attacker.power = power;
 			involved[attacker.y][attacker.x] = true;
-			attacker.time++;
+			attacker.time = turn;
 			return;
 		}
 		
@@ -166,7 +166,7 @@ public class Main {
 		
 		involved[attacker.y][attacker.x] = true;
 		attacker.power = power;
-		attacker.time++;
+		attacker.time = turn;
 		
 	}
 	
@@ -210,6 +210,7 @@ public class Main {
 //		printBoard(board);
 		
 	}
+	static int turn;
 	
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -230,7 +231,7 @@ public class Main {
         	}
         }
         
-        for(int turn=1;turn<=k;turn++) {
+        for(turn=1;turn<=k;turn++) {
 //        	System.out.println("-----");
 //        	System.out.println("turn: "+turn);
         	simulate();
