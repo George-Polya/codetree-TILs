@@ -148,6 +148,7 @@ public class Main {
 		int x = target.x;
 		
 		involved[y][x] = true;
+		target.power -= power;
 		
 		for(int dir = 0; dir < 8; dir++) {
 			int ny = y + dy[dir];
