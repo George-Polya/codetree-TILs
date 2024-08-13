@@ -9,7 +9,7 @@ public class Main {
 	static int dist[];
 	static StringTokenizer st;
 	static int start;
-	static class Product{
+	static class Product implements Comparable<Product>{
 		int id, revenue, dest;
 		int cost, profit;
 		public Product(int id,int revenue, int dest) {
@@ -26,10 +26,11 @@ public class Main {
 			this.profit = revenue - cost;
 		}
 		
-		public boolean isHigher(Product p) {
+		
+		public int compareTo(Product p) {
 			if(profit != p.profit)
-				return profit > p.profit;
-			return id < p.id;
+				return p.profit - profit;
+			return id - p.id;
 		}
 		
 		public String toString() {
@@ -58,14 +59,18 @@ public class Main {
 	
 	static ArrayList<Node> adjList[];
 	
-	static Map<Integer, Product> managed = new HashMap<>();
+//	static Map<Integer, Product> managed = new HashMap<>();
+	static Set<Integer> managed = new HashSet<>();
 	static Set<Integer> removed = new HashSet<>();
+	
+	static PriorityQueue<Product> ppq;
 	
 	static void init() {
 		n = Integer.parseInt(st.nextToken());
 		m = Integer.parseInt(st.nextToken());
 		adj = new int[n][n];
 		dist = new int[n];
+		ppq = new PriorityQueue<>();
 		for(int i = 0; i <n;i++) {
 			Arrays.fill(adj[i], INF);
 		}
@@ -100,16 +105,15 @@ public class Main {
 		dijkstra(start);
 	}
 	
-	static void createProduct() {
-		int id = Integer.parseInt(st.nextToken());
-		int revenue = Integer.parseInt(st.nextToken());
-		int dest = Integer.parseInt(st.nextToken());
-		managed.put(id,  new Product(id, revenue, dest));
+	static void createProduct(int id, int revenue, int dest) {
+		managed.add(id);
+		ppq.add(new Product(id,revenue, dest, dist[dest]));
 	}
 	
 	static void cancelProduct() {
 		int id = Integer.parseInt(st.nextToken());
-		removed.add(id);
+		if(managed.contains(id))
+			removed.add(id);
 	}
 	
 	static void printDist(int dist[]) {
@@ -119,10 +123,9 @@ public class Main {
 		System.out.println();
 	}
 	
-	static PriorityQueue<Node> pq;
 	static void dijkstra(int start) {
 		Arrays.fill(dist, INF);
-		pq = new PriorityQueue<>();
+		PriorityQueue<Node> pq = new PriorityQueue<>();
 		dist[start] = 0;
 		pq.add(new Node(start, dist[start]));
 		
@@ -139,6 +142,9 @@ public class Main {
 				pq.add(new Node(nxt.id, dist[nxt.id]));
 			}
 		}
+		
+		
+		
 	}
 	
 	/*
@@ -147,39 +153,35 @@ public class Main {
 	 */
 	static void sellBestProduct() {
 		
-	
-		Product best = WORST_PRODUCT;
-		for(int pid : managed.keySet()) {
-			Product product = managed.get(pid);
-			int cost = dist[product.dest];
+		while(!ppq.isEmpty()) {
+			Product product = ppq.peek();
 			
-			/*
-			 * 취소된 상품이거나 
-			 * dest에 도달하지 못하거나(cost == INF)
-			 * revenue가 cost보다 작다면(이득을 얻을 수 없다면)
-			 * 판매 불가 상품 
-			 */
-			if(removed.contains(pid) || cost == INF || product.revenue < cost)
-				continue;
-			product = new Product(product.id, product.revenue, product.dest, dist[product.dest]);
-//			System.out.println(product);
-			if(product.isHigher(best)) {
-				best = product;
+			if(product.profit < 0)
+				break;
+			
+			ppq.poll();
+			if(!removed.contains(product.id)) {
+				System.out.println(product.id);
+				return;
 			}
 		}
 		
-		if(best == WORST_PRODUCT) {
-			System.out.println(-1);
-		}else {
-			System.out.println(best.id);
-			removed.add(best.id);
-		}
+		System.out.println(-1);
 		
 	}
 	
 	static void changeStart() {
 		start = Integer.parseInt(st.nextToken());
 		dijkstra(start);
+		
+		ArrayList<Product> temp = new ArrayList<>();
+		while(!ppq.isEmpty()) {
+			temp.add(ppq.poll());
+		}
+		
+		for(Product p : temp) {
+			ppq.add(new Product(p.id, p.revenue, p.dest,dist[p.dest]));
+		}
 	}
 	
 	public static void main(String[] args) throws IOException{
@@ -192,7 +194,10 @@ public class Main {
 			if(cmd == 100) {
 				init();
 			}else if(cmd == 200) {
-				createProduct();
+				int id = Integer.parseInt(st.nextToken());
+				int revenue = Integer.parseInt(st.nextToken());
+				int dest = Integer.parseInt(st.nextToken());
+				createProduct(id, revenue, dest);
 			}else if(cmd == 300) {
 				cancelProduct();
 			}else if(cmd == 400) {
