@@ -203,34 +203,34 @@ private static void attack() {
         int curR = target.r;
         int curC = target.c;
         
-        int previous = prev[curR][curC];
-        int prevR = previous / M;
-        int prevC = previous % M;
-        while(!(prevR == attacker.r && prevC == attacker.c)) {
-        	curR = prevR;
-        	curC = prevC;
-        	Tower tower = map[curR][curC];
-        	tower.power -= attacker.power / 2;
-        	tower.isRelevantWithAttack = true;
-            previous = prev[curR][curC];
-            prevR = previous / M;
-            prevC = previous % M;
-
-        }
-        
-//        while (curR != attacker.r && curC != attacker.c) {
-//            Tower tower = map[curR][curC];
-//            int previous = prev[curR][curC];
-//            int prevR = previous / M;
-//            int prevC = previous % M;
-//            if (tower.r != target.r && tower.c != target.c) {
-//                tower.power -= attacker.power / 2;
-//                tower.isRelevantWithAttack = true;
-//            }
+//        int previous = prev[curR][curC];
+//        int prevR = previous / M;
+//        int prevC = previous % M;
+//        while(!(prevR == attacker.r && prevC == attacker.c)) {
+//        	curR = prevR;
+//        	curC = prevC;
+//        	Tower tower = map[curR][curC];
+//        	tower.power -= attacker.power / 2;
+//        	tower.isRelevantWithAttack = true;
+//            previous = prev[curR][curC];
+//            prevR = previous / M;
+//            prevC = previous % M;
 //
-//            curR = prevR;
-//            curC = prevC;
 //        }
+        while (curR != attacker.r || curC != attacker.c) {
+            Tower tower = map[curR][curC];
+            int previous = prev[curR][curC];
+            int prevR = previous / M;
+            int prevC = previous % M;
+
+            if (tower.r != target.r || tower.c != target.c) {
+                tower.power -= attacker.power / 2;
+                tower.isRelevantWithAttack = true;
+            }
+
+            curR = prevR;
+            curC = prevC;
+        }
 
         target.power -= attacker.power;
         target.isRelevantWithAttack = true;
