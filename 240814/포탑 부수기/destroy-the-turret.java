@@ -67,20 +67,29 @@ public class Main {
         }
         public int compareTo(Tower t){
             // 만약 공격력이 같다면
-            if(power == t.power){
-                // 만약 최근 공격한 턴 수가 같다면
-                if(lastAttack == t.lastAttack){
-                    // 열과 합이 같다면
-                    if(r+c == t.r+t.c){
-                        return t.c - c;
-                    }
-                    return (t.r + t.c) - (r+c);
-                }
-                // 최근 공격한 턴이 더 적은애를 선택
-                return lastAttack - t.lastAttack;
-            }
-            // 가장 우선 조건인 더 공격력이 작은 순으로 정렬
-            return power - t.power;
+        	
+        	if(power != t.power)
+        		return power - t.power;
+        	if(lastAttack != t.lastAttack)
+        		return t.lastAttack - lastAttack;
+        	if((r + c) != (t.r + t.c))
+        		return (t.r + t.c) - (r + c);
+        	return t.c - c;
+        	
+//            if(power == t.power){
+//                // 만약 최근 공격한 턴 수가 같다면
+//                if(lastAttack == t.lastAttack){
+//                    // 열과 합이 같다면
+//                    if(r+c == t.r+t.c){
+//                        return t.c - c;
+//                    }
+//                    return (t.r + t.c) - (r+c);
+//                }
+//                // 최근 공격한 턴이 더 적은애를 선택
+//                return  t.lastAttack - lastAttack;
+//            }
+//            // 가장 우선 조건인 더 공격력이 작은 순으로 정렬
+//            return power - t.power;
         }
     }
     static int N,M,K;
@@ -122,8 +131,6 @@ public class Main {
         for( k = 1; k <= K ; k++){
 
             boolean isEnd = setTowerAndAttacker();
-//            System.out.println("k: "+k);
-//            System.out.println("isEnd: "+isEnd);
             if(!isEnd) break;
 
             attack();
@@ -136,6 +143,7 @@ public class Main {
         ArrayList<Tower> list = new ArrayList<>();
         for(int i = 0; i < N; i++){
             for(int j = 0; j < M; j++){
+            	map[i][j].isRelevantWithAttack = false;
                 if(map[i][j].power > 0){
                     list.add(map[i][j]);
                 }
@@ -146,10 +154,6 @@ public class Main {
 
         Collections.sort(list);
 
-//        System.out.println("after sort list");
-//        for(Tower t : list){
-//            System.out.println(t.power);
-//        }
 
         attacker = list.get(0);
 
@@ -164,7 +168,7 @@ public class Main {
         return true;
     }
 
-    private static void attack() {
+private static void attack() {
     Queue<Tower> q = new LinkedList<>();
     boolean canAttackWithLaser = false;
     boolean[][] visited = new boolean[N][M];
@@ -198,21 +202,35 @@ public class Main {
     if (canAttackWithLaser) {
         int curR = target.r;
         int curC = target.c;
+        
+        int previous = prev[curR][curC];
+        int prevR = previous / M;
+        int prevC = previous % M;
+        while(!(prevR == attacker.r && prevC == attacker.c)) {
+        	curR = prevR;
+        	curC = prevC;
+        	Tower tower = map[curR][curC];
+        	tower.power -= attacker.power / 2;
+        	tower.isRelevantWithAttack = true;
+            previous = prev[curR][curC];
+            prevR = previous / M;
+            prevC = previous % M;
 
-        while (curR != attacker.r || curC != attacker.c) {
-            Tower tower = map[curR][curC];
-            int previous = prev[curR][curC];
-            int prevR = previous / M;
-            int prevC = previous % M;
-
-            if (tower.r != target.r || tower.c != target.c) {
-                tower.power -= attacker.power / 2;
-                tower.isRelevantWithAttack = true;
-            }
-
-            curR = prevR;
-            curC = prevC;
         }
+        
+//        while (curR != attacker.r && curC != attacker.c) {
+//            Tower tower = map[curR][curC];
+//            int previous = prev[curR][curC];
+//            int prevR = previous / M;
+//            int prevC = previous % M;
+//            if (tower.r != target.r && tower.c != target.c) {
+//                tower.power -= attacker.power / 2;
+//                tower.isRelevantWithAttack = true;
+//            }
+//
+//            curR = prevR;
+//            curC = prevC;
+//        }
 
         target.power -= attacker.power;
         target.isRelevantWithAttack = true;
@@ -226,8 +244,10 @@ public class Main {
             map[nr][nc].isRelevantWithAttack = true;
             map[nr][nc].power -= (attacker.power / 2);
         }
+        target.isRelevantWithAttack = true;
         target.power -= attacker.power;
     }
+//    printMap();
 }
 
     private static void repair(){
