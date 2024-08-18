@@ -52,6 +52,31 @@ public class Main {
 		
 	}
 	
+	static int move(int cur, int limit) {
+		Queue<Integer> q = new LinkedList<>();
+		q.add(cur);
+		
+		int cnt = 0;
+		while(!q.isEmpty()) {
+			cur = q.poll();
+			if(cur == END || cnt == limit) {
+				return cur;
+			}
+			int nxt = cur + 1;
+			if(cnt == 0 && (cur == 5 || cur == 10 || cur == 15))
+				nxt = cur + 17;
+			else if(cur == 24 || cur == 28 || cur == 34)
+				nxt = 36;
+			else if(cur == 38)
+				nxt = 20;
+			cnt++;
+			q.add(nxt);
+		}
+		
+		return cur;
+		
+	}
+	
 	static boolean overlapped(int idx, int nxtPos) {
 		if(nxtPos == END)
 			return false;
@@ -69,26 +94,25 @@ public class Main {
 		return false;
 	}
 	
-	static void solve(int cnt, int sum) {
-		if(cnt == 10) {
+	static void solve(int cur, int sum) {
+		if(cur == 10) {
 //			System.out.printf("%s: %d\n", Arrays.toString(horses), sum);
 			ans = Math.max(ans, sum);
 			return;
 		}
 		
 		for(int i = 0; i < 4; i++) {
-			int cur = horses[i];
-			if(cur == END)
+			int pos = horses[i];
+			if(pos == END)
 				continue;
 			
-			int nxt = move(cur, 0, counts[cnt]);
+//			int nxt = move(cur, 0, counts[cnt]);
+			int nxt = move(pos, counts[cur]);
 			if(!overlapped(i, nxt)) {
 				horses[i] = nxt;
-				solve(cnt + 1, sum + map[nxt]);
-				horses[i] = cur;
+				solve(cur + 1, sum + map[nxt]);
+				horses[i] = pos;
 			}
-			
-			horses[i] = cur;
 		}
 	}
     public static void main(String[] args) throws IOException{
