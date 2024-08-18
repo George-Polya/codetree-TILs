@@ -34,34 +34,21 @@ public class Main {
 	
 	static int END = 21;
 
-
 	
-	static boolean check(int idx, int nxt) {
-		if(nxt == END)
-			return false;
+	static int move(int cur, int count, int limit) {
 		
-		for(int i = 0; i < 4; i++) {
-			if(i == idx)
-				continue;
-			if(horses[i] == nxt)
-				return true;
-		}
-		return false;
-	}
-	
-	static int move(int cur, int count) {
-		
-		if(cur == END || count == 0)
+		if(cur == END || count == limit)
 			return cur;
 		
 		int nxt = cur + 1;
-		
-		if(cur == 24 || cur == 28 || cur == 34)
+		if(count == 0 && (cur == 5 || cur == 10 || cur == 15))
+			nxt = cur + 17;
+		else if(cur == 24 || cur == 28 || cur == 34)
 			nxt = 36;
 		else if(cur == 38)
 			nxt = 20;
 		
-		return move(nxt, count-1);
+		return move(nxt, count+1, limit);
 		
 	}
 	
@@ -91,16 +78,10 @@ public class Main {
 		
 		for(int i = 0; i < 4; i++) {
 			int cur = horses[i];
-			int nxt = -1;
 			if(cur == END)
 				continue;
 			
-			if(cur != 0 && (cur == 5 || cur == 10 || cur == 15)) {
-				nxt = move(cur + 17, counts[cnt] - 1);
-			}else {
-				nxt = move(cur, counts[cnt]);
-			}
-			
+			int nxt = move(cur, 0, counts[cnt]);
 			if(!overlapped(i, nxt)) {
 				horses[i] = nxt;
 				solve(cnt + 1, sum + map[nxt]);
@@ -118,12 +99,6 @@ public class Main {
         }
         
         init();
-        
-//       System.out.println(move(0,0,horses[0],2));
-//       System.out.println(Arrays.toString(horses));
-//       
-//       System.out.println(move(0,1,horses[1],1));
-//       System.out.println(Arrays.toString(horses));
         
         solve(0,0);
         System.out.println(ans);
