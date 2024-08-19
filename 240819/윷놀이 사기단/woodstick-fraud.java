@@ -39,7 +39,8 @@ public class Main {
 		
 		if(cur == END || count == limit)
 			return cur;
-		
+		if(cur + limit <= 21)
+			return cur + limit;
 		int nxt = cur + 1;
 		if(count == 0 && (cur == 5 || cur == 10 || cur == 15))
 			nxt = cur + 17;
