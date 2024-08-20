@@ -122,7 +122,7 @@ public class Main {
 			if(this.isSame(bestSanta.y, bestSanta.x)) {
 				int id = bestSanta.id;
 				scores[id] += c; // 해당 산타는 c만큼의 점수 획득 
-				santas[id].stun += 2;
+				santas[id].stun = 2;
 				
 				// 해당 방향으로 c만큼 밀려남 
 				push(id,nxtPos.dir, c);
@@ -284,7 +284,7 @@ public class Main {
 			if(this.isSame(rudolf.y, rudolf.x)) {
 				scores[id] += d;
 				
-				santas[id].stun += 2;
+				santas[id].stun = 2;
 				// 자신이 이동해온 반대 방향으로 D칸 밀려난다 
 				push(id, (nxtPos.dir + 4) % 8, d);
 				return;
