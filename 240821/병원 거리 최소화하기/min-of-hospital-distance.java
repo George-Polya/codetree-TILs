@@ -64,7 +64,7 @@ public class Main {
 //		selected[cnt] = 0;
 		
 		
-		solve(cur + 1, cnt);
+//		solve(cur + 1, cnt);
     	
     }
     
