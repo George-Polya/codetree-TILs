@@ -51,20 +51,20 @@ public class Main {
     		return;
     	}
     	
-    	for(int i = cur; i < hospitals.size(); i++) {
-    		selected[cnt] = hospitals.get(i);
-    		solve(cur + 1, cnt + 1);
-    	}
+//    	for(int i = cur; i < hospitals.size(); i++) {
+//    		selected[cnt] = hospitals.get(i);
+//    		solve(cur + 1, cnt + 1);
+//    	}
     	
-//    	if(cur == hospitals.size())
-//    		return;
-//    	
-//    	selected[cnt] = hospitals.get(cur);
-//		solve(cur + 1, cnt + 1);
-//		selected[cnt] = 0;
-//		
-//		
-//		solve(cur + 1, cnt);
+    	if(cur == hospitals.size())
+    		return;
+    	
+    	selected[cnt] = hospitals.get(cur);
+		solve(cur + 1, cnt + 1);
+		selected[cnt] = 0;
+		
+		
+		solve(cur + 1, cnt);
     	
     }
     
