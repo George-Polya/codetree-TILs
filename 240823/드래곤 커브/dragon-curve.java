@@ -12,7 +12,7 @@ public class Main {
 	static int dx[] = {1,0,-1,0};
 	
 	
-	static void makeDragon(int y,int x, int d, int level) {
+	static void makeDragonCurve(int y,int x, int d, int level) {
 		ArrayDeque<Integer> deq = new ArrayDeque<>();
 		board[y][x] = true;
 		y = y + dy[d];
@@ -20,8 +20,9 @@ public class Main {
 		board[y][x] = true;
 		deq.addFirst(d);
 		
+		Queue<Integer> q = new LinkedList<>();
 		for(int l = 1; l<=level; l++) {
-			Queue<Integer> q = new LinkedList<>(deq);
+			q.addAll(deq);
 			while(!q.isEmpty()) {
 				int dir = q.poll();
 				dir = (dir + 1) % 4;
@@ -44,7 +45,7 @@ public class Main {
 			int x = Integer.parseInt(st.nextToken());
 			int d = Integer.parseInt(st.nextToken());
 			int g = Integer.parseInt(st.nextToken());
-			makeDragon(y,x,d,g);
+			makeDragonCurve(y,x,d,g);
 		}
 		int ans = 0;
 		for(int y = 1; y<=MAX_R; y++) {
