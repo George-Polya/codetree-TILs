@@ -15,29 +15,54 @@ public class Main {
 			}
 		}
 		
+		/*
+		 * 이동 로직 
+		 * 처음 시작은 중심좌표 
+		 * 처음 이동방향은 왼쪽(dir = 0)
+		 * 처음 이동횟수는 1
+		 * 현재 이동방향이 1이거나 3일때 다음 이동의 이동횟수가 증가함 
+		 * 
+		 * 이동횟수만큼 이동이 끝난 후 dir 업데이트 
+		 * 
+		 * 좌측 최상단에 도달할때까지 반복 
+		 */
 		int y = n/2;
 		int x = n/2;
 		int moveNum = 1;
 		int dir = 0;
 		int cnt = 1;
+		
 		while(true) {
 			for(int num = 1; num<= moveNum; num++) {
 //				System.out.println("-----");
+				
+				// 이동 
 				y = y + dy[dir];
 				x = x + dx[dir];
 				
-				if(OOB(y,x))
+				if(OOB(y,x)) // 좌측 최상단에 도달하면 이동 중지 
 					break;
+				
+				
 //				map[y][x] = cnt++;
 //				System.out.printf("(%d, %d)\n", y,x);
+				
+				// 이동한 위치에서 먼지 이동 
 				sweep(y,x,dir);
+				
 //				printBoard(board);
 			}
+			
+			// 좌측 최상단에 도달했으면 중지 
 			if(OOB(y,x))
 				break;
 			
+			
+			// 현재 이동방향이 1이거나 3일때 다음 이동의 이동횟수가 증가함 
 			if(dir == 1 || dir == 3)
 				moveNum++;
+			
+			// 이동방향 업데이트 
 			dir = (dir + 1) % 4;
 		}
 		
@@ -99,35 +124,51 @@ public class Main {
 	};
 	
 	static int ans;
+	
+	/*
+	 * 먼지의 이동 
+	 * 1. 현재위치의 먼지의 양을 바탕으로 5x5에 각각 이동하게 되는 먼지의 양 구하기 
+	 * 2. nxn 격자에 5x5먼지의 양 더해주기 
+	 *  2.1 a% 계산
+	 *  2.2 격자밖을 벗어나면 ans 업데이트 
+	 * 3. a%에 해당하는 격자 업데이트 
+	 *  3.1 a%에 해당하는 격자가 OOB이면 ans 업데이트 
+	 */
 	static void sweep(int cy, int cx, int dir) {
-		int value = board[cy][cx];
-		int swept[][] = makeSwept(value,sweepers[dir]);
-//		printBoard(swept);
+		int value = board[cy][cx]; // cur에 해당하는 먼지의 양 
 		
-		board[cy][cx] = 0;
+		// 이동방향대로 이동했을때 5x5격자에 존재하는 먼지의 양 
+//		int swept[][] = makeSwept(value,sweepers[dir]);
+//		printBoard(swept);
+		int a = value;
+		board[cy][cx] = 0; // 현재 격자의 먼지는 모두 없어짐 
 		
 		for(int y = cy-2; y<= cy+2; y++) {
 			for(int x=cx-2; x<=cx+2; x++) {
-				int sy = y - (cy-2);
+				int sy = y - (cy-2); 
 				int sx = x - (cx-2);
-				value -= swept[sy][sx];
-
+//				value -= swept[sy][sx]; // a%에 해당하는 먼지 양 계산  
+				int plus = (value * sweepers[dir][sy][sx]) / 100;
+				a -= plus;
+				
 				if(OOB(y,x)) {
-					ans += swept[sy][sx];
+//					ans += swept[sy][sx]; // 격자 밖을 벗어나면 ans 업데이트
+					ans += plus;
 					continue;
 				}
 				
-				board[y][x] += swept[sy][sx];
+//				board[y][x] += swept[sy][sx]; // 이동한 먼지가 더해짐
+				board[y][x] += plus;
 			}
 		}
 		
 		int ny = cy + dy[dir];
 		int nx = cx + dx[dir];
 		if(OOB(ny,nx)) {
-			ans += value;
+			ans += a;
 			return;
 		}
-		board[ny][nx] += value;
+		board[ny][nx] += a;
 	}
 	
 	static int[][] makeSwept(int value, int sweeper[][]){
