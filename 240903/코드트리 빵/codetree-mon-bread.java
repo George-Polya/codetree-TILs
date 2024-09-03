@@ -64,61 +64,15 @@ public class Main {
         }
         System.out.println(t);
     }
-    
-    static Tuple findBestCamp(int idx) {
-    	Pair store = stores[idx];
-    	
-    	bfs(store.y, store.x);
-    	
-    	Tuple best = NO_CAMP;
-    	for(Pair pair : basecamps) {
-    		if(board[pair.y][pair.x] == 1) // 이미 점유된 캠프는 선택하지 않음 
-    			continue;
-    		Tuple camp = new Tuple(pair.y, pair.x, dist[pair.y][pair.x]);
-    		if(camp.isHigher(best))
-    			best = camp;
-    	}
-    	
-    	return best;
-    }
-    
-    static void gotoBasecamp(int idx) {
-    	Tuple bestCamp = findBestCamp(idx);
-    	
-    	people[idx] = new Pair(bestCamp.y, bestCamp.x);
-    	board[bestCamp.y][bestCamp.x] = 1;
-    }
-    
-    static class Tuple{
-    	int y, x, dist;
-    	public Tuple(int y,int x, int dist) {
-    		this.y = y;
-    		this.x = x;
-    		this.dist = dist;
-    	}
-    	
-    	public boolean isHigher(Tuple o) {
-    		if(dist != o.dist)
-    			return dist < o.dist;
-    		if(y != o.y)
-    			return y < o.y;
-    		return x < o.x;
-    	}
-    }
-    
-    static Tuple NO_CAMP = new Tuple(16,16,INT_MAX);
-    
-    static void disableStores() {
+
+    static boolean end() {
     	for(int i = 1; i<=m; i++) {
-//    		Pair person = people[i];
-    		Pair store = stores[i];
-    		
-    		if(board[store.y][store.x] == 0 && store.isSame(people[i]))
-    			board[store.y][store.x] = 1;
+    		if(!people[i].isSame(stores[i]))
+    			return false;
     	}
+    	return true;
     }
-    
-    
+
     /*
      * 격자 안의 모두가 가고 자신이 가고 싶어하는 편의점을 향해 최단거리로 이동 
      */
@@ -141,6 +95,83 @@ public class Main {
     	// 문제에서 이런 경우는 절대 발생하지 않는다 하였음 
     	people[idx] = nxtPos;
     }
+
+    static Pair getNxtPos(int idx) {
+    	
+    	Pair store = stores[idx];
+    	
+    	bfs(store.y, store.x);
+    	
+    	Tuple best = NO_TUPLE;
+    	for(int dir = 0; dir < 4; dir++) {
+    		int ny = people[idx].y + dy[dir];
+    		int nx = people[idx].x + dx[dir];
+    		if(OOB(ny,nx) || board[ny][nx] != 0)
+    			continue;
+    		Tuple nxt = new Tuple(ny,nx,dist[ny][nx]);
+    		if(nxt.isHigher(best))
+    			best = nxt;
+    	}
+    	
+    	return new Pair(best.y, best.x);
+    }
+
+    static void disableStores() {
+    	for(int i = 1; i<=m; i++) {
+
+    		Pair store = stores[i];
+    		
+    		if(board[store.y][store.x] == 0 && store.isSame(people[i]))
+    			board[store.y][store.x] = 1;
+    	}
+    }
+
+    static void gotoBasecamp(int idx) {
+    	Tuple bestCamp = findBestCamp(idx);
+    	
+    	people[idx] = new Pair(bestCamp.y, bestCamp.x);
+    	board[bestCamp.y][bestCamp.x] = 1;
+    }
+
+    
+    static Tuple findBestCamp(int idx) {
+    	Pair store = stores[idx];
+    	
+    	bfs(store.y, store.x);
+    	
+    	Tuple best = NO_TUPLE;
+    	for(Pair pair : basecamps) {
+    		if(board[pair.y][pair.x] == 1) // 이미 점유된 캠프는 선택하지 않음 
+    			continue;
+    		Tuple camp = new Tuple(pair.y, pair.x, dist[pair.y][pair.x]);
+    		if(camp.isHigher(best))
+    			best = camp;
+    	}
+    	
+    	return best;
+    }
+    
+  
+    
+    static class Tuple{
+    	int y, x, dist;
+    	public Tuple(int y,int x, int dist) {
+    		this.y = y;
+    		this.x = x;
+    		this.dist = dist;
+    	}
+    	
+    	public boolean isHigher(Tuple o) {
+    		if(dist != o.dist)
+    			return dist < o.dist;
+    		if(y != o.y)
+    			return y < o.y;
+    		return x < o.x;
+    	}
+    }
+    
+    static Tuple NO_TUPLE = new Tuple(16,16,INT_MAX);
+    
     
     static void bfs(int sy,int sx) {
     	for(int y = 1; y<=n; y++) {
@@ -164,37 +195,7 @@ public class Main {
     		}
     	}
     }
-    
-    static Pair getNxtPos(int idx) {
-    	
-    	Pair store = stores[idx];
-    	
-    	bfs(store.y, store.x);
-    	
-    	Pair ret = null;
-    	int distance = INT_MAX;
-    	for(int dir = 0; dir < 4; dir++) {
-    		int ny = people[idx].y + dy[dir];
-    		int nx = people[idx].x + dx[dir];
-    		if(OOB(ny,nx) || board[ny][nx] != 0)
-    			continue;
-    		if(distance > dist[ny][nx]) {
-    			distance = dist[ny][nx];
-    			ret = new Pair(ny,nx);
-    		}
-    	}
-    	
-    	return ret;
-    }
-    
-    
-    static boolean end() {
-    	for(int i = 1; i<=m; i++) {
-    		if(!people[i].isSame(stores[i]))
-    			return false;
-    	}
-    	return true;
-    }
+
     
     static class Pair{
     	int y,x;
