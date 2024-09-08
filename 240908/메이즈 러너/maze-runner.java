@@ -180,15 +180,7 @@ public class Main {
 		}
 		
 		if(!OOB(exit.y, exit.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
-			
-			int y1 = exit.y - sy + 1;
-			int x1 = exit.x - sx + 1;
-			
-			int y2 = x1;
-			int x2 = size + 1 - y1;
-			
-			exit.y = y2 + sy - 1;
-			exit.x = x2 + sx - 1;
+			updatePos(exit, sy,sx,size);
 		}
 		
 		
@@ -197,17 +189,18 @@ public class Main {
 			if(p == EXITED)
 				continue;
 			if(!OOB(p.y, p.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
-				int y1 = p.y - sy + 1;
-				int x1 = p.x - sx + 1;
-				int y2 = x1;
-				int x2 = size + 1 - y1;
-				p.y = y2 + sy - 1;
-				p.x = x2 + sx - 1;
-				
+				updatePos(p, sy,sx,size);
 			}
 		}
-
-		
+	}
+	
+	static void updatePos(Pair pair, int sy,int sx, int size) {
+		int y1 = pair.y - sy + 1;
+		int x1 = pair.x - sx + 1;
+		int y2 = x1;
+		int x2 = size + 1 - y1;
+		pair.y = y2 + sy - 1;
+		pair.x = x2 + sx - 1;
 		
 	}
 	
