@@ -21,6 +21,16 @@ public class Main {
 		public boolean isSame(int y,int x) {
 			return this.y == y && this.x == x;
 		}
+		
+		public void update(int sy, int sx ,int size) {
+			int y1 = y - sy + 1;
+			int x1 = x - sx + 1;
+			int y2 = x1;
+			int x2 = size + 1 - y1;
+			
+			y = y2 + sy - 1;
+			x = x2 + sx - 1;
+		}
 	}
 	
 	static Pair EXITED = new Pair(-1,-1);
@@ -180,7 +190,7 @@ public class Main {
 		}
 		
 		if(!OOB(exit.y, exit.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
-			updatePos(exit, sy,sx,size);
+			exit.update(sy, sx, size);
 		}
 		
 		
@@ -189,20 +199,11 @@ public class Main {
 			if(p == EXITED)
 				continue;
 			if(!OOB(p.y, p.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
-				updatePos(p, sy,sx,size);
+				p.update(sy, sx, size);
 			}
 		}
 	}
 	
-	static void updatePos(Pair pair, int sy,int sx, int size) {
-		int y1 = pair.y - sy + 1;
-		int x1 = pair.x - sx + 1;
-		int y2 = x1;
-		int x2 = size + 1 - y1;
-		pair.y = y2 + sy - 1;
-		pair.x = x2 + sx - 1;
-		
-	}
 	
 	static Square findBestSquare() {
 		Square ret = WORST_SQUARE;
