@@ -179,7 +179,7 @@ public class Main {
 			}
 		}
 		
-		if(!OOB(exit.y, exit.x, sy - 1, sy + size, sx - 1, sx + size)) {
+		if(!OOB(exit.y, exit.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
 			
 			int y1 = exit.y - sy + 1;
 			int x1 = exit.x - sx + 1;
@@ -196,7 +196,7 @@ public class Main {
 			Pair p = people[i];
 			if(p == EXITED)
 				continue;
-			if(!OOB(p.y, p.x, sy - 1, sy + size, sx - 1, sx + size)) {
+			if(!OOB(p.y, p.x, sy - 1, sy + size - 1, sx - 1, sx + size - 1)) {
 				int y1 = p.y - sy + 1;
 				int x1 = p.x - sx + 1;
 				int y2 = x1;
