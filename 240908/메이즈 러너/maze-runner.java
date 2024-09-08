@@ -133,6 +133,8 @@ public class Main {
 	
 	static void rotate() {
 		Square best = findBestSquare();
+//		if(best == WORST_SQUARE)
+//			return;
 		
 //		System.out.println("bestSquare: "+best);
 		
@@ -158,9 +160,9 @@ public class Main {
 				
 				int y2 = x1;
 				int x2 = size + 1 - y1;
-				
-				idTemp[y2][x2] = idBoard[y][x];
-				wallTemp[y2][x2] = walls[y][x] > 0 ? walls[y][x] - 1 : 0; // 회전된 벽은 내구도가 깎임 
+//				System.out.printf("%d %d\n", y2,x2);
+//				idTemp[y2][x2] = idBoard[y][x];
+//				wallTemp[y2][x2] = walls[y][x] > 0 ? walls[y][x] - 1 : 0; // 회전된 벽은 내구도가 깎임 
 				
 			}
 		}
@@ -248,13 +250,13 @@ public class Main {
         idBoard[exit.y][exit.x] = (1<<0);
 //        printBoard(idBoard);
         for(int turn = 1; turn<=k; turn++) {
-        	if(exitedCnt == m)
-        		break;
 //        	System.out.println("-----");
 //        	System.out.println("turn: "+turn);
 //        	System.out.println("exit: "+exit);
         	// 모든 참가자들의 이동 
         	moveAll();
+        	if(exitedCnt == m)
+        		break;
 //        	System.out.println("after move");
 //        	printBoard(idBoard);
 //        	System.out.println("people: "+Arrays.toString(people));
