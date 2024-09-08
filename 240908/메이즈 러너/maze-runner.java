@@ -30,7 +30,7 @@ public class Main {
 	static int dx[] = {0,0,-1,1};
 	
 	static boolean OOB(int y,int x, int sy, int ey, int sx ,int ex) {
-		return y<=sy || y>ey || x<=sx || x>ex;
+		return y<=sy || y>ey || x<=sx || x > ex;
 	}
 	
 	static void printBoard(int board[][]) {
@@ -179,7 +179,7 @@ public class Main {
 			}
 		}
 		
-		if(!OOB(exit.y, exit.x, sy, sy + size, sx, sx + size)) {
+		if(!OOB(exit.y, exit.x, sy - 1, sy + size, sx - 1, sx + size)) {
 			
 			int y1 = exit.y - sy + 1;
 			int x1 = exit.x - sx + 1;
@@ -196,7 +196,7 @@ public class Main {
 			Pair p = people[i];
 			if(p == EXITED)
 				continue;
-			if(!OOB(p.y, p.x, sy, sy + size, sx, sx + size)) {
+			if(!OOB(p.y, p.x, sy - 1, sy + size, sx - 1, sx + size)) {
 				int y1 = p.y - sy + 1;
 				int x1 = p.x - sx + 1;
 				int y2 = x1;
