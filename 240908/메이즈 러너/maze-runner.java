@@ -161,8 +161,8 @@ public class Main {
 				int y2 = x1;
 				int x2 = size + 1 - y1;
 //				System.out.printf("%d %d\n", y2,x2);
-//				idTemp[y2][x2] = idBoard[y][x];
-//				wallTemp[y2][x2] = walls[y][x] > 0 ? walls[y][x] - 1 : 0; // 회전된 벽은 내구도가 깎임 
+				idTemp[y2][x2] = idBoard[y][x];
+				wallTemp[y2][x2] = walls[y][x] > 0 ? walls[y][x] - 1 : 0; // 회전된 벽은 내구도가 깎임 
 				
 			}
 		}
