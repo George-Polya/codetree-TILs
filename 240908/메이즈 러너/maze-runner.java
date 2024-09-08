@@ -29,8 +29,8 @@ public class Main {
 	static int dy[] = {-1,1,0,0};
 	static int dx[] = {0,0,-1,1};
 	
-	static boolean OOB(int y,int x) {
-		return y<=0 || y>n || x<=0 || x>n;
+	static boolean OOB(int y,int x, int sy, int ey, int sx ,int ex) {
+		return y<=sy || y>ey || x<=sx || x>ex;
 	}
 	
 	static void printBoard(int board[][]) {
@@ -94,7 +94,7 @@ public class Main {
 		for(int dir = 0; dir < 4; dir++) {
 			int ny = y + dy[dir];
 			int nx = x + dx[dir];
-			if(OOB(ny,nx) || walls[ny][nx] != 0)
+			if(OOB(ny,nx, 0,n,0,n) || walls[ny][nx] != 0)
 				continue;
 			int dist = getDistance(ny,nx, exit.y, exit.x);
 			if(best > dist) {
@@ -155,7 +155,6 @@ public class Main {
 		 *  1.3 idBoard회전에 따른 people업데이트
 		 *  1.4 idBoard회전에 따른 exit업데이트 
 		 */
-		int idTemp[][] = new int[size + 1][size+1];
 		int wallTemp[][] = new int[size + 1][size + 1];
 		for(int y=sy; y<=sy+size-1;y++) {
 			for(int x=sx; x<=sx+size-1; x++) {
@@ -180,7 +179,8 @@ public class Main {
 			}
 		}
 		
-		if(sy <= exit.y && exit.y <= sy + size - 1 && sx <= exit.x && exit.x <= sx + size - 1) {
+		if(!OOB(exit.y, exit.x, sy, sy + size, sx, sx + size)) {
+			
 			int y1 = exit.y - sy + 1;
 			int x1 = exit.x - sx + 1;
 			
@@ -191,39 +191,22 @@ public class Main {
 			exit.x = x2 + sx - 1;
 		}
 		
+		
 		for(int i = 1; i<=m; i++) {
 			Pair p = people[i];
 			if(p == EXITED)
 				continue;
-			if(sy <= p.y && p.y <= sy + size - 1 && sx <= p.x && p.x <= sx + size - 1) {
+			if(!OOB(p.y, p.x, sy, sy + size, sx, sx + size)) {
 				int y1 = p.y - sy + 1;
 				int x1 = p.x - sx + 1;
 				int y2 = x1;
 				int x2 = size + 1 - y1;
 				p.y = y2 + sy - 1;
 				p.x = x2 + sx - 1;
+				
 			}
 		}
-		
-//		for(int y=1; y<=size; y++) {
-//			for(int x=1; x<=size;x++) {
-//				int y3 = y + sy - 1;
-//				int x3 = x + sx - 1;
-//				idBoard[y3][x3] = idTemp[y][x];
-//				walls[y3][x3] = wallTemp[y][x];
-//				
-//				int bit = 0;
-//				if( (idBoard[y3][x3] & (1<<bit) )!= 0 )
-//					exit = new Pair(y3,x3);
-//				
-//				for(bit = 1; bit <= m; bit++) {
-//					if( (idBoard[y3][x3] & (1<<bit) )!= 0  && people[bit] != EXITED) {
-//						people[bit] = new Pair(y3,x3);
-//					}
-//				}
-//				
-//			}
-//		}
+
 		
 		
 	}
