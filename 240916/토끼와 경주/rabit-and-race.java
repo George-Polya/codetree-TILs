@@ -71,7 +71,7 @@ public class Main {
         rabbits.add(rabbit);
     }
 
-    public static int total;
+    public static long total;
     // 200 경주 진행
     public static void play(int K, int S) {
         Set<Rabbit> choosed = new HashSet<>();
