@@ -19,7 +19,7 @@ public class Main {
 		}
 	}
 	
-	static int scores[];
+	static long scores[];
 	static ArrayList<Rabbit> rabbits;
 	static Map<Integer, Integer> pid2Idx;
 	static void init() {
@@ -43,7 +43,7 @@ public class Main {
 		
 		rabbits = new ArrayList<>();
 		pid2Idx = new HashMap<>();
-		scores = new int[p];
+		scores = new long[p];
 		
 		for(int idx = 0; idx < p; idx++) {
 			int pid = Integer.parseInt(st.nextToken());
@@ -122,7 +122,7 @@ public class Main {
 		return ret;
 	}
 	
-	static int total;
+	static long total;
 	
 	static void race() {
 		int k = Integer.parseInt(st.nextToken());
@@ -177,8 +177,8 @@ public class Main {
 		Rabbit rabbit = rabbits.get(idx);
 		rabbit.d *= l;
 	}
-	static int bestScore() {
-		int ans = Integer.MIN_VALUE;
+	static long bestScore() {
+		long ans = Long.MIN_VALUE;
 		for(int i = 0; i < p; i++) {
 			ans = Math.max(ans, scores[i]);
 		}
