@@ -162,8 +162,6 @@ public class Main {
 		}
 		
 
-//		System.out.println("peek: "+pq2.peek());
-		pq2.addAll(pq1);
 		int pid = pq2.peek().pid;
 		int idx = pid2Idx.get(pid);
 		scores[idx] += s;
@@ -186,6 +184,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws IOException{
+		System.setIn(new FileInputStream("./input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		q = Integer.parseInt(br.readLine());
 		
