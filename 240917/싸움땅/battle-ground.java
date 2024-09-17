@@ -34,6 +34,7 @@ public class Main {
 		}
 		
 		private Tuple getNxtPos() {
+			int dir = this.dir;
 			int ny = y + dy[dir];
 			int nx = x + dx[dir];
 			if(OOB(ny,nx)) {
@@ -88,6 +89,7 @@ public class Main {
 			
 			y = nxt.y;
 			x = nxt.x; 
+			dir = nxt.dir;
 			
 			if(idBoard[nxt.y][nxt.x] == 0) { // 다음 칸에 다른 플레이어가 없음
 				// 이동 
