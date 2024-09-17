@@ -75,7 +75,7 @@ public class Main {
 			
 			idBoard[y][x] = id;
 			// 가장 쎈 총을 가져감 
-//			board[y][x].add(gun);
+			board[y][x].add(gun);
 			gun = board[y][x].poll();
 		}
 		
