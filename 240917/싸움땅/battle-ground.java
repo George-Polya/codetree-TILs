@@ -76,8 +76,9 @@ public class Main {
 			
 			idBoard[y][x] = id;
 			// 가장 쎈 총을 가져감 
-			board[y][x].add(gun);
-			gun = board[y][x].poll();
+//			board[y][x].add(gun);
+			if(!board[y][x].isEmpty())
+				gun = board[y][x].poll();
 		}
 		
 		public void move() {
@@ -85,17 +86,16 @@ public class Main {
 			Tuple nxt = getNxtPos();
 			idBoard[y][x] = 0; // 이전 위치에서 id 제거 
 			
+			y = nxt.y;
+			x = nxt.x; 
+			
 			if(idBoard[nxt.y][nxt.x] == 0) { // 다음 칸에 다른 플레이어가 없음
 				// 이동 
-				y = nxt.y;
-				x = nxt.x; 
 				idBoard[y][x] = id;
 				board[y][x].add(gun); // 자신의 총을 내려놓고(총이 없으면 0을 내려놓음)  
 				gun = board[y][x].poll(); // 가장 쎈 총 가져감 
 			}else { // 다음 칸에 다른 플레이어가 있음 
 				// 싸워야함 
-				y = nxt.y;
-				x = nxt.x; 
 
 				Player other = players[idBoard[y][x]]; // 다른 플레이어 
 				if(this.isStronger(other)) { // 이긴 경우 
