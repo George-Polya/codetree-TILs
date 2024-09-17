@@ -61,15 +61,16 @@ public class Main {
 			gun = 0; // 총을 내려놓았으니 0이 됨 
 			
 			for(int i = 0; i < 4; i++) {
-				dir = (dir + i) % 4;
-				int ny = y + dy[dir];
-				int nx = x + dx[dir];
+				int ndir = (dir + i) % 4;
+				int ny = y + dy[ndir];
+				int nx = x + dx[ndir];
 				
 				if(OOB(ny,nx) || idBoard[ny][nx] != 0) // 다음 위치가 격자밖이거나 다른 플레이어가 있으면 
 					continue; // 오른쪽으로 90도 회전
 				// 가능한 순간 이동하고 반복문 break 
 				y = ny;
 				x = nx;
+				dir = ndir;
 				break;
 			}
 			
@@ -83,18 +84,19 @@ public class Main {
 			// 다음 칸 (방향이 바뀔 수 있음)
 			Tuple nxt = getNxtPos();
 			idBoard[y][x] = 0; // 이전 위치에서 id 제거 
-			y = nxt.y;
-			x = nxt.x; 
 			
 			if(idBoard[nxt.y][nxt.x] == 0) { // 다음 칸에 다른 플레이어가 없음
-				
 				// 이동 
+				y = nxt.y;
+				x = nxt.x; 
 				idBoard[y][x] = id;
 				board[y][x].add(gun); // 자신의 총을 내려놓고(총이 없으면 0을 내려놓음)  
 				gun = board[y][x].poll(); // 가장 쎈 총 가져감 
 			}else { // 다음 칸에 다른 플레이어가 있음 
 				// 싸워야함 
-				
+				y = nxt.y;
+				x = nxt.x; 
+
 				Player other = players[idBoard[y][x]]; // 다른 플레이어 
 				if(this.isStronger(other)) { // 이긴 경우 
 					
@@ -131,8 +133,8 @@ public class Main {
 					// 승자 
 					idBoard[other.y][other.x] = other.id;
 					
-					board[y][x].add(other.gun);
-					other.gun = board[y][x].poll();
+					board[other.y][other.x].add(other.gun);
+					other.gun = board[other.y][other.x].poll();
 					
 				}
 				
