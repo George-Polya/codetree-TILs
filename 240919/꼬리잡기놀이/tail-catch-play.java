@@ -172,7 +172,7 @@ public class Main {
 	
 	static Ball findPitchPos(int turn) {
 		int mod = (turn % n ) == 0 ? n : turn % n;
-		int dir = (turn % n ) == 0 ? (turn / n ) % 4 - 1 : (turn / n) % 4;
+		int dir = (turn % n ) == 0 ? (turn / n -1) % 4 : (turn / n) % 4;
 		if(dir == 0)
 			return new Ball(mod,0,dir);
 		else if(dir == 1)
