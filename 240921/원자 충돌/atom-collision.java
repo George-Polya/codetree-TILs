@@ -9,7 +9,14 @@ public class Main {
         m = Integer.parseInt(st.nextToken());
         k = Integer.parseInt(st.nextToken());
         
-        board = new int[n+1][n+1];
+        board = new ArrayList[n+1][n+1];
+        nxtBoard = new ArrayList[n+1][n+1];
+        for(int y=1; y<=n; y++) {
+        	for(int x=1; x<=n; x++) {
+        		board[y][x] = new ArrayList<>();
+        		nxtBoard[y][x] = new ArrayList<>();
+        	}
+        }
         for(int i = 0; i<m;i++) {
         	st = new StringTokenizer(br.readLine());
         	int y = Integer.parseInt(st.nextToken());
@@ -17,16 +24,13 @@ public class Main {
         	int mass = Integer.parseInt(st.nextToken());
         	int speed = Integer.parseInt(st.nextToken());
         	int dir = Integer.parseInt(st.nextToken());
-        	Atom atom = new Atom(y,x,mass,speed, dir);
-        	atoms.add(atom);
-        	board[y][x] += 1;
+        	Atom atom = new Atom(mass,speed, dir);
+        	board[y][x].add(atom);
         }
         
-//        printBoard(board);
         for(int turn = 1; turn<=k; turn++) {
 //        	System.out.println("-----");
 //        	System.out.println("turn: "+turn);
-        	
         	moveAll();
         	
         	fusionAll();
@@ -34,10 +38,13 @@ public class Main {
         }
         
         int ans = 0;
-        for(Atom atom : atoms) {
-        	ans += atom.mass;
+        for(int y=1; y<=n; y++) {
+        	for(int x=1; x<=n; x++) {
+        		for(Atom atom : board[y][x]) {
+        			ans += atom.mass;
+        		}
+        	}
         }
-        		
         System.out.println(ans);
     }
     
@@ -45,39 +52,31 @@ public class Main {
 		int massSum = 0;
 		int speedSum = 0;
 		
-		int size = atoms.size();
-		List<Integer> dirs = new ArrayList<>();
-		for(int i = size - 1; i>=0;i--) {
-			Atom atom = atoms.get(i);
-			if(atom.isSame(y,x)) {
-				massSum += atom.mass;
-				speedSum += atom.speed;
-				dirs.add(atom.dir);
-				atoms.remove(i);
-			}
+		boolean flag = check(board[y][x]);
+		int size = board[y][x].size();
+		for(Atom atom : board[y][x]) {
+			massSum += atom.mass;
+			speedSum += atom.speed;
 		}
 		
-		if(dirs.isEmpty())
+		int mass = massSum / 5;
+		board[y][x].clear();
+		if(mass == 0) {
 			return;
-    	boolean flag = check(dirs);
-    	int mass = massSum / 5;
-    	if(mass == 0) {
-    		board[y][x] = 0;
-    		return;
-    	}
-    	int speed = speedSum / dirs.size();
-    	board[y][x] = 4;
-    	for(int d = flag ? 0 : 1 ; d<8; d+=2) {
-    		Atom atom = new Atom(y,x,mass,speed, d);
-    		atoms.add(atom);
-    	}
+		}
+		
+		int speed = speedSum / size;
+		for(int dir = flag ? 0 : 1; dir <8; dir+=2) {
+			board[y][x].add(new Atom(mass,speed, dir));
+		}
+		
     }
     
-    static boolean check(List<Integer> dirs) {
-    	int dir = dirs.get(0);
+    static boolean check(List<Atom> atoms) {
+    	int dir = atoms.get(0).dir;
     	
-		for(int i = 1; i< dirs.size(); i++) {
-			int d = dirs.get(i);
+		for(int i = 1; i< atoms.size(); i++) {
+			int d = atoms.get(i).dir;
 			if((dir % 2 == 0 && d % 2 == 1) || (dir %2 ==1 && d % 2 ==0))
 				return false;
 		}
@@ -89,17 +88,19 @@ public class Main {
     static void fusionAll() {
     	for(int y=1; y<=n; y++) {
     		for(int x=1; x<=n; x++) {
-    			if(board[y][x] >= 2) {
+    			if(board[y][x].size() >= 2) {
     				fusion(y,x);
     			}
     		}
     	}
+    	
+//    	System.out.println("after fusion");
+//    	printBoard(board);
+    	
     }
     static int n,m,k;
     static StringTokenizer st;
-//    static Atom atoms[];
-    static List<Atom> atoms = new ArrayList<>();
-    static int board[][], nxtBoard[][];
+    static ArrayList<Atom> board[][], nxtBoard[][];
     static int dy[] = {-1,-1,0,1,1,1,0,-1};
     static int dx[] = {0,1,1,1,0,-1,-1,-1};
     static boolean OOB(int y,int x) {
@@ -108,53 +109,57 @@ public class Main {
     
     
     static class Atom{
-    	int y,x,mass, speed, dir;
-    	public Atom(int y,int x, int mass, int speed, int dir) {
-    		this.y = y;
-    		this.x = x;
+    	int mass, speed, dir;
+    	public Atom(int mass, int speed, int dir) {
     		this.mass = mass;
     		this.speed = speed;
     		this.dir = dir;
     	}
-    	
-    	public String toString() {
-    		return y+" "+x;
-    	}
-    	
-    	public boolean isSame(int y,int x) {
-    		return this.y == y && this.x == x;
-    	}
-    	
-    	public void move() {
-    		int s = speed % n;
-    		int ny = y + dy[dir] * s;
-    		int nx = x + dx[dir] * s;
-//    		System.out.printf("/(%d %d), (%d %d)\n",y,x,ny,nx);
+    }
+    
+    static void move(int y,int x) {
+    	for(Atom atom : board[y][x]) {
+    		int dir = atom.dir;
+    		int speed = atom.speed;
+    		int ny = y + dy[dir] * (speed % n);
+    		int nx = x + dx[dir] * (speed % n);
+    		
+    		
     		ny = (ny - 1 + n) % n + 1;
     		nx = (nx - 1 + n) % n + 1;
-//    		System.out.printf("(%d %d), (%d %d)\n",y,x,ny,nx);
-    		board[y][x]--;
-    		y = ny;
-    		x = nx;
-    		board[y][x]++;
+    		nxtBoard[ny][nx].add(atom);
     	}
     }
     
     static void moveAll() {
-    	for(int i = 0; i < atoms.size();i++) {
-    		Atom atom = atoms.get(i);
-//    		System.out.println("atom: "+atom);
-    		atom.move();
+    	for(int y=1; y<=n; y++) {
+    		for(int x=1; x<=n; x++) {
+    			nxtBoard[y][x].clear();
+    		}
     	}
-//    	System.out.println("after move");
-//    	System.out.println(atoms);
-//    	printBoard(board);
-    }
-    
-    static void printBoard(int board[][]) {
     	for(int y= 1; y<=n; y++) {
     		for(int x=1; x<=n; x++) {
-    			System.out.printf("%3d", board[y][x]);
+    			
+    			if(!board[y][x].isEmpty())
+    				move(y,x);
+    		}
+    	}
+    	
+    	for(int y=1; y<=n; y++) {
+    		for(int x=1; x<=n; x++) {
+    			board[y][x] = (ArrayList)nxtBoard[y][x].clone();
+    		}
+    	}
+    	
+//    	System.out.println("after move");
+//    	printBoard(board);
+    	
+    }
+    
+    static void printBoard(List<Atom> board[][]) {
+    	for(int y= 1; y<=n; y++) {
+    		for(int x=1; x<=n; x++) {
+    			System.out.printf("%3d", board[y][x].size());
     		}
     		System.out.println();
     	}
