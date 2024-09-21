@@ -28,7 +28,7 @@ public class Main {
     		int y = Integer.parseInt(st.nextToken());
     		int x = Integer.parseInt(st.nextToken());
     		int age = Integer.parseInt(st.nextToken());
-    		board[y][x].add(new Virus(age));
+    		board[y][x].add(age);
     	}
     	
     	for(int turn = 1; turn<=k; turn++) {
@@ -75,9 +75,9 @@ public class Main {
     }
     
     static void breed(int y,int x) {
-    	for(Virus v : board[y][x]) {
+    	for(int age : board[y][x]) {
     		// 5의 배수의 나이를 가진 바이러스에게만 진행됨 
-    		if(v.age % 5 != 0)
+    		if(age % 5 != 0)
     			continue;
     		
     		for(int dir = 0; dir < 8; dir++) {
@@ -86,7 +86,7 @@ public class Main {
     			if(OOB(ny,nx))
     				continue;
     			
-    			board[ny][nx].add(new Virus(1));
+    			board[ny][nx].add(1);
     		}
     	}
     }
@@ -111,17 +111,16 @@ public class Main {
     
     
     static void eat(int y,int x) {
-    	ArrayList<Virus> list = board[y][x];
+    	ArrayList<Integer> list = board[y][x];
     	Collections.sort(list); // 나이가 어린 바이러스부터 양분 섭취 
-    	for(Virus v : list) {
+    	for(int age : list) {
     		// 죽은 바이러스가 양분이 되는걸 지금하면 죽어야하는 바이러스가 살게 되는 경우가 생길 수 있음
-    		if(food[y][x] < v.age) { 
-    			dead[y][x] += v.age/2;
+    		if(food[y][x] < age) { 
+    			dead[y][x] += age/2;
     			continue;
     		}
-    		food[y][x] -= v.age;
-    		v.age++;
-    		nxtBoard[y][x].add(v);
+    		food[y][x] -= age;
+    		nxtBoard[y][x].add(age+1);
     	}
     }
     
@@ -157,7 +156,7 @@ public class Main {
     static int n,m,k;
     static StringTokenizer st;
     static int food[][], plus[][], dead[][];
-    static ArrayList<Virus> board[][], nxtBoard[][];
+    static ArrayList<Integer> board[][], nxtBoard[][];
     
     static void printBoard(int board[][]) {
     	for(int y=1; y<=n; y++) {
@@ -168,25 +167,12 @@ public class Main {
     	}
     }
     
-    static void printBoard(ArrayList<Virus> board[][]) {
+    static void printBoard(ArrayList<Integer> board[][]) {
     	for(int y=1; y<=n; y++) {
     		for(int x=1; x<=n; x++) {
     			System.out.printf("%s", board[y][x]);
     		}
     		System.out.println();
-    	}
-    }
-    static class Virus implements Comparable<Virus>{
-    	int age;
-    	public Virus(int age) {
-    		this.age = age;
-    	}
-    	
-    	public int compareTo(Virus o) {
-    		return age - o.age;
-    	}
-    	public String toString() {
-    		return age+"";
     	}
     }
 }
