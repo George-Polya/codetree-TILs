@@ -211,6 +211,9 @@ public class Main {
     			// 도망자가 움직일때 술래와의 거리가 3이하인 도망자만 움직임
     			if(canMove(y,x))
     				move(y,x);
+    			else {
+    				nxtThief[y][x].addAll(thief[y][x]);
+    			}
     		}
     	}
     	
