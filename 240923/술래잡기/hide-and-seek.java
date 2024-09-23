@@ -188,6 +188,13 @@ public class Main {
     	return new Tuple(ny,nx,dir);
     }
     
+    static boolean canMove(int y,int x) {
+    	return getDistance(y,x) <= 3;
+    }
+    
+    static int getDistance(int y,int x) {
+    	return Math.abs(police.y - y) + Math.abs(police.x - x);
+    }
     
     
     static void moveThief() {
@@ -200,7 +207,10 @@ public class Main {
     		for(int x=1; x<=n; x++) {
     			if(thief[y][x].isEmpty())
     				continue;
-    			move(y,x);
+    			
+    			// 도망자가 움직일때 술래와의 거리가 3이하인 도망자만 움직임
+    			if(canMove(y,x))
+    				move(y,x);
     		}
     	}
     	
