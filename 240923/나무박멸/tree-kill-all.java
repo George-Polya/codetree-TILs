@@ -1,4 +1,3 @@
-package algostury;
 import java.util.*;
 import java.io.*;
 
