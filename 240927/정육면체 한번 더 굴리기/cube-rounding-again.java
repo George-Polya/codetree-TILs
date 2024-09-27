@@ -35,7 +35,7 @@ public class Main {
         	ans += score;
         	
         	// 방향 변경 
-        	dice.rotate();
+        	dice.dir = dice.rotate();
 //        	System.out.println("after rotate: "+dice.dir);
         	
         }
@@ -91,60 +91,55 @@ public class Main {
     		this.x = 1;
     		this.dir = 0;
     		this.top = 1;
-    		this.bottom = 7 - top;
+    		this.bottom = 6;
     		this.front = 2;
-    		this.back = 7 - front;
+    		this.back = 5;
     		this.right = 3;
-    		this.left = 7 - left;
+    		this.left = 4;
     	}
     	
     	public void move() {
     		Tuple nxt = getNxtPos(y,x,dir);
-    		roll(dir);
     		y = nxt.y;
     		x = nxt.x;
     		dir = nxt.dir;
+    		roll(dir);
     	}
     	
     	private void roll(int dir) {
-    		switch(dir) {
-    		case 0:{
+    		int temp = top;
+    		
+    		if(dir == 0) {
+    			top = left;
+    			left = bottom;
     			bottom = right;
-    			right = top;
-    			top = 7 - bottom;
-    			left = 7 - right;
-    			break;
-    		}
-    		case 1:{
+    			right = temp;
+    		}else if(dir == 1) {
+    			top = back;
+    			back = bottom;
     			bottom = front;
-    			front = top;
-    			top = 7 - bottom;
-    			back = 7 - front;
-    			break;
-    		}
-    		case 2:{
+    			front = temp;
+    		}else if(dir == 2) {
+    			top = right;
+    			right = bottom;
     			bottom = left;
-    			left = top;
-    			top = 7 -bottom;
-    			right = 7 - left;
-    			break;
-    		}
-    		case 3:
+    			left = temp;
+    		}else {
+    			top = front;
+    			front = bottom;
     			bottom = back;
-    			back = top;
-    			top = 7 - bottom;
-    			front = 7 - back;
-    			break;
+    			back = temp;
     		}
     	}
     	
-    	public void rotate() {
+    	public int rotate() {
     		int value = board[y][x];
     		if(bottom > value) {
-    			dir = (dir + 1) % 4;
+    			return (dir + 1) % 4;
     		}else if(bottom < value) {
-    			dir = (dir + 3) % 4;
+    			return (dir + 3) % 4;
     		}
+    		return dir;
     	}
     	
     	public void printState() {
