@@ -35,7 +35,7 @@ public class Main {
         	ans += score;
         	
         	// 방향 변경 
-        	dice.dir = dice.rotate();
+        	dice.rotate();
 //        	System.out.println("after rotate: "+dice.dir);
         	
         }
@@ -91,55 +91,61 @@ public class Main {
     		this.x = 1;
     		this.dir = 0;
     		this.top = 1;
-    		this.bottom = 6;
+    		this.bottom = 7 - top;
     		this.front = 2;
-    		this.back = 5;
+    		this.back = 7 - front;
     		this.right = 3;
-    		this.left = 4;
+    		this.left = 7 - right;
     	}
     	
     	public void move() {
     		Tuple nxt = getNxtPos(y,x,dir);
+    		
     		y = nxt.y;
     		x = nxt.x;
     		dir = nxt.dir;
-    		roll(dir);
+			roll(dir);
     	}
     	
     	private void roll(int dir) {
-    		int temp = top;
-    		
-    		if(dir == 0) {
-    			top = left;
-    			left = bottom;
+    		switch(dir) {
+    		case 0:{
     			bottom = right;
-    			right = temp;
-    		}else if(dir == 1) {
-    			top = back;
-    			back = bottom;
+    			right = top;
+    			top = 7 - bottom;
+    			left = 7 - right;
+    			break;
+    		}
+    		case 1:{
     			bottom = front;
-    			front = temp;
-    		}else if(dir == 2) {
-    			top = right;
-    			right = bottom;
+    			front = top;
+    			top = 7 - bottom;
+    			back = 7 - front;
+    			break;
+    		}
+    		case 2:{
     			bottom = left;
-    			left = temp;
-    		}else {
-    			top = front;
-    			front = bottom;
+    			left = top;
+    			top = 7 -bottom;
+    			right = 7 - left;
+    			break;
+    		}
+    		case 3:
     			bottom = back;
-    			back = temp;
+    			back = top;
+    			top = 7 - bottom;
+    			front = 7 - back;
+    			break;
     		}
     	}
     	
-    	public int rotate() {
+    	public void rotate() {
     		int value = board[y][x];
     		if(bottom > value) {
-    			return (dir + 1) % 4;
+    			dir = (dir + 1) % 4;
     		}else if(bottom < value) {
-    			return (dir + 3) % 4;
+    			dir = (dir + 3) % 4;
     		}
-    		return dir;
     	}
     	
     	public void printState() {
