@@ -80,15 +80,21 @@ public class Main {
     	}
     	
     	
-    	if(cur == hospitals.size())
-    		return;
+//    	if(cur == hospitals.size())
+//    		return;
+//    	
+//    	// 현재 병원을 고를 경우  경우 
+//    	selected[cnt] = hospitals.get(cur);
+//    	solve(cur + 1, cnt + 1);
+////    	selected[cnt] = null;
+//    	
+//    	solve(cur + 1, cnt);
     	
-    	// 현재 병원을 고를 경우  경우 
-    	selected[cnt] = hospitals.get(cur);
-    	solve(cur + 1, cnt + 1);
-//    	selected[cnt] = null;
+    	for(int i = cur; i < hospitals.size(); i++) {
+    		selected[cnt] = hospitals.get(i);
+    		solve(i + 1, cnt + 1);
+    	}
     	
-    	solve(cur + 1, cnt);
     }
     
     static int n,m;
