@@ -40,9 +40,8 @@ public class Main {
     	while(!q.isEmpty()) {
     		Pair cur = q.poll();
     		
-    		if(board[cur.y][cur.x] == VIRUS) {
-    			ret = Math.max(ret, dist[cur.y][cur.x]);
-    		}
+    		if(board[cur.y][cur.x] == VIRUS)
+    			ret = Math.max(ret,  dist[cur.y][cur.x]);
     		
     		for(int dir = 0; dir < 4; dir++) {
     			int ny = cur.y + dy[dir];
@@ -52,6 +51,9 @@ public class Main {
     				continue;
     			
     			dist[ny][nx] = dist[cur.y][cur.x] + 1;
+//    			if(board[ny][nx] == VIRUS) {
+//    				ret = Math.max(ret,  dist[ny][nx]);
+//    			}
     			q.add(new Pair(ny,nx));
     		}
     	}
@@ -65,7 +67,7 @@ public class Main {
 //    		}
 //    	}
     	
-    	return ret;
+    	return ret == 0 ? INT_MAX : ret;
     	
     	
     }
