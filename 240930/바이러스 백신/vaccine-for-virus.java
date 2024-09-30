@@ -29,6 +29,8 @@ public class Main {
     		Arrays.fill(dist[y], INT_MAX);
     	}
     	
+    	int ret = 0;
+    	
     	Queue<Pair> q = new ArrayDeque<>();
     	for(Pair p : selected) {
     		dist[p.y][p.x] = 0;
@@ -37,6 +39,10 @@ public class Main {
     	
     	while(!q.isEmpty()) {
     		Pair cur = q.poll();
+    		
+    		if(board[cur.y][cur.x] == VIRUS) {
+    			ret = Math.max(ret, dist[cur.y][cur.x]);
+    		}
     		
     		for(int dir = 0; dir < 4; dir++) {
     			int ny = cur.y + dy[dir];
@@ -50,14 +56,14 @@ public class Main {
     		}
     	}
     	
-    	int ret = 0; 
-    	for(int y=1; y<=n; y++) {
-    		for(int x=1; x<=n; x++) {
-    			if(board[y][x] == VIRUS) {
-    				ret = Math.max(ret,  dist[y][x]);
-    			}
-    		}
-    	}
+//    	int ret = 0; 
+//    	for(int y=1; y<=n; y++) {
+//    		for(int x=1; x<=n; x++) {
+//    			if(board[y][x] == VIRUS) {
+//    				ret = Math.max(ret,  dist[y][x]);
+//    			}
+//    		}
+//    	}
     	
     	return ret;
     	
