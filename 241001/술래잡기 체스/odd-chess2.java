@@ -25,34 +25,9 @@ public class Main {
     static StringTokenizer st;
     
 
-    
-//    static boolean thiefCanGo(int y,int x) {
-//    	return !OOB(y,x) && board[y][x] != POLICE;
-//    }
-    
-//    static Tuple getNxt(int y,int x,int dir) {
-//        for(int i = 0; i<8;i++) {
-//        	int moveDir = (dir + i) % 8;
-//        	int ny = y + dy[moveDir];
-//        	int nx = x + dx[moveDir];
-//        	if(thiefCanGo(ny,nx))
-//        		return new Tuple(ny,nx,moveDir);
-//        }
-//        return new Tuple(y,x,dir);
-//    }
-    
-//    static void swap(int y1,int x1, int y2, int x2) {
-//    	Pair temp = board[y1][x1];
-//    	board[y1][x1] = board[y2][x2];
-//    	board[y2][x2] = temp;
-//    }
-    
-    
-
-    
     static void moveAll(Thief police) {
         for(int id=1; id<=16;id++) {
-        	if(thiefs[id] == POLICE || thiefs[id] == EMPTY)
+        	if(thiefs[id].isSame(POLICE) || thiefs[id].isSame(EMPTY))
         		continue;
         	thiefs[id].move(police);
         }
@@ -187,6 +162,7 @@ public class Main {
     	}
     	
     	public void move(Thief police) {
+//    		System.out.println(this);
     		Tuple nxt = getNxt(police);
     		
     		int id = board[nxt.y][nxt.x];
@@ -228,6 +204,10 @@ public class Main {
     	
     	private boolean canGo(int y,int x) {
     		return !OOB(y,x) && board[y][x] != -1;
+    	}
+    	
+    	public boolean isSame(Thief o) {
+    		return this.y == o.y && this.x == o.x;
     	}
     	
     }
