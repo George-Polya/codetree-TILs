@@ -3,14 +3,14 @@ import java.io.*;
 public class Main {
     static int n;
     static class Pair{
-        int first, second;
+        int id, dir;
         public Pair(int first, int second) {
-            this.first = first;
-            this.second = second;
+            this.id = first;
+            this.dir = second;
         }
         
         public String toString() {
-            return first +" "+second+"|";
+            return id +" "+dir+"|";
         }
     }
     
@@ -59,13 +59,14 @@ public class Main {
     	board[y2][x2] = temp;
     }
     
+    
     static void move(int target) {
         for(int y=0; y<4;y++) {
             for(int x=0; x<4;x++) {
                 if(board[y][x] == POLICE || board[y][x] == EMPTY)
                     continue;
-                int id = board[y][x].first;
-                int dir = board[y][x].second;
+                int id = board[y][x].id;
+                int dir = board[y][x].dir;
                 if(target == id) {
                     Tuple nxt = getNxt(y,x,dir);
 //                    board[y][x].second = nxt.third;
@@ -97,23 +98,21 @@ public class Main {
     	return !OOB(y,x) && board[y][x] != EMPTY;
     }
     
-    static boolean end(int y,int x) {
-    	for(int dist = 1; dist<=4; dist++) {
-    		int ny = y + dy[policeDir] * dist;
-    		int nx = x + dx[policeDir] * dist;
-    		if(policeCanGo(ny,nx))
-    			return false;
+    static class Pos{
+    	int y,x;
+    	public Pos(int y,int x) {
+    		this.y = y;
+    		this.x = x;
     	}
-    	return true;
     }
     
-    static ArrayList<Pair> getNxtPositions(int y, int x){
-    	ArrayList<Pair> ret = new ArrayList<>();
+    static ArrayList<Pos> getNxtPositions(int y, int x){
+    	ArrayList<Pos> ret = new ArrayList<>();
     	for(int dist = 1; dist<=4; dist++) {
     		int ny = y + dy[policeDir] * dist;
     		int nx = x + dx[policeDir] * dist;
     		if(policeCanGo(ny,nx))
-    			ret.add(new Pair(ny,nx));
+    			ret.add(new Pos(ny,nx));
     	}
     	return ret;
     }
@@ -124,17 +123,19 @@ public class Main {
     static void solve(int py,int px, int sum) {
 //    	System.out.println("-------");
     	
-    	ArrayList<Pair> positions = getNxtPositions(py,px);
+    	ArrayList<Pos> positions = getNxtPositions(py,px);
     	if(positions.isEmpty()) {
     		ans = Math.max(ans, sum);
     		return;
     		
     	}
     	
-    	for(Pair nxt : positions) {
-    		int ny = nxt.first;
-    		int nx = nxt.second;
+    	for(Pos nxt : positions) {
+    		int ny = nxt.y;
+    		int nx = nxt.x;
     		
+    		
+    		// backup
     		int temp = policeDir;
     		Pair tempBoard[][] = new Pair[4][4];
     		for(int y = 0; y<4 ; y++) {
@@ -144,17 +145,17 @@ public class Main {
     		}
     		
     		board[py][px] = EMPTY;
-    		policeDir = board[ny][nx].second;
-    		int nxtScore = board[ny][nx].first;
+    		policeDir = board[ny][nx].dir;
+    		int nxtScore = board[ny][nx].id;
     		board[ny][nx] = POLICE;
     		moveAll();
     		solve(ny,nx, sum + nxtScore);
     		
     		
     		// restore
-    		for(int i = 0; i<4;i++) {
-    			for(int j = 0; j<4;j++)
-    				board[i][j] = tempBoard[i][j];
+    		for(int y = 0; y<4;y++) {
+    			for(int x = 0; x<4;x++)
+    				board[y][x] = tempBoard[y][x];
     		}
     		policeDir = temp;
     		
@@ -207,8 +208,8 @@ public class Main {
                 board[y][x] = new Pair(id,dir);
             }
         }
-        policeDir = board[0][0].second;
-        int score = board[0][0].first;
+        policeDir = board[0][0].dir;
+        int score = board[0][0].id;
         board[0][0] = POLICE;
         moveAll();
         solve(0,0,score);
