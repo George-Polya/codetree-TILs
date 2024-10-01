@@ -14,10 +14,9 @@ public class Main {
         }
     }
     
-    static Pair board[][];
-    static Pair POLICE = new Pair(-1,-1);
-    static Pair EMPTY = new Pair(-2,-2);
-    static int policeDir = -1;
+    static int board[][];
+    static Thief POLICE = new Thief(-1,-1,-1,-1);
+    static Thief EMPTY = new Thief(-2,-2,-2,-2);
     static int dy[] = {-1,-1,0,1,1,1,0,-1};
     static int dx[] = {0,-1,-1,-1,0,1,1,1};
     static boolean OOB(int y,int x) {
@@ -25,62 +24,37 @@ public class Main {
     }
     static StringTokenizer st;
     
-    static class Tuple{
-        int first, second, third;
-        public Tuple(int first,int second ,int third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-        }
-        
-        public String toString() {
-            return first+" "+second+" "+third+"|";
-        }
-    }
+
     
-    static boolean thiefCanGo(int y,int x) {
-    	return !OOB(y,x) && board[y][x] != POLICE;
-    }
+//    static boolean thiefCanGo(int y,int x) {
+//    	return !OOB(y,x) && board[y][x] != POLICE;
+//    }
     
-    static Tuple getNxt(int y,int x,int dir) {
-        for(int i = 0; i<8;i++) {
-        	int moveDir = (dir + i) % 8;
-        	int ny = y + dy[moveDir];
-        	int nx = x + dx[moveDir];
-        	if(thiefCanGo(ny,nx))
-        		return new Tuple(ny,nx,moveDir);
-        }
-        return new Tuple(y,x,dir);
-    }
+//    static Tuple getNxt(int y,int x,int dir) {
+//        for(int i = 0; i<8;i++) {
+//        	int moveDir = (dir + i) % 8;
+//        	int ny = y + dy[moveDir];
+//        	int nx = x + dx[moveDir];
+//        	if(thiefCanGo(ny,nx))
+//        		return new Tuple(ny,nx,moveDir);
+//        }
+//        return new Tuple(y,x,dir);
+//    }
     
-    static void swap(int y1,int x1, int y2, int x2) {
-    	Pair temp = board[y1][x1];
-    	board[y1][x1] = board[y2][x2];
-    	board[y2][x2] = temp;
-    }
+//    static void swap(int y1,int x1, int y2, int x2) {
+//    	Pair temp = board[y1][x1];
+//    	board[y1][x1] = board[y2][x2];
+//    	board[y2][x2] = temp;
+//    }
     
     
-    static void move(int target) {
-        for(int y=0; y<4;y++) {
-            for(int x=0; x<4;x++) {
-                if(board[y][x] == POLICE || board[y][x] == EMPTY)
-                    continue;
-                int id = board[y][x].id;
-                int dir = board[y][x].dir;
-                if(target == id) {
-                    Tuple nxt = getNxt(y,x,dir);
-//                    board[y][x].second = nxt.third;
-                    board[y][x] = new Pair(id,nxt.third);
-                    swap(nxt.first, nxt.second, y,x);
-                    return;
-                }
-            }
-        }
-    }
+
     
-    static void moveAll() {
+    static void moveAll(Thief police) {
         for(int id=1; id<=16;id++) {
-            move(id);
+        	if(thiefs[id] == POLICE || thiefs[id] == EMPTY)
+        		continue;
+        	thiefs[id].move(police);
         }
     }
     
@@ -95,7 +69,7 @@ public class Main {
     static int ans;
     
     static boolean policeCanGo(int y,int x) {
-    	return !OOB(y,x) && board[y][x] != EMPTY;
+    	return !OOB(y,x) && board[y][x] != -2;
     }
     
     static class Pos{
@@ -104,13 +78,20 @@ public class Main {
     		this.y = y;
     		this.x = x;
     	}
+    	
+    	public String toString() {
+    		return y+" "+x;
+    	}
     }
     
-    static ArrayList<Pos> getNxtPositions(int y, int x){
+    static ArrayList<Pos> getNxtPositions(Thief police){
+    	int y = police.y;
+    	int x = police.x;
+    	int dir = police.dir;
     	ArrayList<Pos> ret = new ArrayList<>();
     	for(int dist = 1; dist<=4; dist++) {
-    		int ny = y + dy[policeDir] * dist;
-    		int nx = x + dx[policeDir] * dist;
+    		int ny = y + dy[dir] * dist;
+    		int nx = x + dx[dir] * dist;
     		if(policeCanGo(ny,nx))
     			ret.add(new Pos(ny,nx));
     	}
@@ -120,99 +101,186 @@ public class Main {
     /*
      * (py,px) : 술래의 현재 위치 
      */
-    static void solve(int py,int px, int sum) {
-//    	System.out.println("-------");
+    static void solve(Thief p, int sum) {
     	
-    	ArrayList<Pos> positions = getNxtPositions(py,px);
+    	ArrayList<Pos> positions = getNxtPositions(p);
     	if(positions.isEmpty()) {
     		ans = Math.max(ans, sum);
     		return;
     		
     	}
     	
+//    	System.out.println("positions: "+positions);
     	for(Pos nxt : positions) {
     		int ny = nxt.y;
     		int nx = nxt.x;
     		
     		
     		// backup
-    		int temp = policeDir;
-    		Pair tempBoard[][] = new Pair[4][4];
-    		for(int y = 0; y<4 ; y++) {
-    			for(int x = 0; x<4; x++) {
-    				tempBoard[y][x] = board[y][x];
-    			}
+    		
+    		int temp[][] = new int[4][4];
+    		copy(board, temp);
+    		Thief tempThiefs[] = new Thief[17];
+    		for(int i = 1; i<=16; i++) {
+    			tempThiefs[i] = new Thief(thiefs[i]);
     		}
     		
-    		board[py][px] = EMPTY;
-    		policeDir = board[ny][nx].dir;
-    		int nxtScore = board[ny][nx].id;
-    		board[ny][nx] = POLICE;
-    		moveAll();
-    		solve(ny,nx, sum + nxtScore);
+    		// 현재 술래가 있던 위치는 EMPTY로 변경 
+    		board[p.y][p.x] = -2;
+    		thiefs[p.id] = EMPTY;
+    		
+    		
+    		
+    		/*
+    		 * 술래의 이동 
+    		 */
+    		int id = board[ny][nx];
+    		int dir = thiefs[id].dir;
+    		Thief nxtPolice = thiefs[id]; 
+    		thiefs[id] = POLICE;
+    		board[ny][nx] = -1;
+    		
+    		// 도둑의 이동
+    		moveAll(nxtPolice);
+    		
+    		
+    		solve(nxtPolice, sum + id);
     		
     		
     		// restore
-    		for(int y = 0; y<4;y++) {
-    			for(int x = 0; x<4;x++)
-    				board[y][x] = tempBoard[y][x];
+    		copy(temp, board);
+    		for(int i = 1; i<=16; i++) {
+    			thiefs[i] = tempThiefs[i];
     		}
-    		policeDir = temp;
     		
     		
     	}
+    }
+    
+    static void copy(int src[][], int dst[][]) {
+    	for(int y=0; y<4; y++) {
+    		System.arraycopy(src[y], 0, dst[y], 0, 4);
+    	}
+    }
+    
+    static void printThiefs() {
+    	for(int i = 1;i<=16;i++) {
+    		System.out.println(thiefs[i]);
+    	}
+    }
+    
+    static class Thief{
+    	int y,x,id, dir;
+    	public Thief(int y,int x,int id,int dir) {
+    		this.y = y;
+    		this.x = x;
+    		this.id = id;
+    		this.dir = dir;
+    	}
     	
-//    	for(int dist = 1; dist<=4;dist++) {
-//    		int ny = py + dy[policeDir] * dist;
-//    		int nx = px + dx[policeDir] * dist;
-//    		if(!policeCanGo(ny,nx))
-//    			continue;
-//    		
-//    		
-//    		//backup
-//    		int temp = policeDir;
-//    		Pair tempBoard[][] = new Pair[4][4];
-//    		for(int y = 0; y<4 ; y++) {
-//    			for(int x = 0; x<4; x++) {
-//    				tempBoard[y][x] = board[y][x];
-//    			}
-//    		}
-//    		
-//    		board[py][px] = EMPTY;
-//    		policeDir = board[ny][nx].second;
-//    		int nxtScore = board[ny][nx].first;
-//    		board[ny][nx] = POLICE;
-//    		moveAll();
-//    		solve(ny,nx, sum + nxtScore);
-//    		
-//    		
-//    		// restore
-//    		for(int i = 0; i<4;i++) {
-//    			for(int j = 0; j<4;j++)
-//    				board[i][j] = tempBoard[i][j];
-//    		}
-//    		policeDir = temp;
-////    		System.out.println("----");
-//    	}
+    	public Thief(Thief o) {
+    		this(o.y,o.x,o.id,o.dir);
+    	}
+    	
+    	public String toString() {
+    		return String.format("id: %d | (%d %d) | dir: %d", id,y,x,dir);
+    	}
+    	
+    	public void move(Thief police) {
+    		Tuple nxt = getNxt(police);
+    		
+    		int id = board[nxt.y][nxt.x];
+    		
+    		if(id > 0) {
+    			Thief other = thiefs[id];
+    			
+    			board[other.y][other.x] = this.id;
+    			board[y][x] = id;
+    			
+    			other.y = y;
+    			other.x = x;
+    			
+    			y = nxt.y;
+    			x = nxt.x;
+    			dir = nxt.dir;
+    			
+    		}else if(id == -2) {
+    			board[y][x] = id;
+    			y = nxt.y;
+    			x = nxt.x;
+    			dir = nxt.dir;
+    		}
+    		
+    	}
+    	
+    	private Tuple getNxt(Thief police) {
+    		for(int i = 0; i < 8;i++) {
+    			int moveDir = (dir + i) % 8;
+    			int ny = y + dy[moveDir];
+    			int nx = x + dx[moveDir];
+    			
+    			if(canGo(ny,nx))
+    				return new Tuple(ny,nx,moveDir);
+    		}
+    		
+    		return new Tuple(y,x,dir);
+    	}
+    	
+    	private boolean canGo(int y,int x) {
+    		return !OOB(y,x) && board[y][x] != -1;
+    	}
+    	
+    }
+    
+    static Thief thiefs[];
+    static class Tuple{
+    	int y,x,dir;
+    	public Tuple(int y,int x,int dir) {
+    		this.y = y;
+    		this.x = x;
+    		this.dir = dir;
+    	}
+    	
+    }
+    
+    static void printBoard(int board[][]) {
+    	for(int y=0; y<4; y++) {
+    		for(int x=0; x< 4; x++) {
+    			System.out.printf("%3d", board[y][x]);
+    		}
+    		System.out.println();
+    	}
     }
     
     public static void main(String[] args) throws IOException{
     	// System.setIn(new FileInputStream("./input.txt"));
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        board = new Pair[4][4];
+        board = new int[4][4];
+        thiefs = new Thief[17];
         for(int y= 0; y<4;y++) {
             st = new StringTokenizer(br.readLine());
             for(int x= 0; x<4;x++) {
                 int id = Integer.parseInt(st.nextToken());
                 int dir = Integer.parseInt(st.nextToken()) - 1;
-                board[y][x] = new Pair(id,dir);
+//                board[y][x] = new Pair(id,dir);
+                board[y][x] = id;
+                thiefs[id] = new Thief(y,x,id,dir);
             }
         }
-        policeDir = board[0][0].dir;
-        int score = board[0][0].id;
-        board[0][0] = POLICE;
-        moveAll();
-        solve(0,0,score);
+        
+        // 술래의 이동 
+        int id = board[0][0];
+        Thief police = thiefs[id];
+        board[0][0] = -1;
+        thiefs[id] = POLICE;
+        
+        // 도둑의 이동 
+        moveAll(police);
+        
+        
+//        printBoard(board);
+//        printThiefs();
+        solve(police,id);
         System.out.println(ans);
     }
 }
