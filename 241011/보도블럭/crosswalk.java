@@ -39,7 +39,7 @@ public class Main {
    }
    
    static boolean check(int value, int start, int end, int arr[]) {
-	   if(end >= n || end < 0)
+	   if(end >= n || end < 0 || start >= n || start < 0)
 		   return false;
 	   for(int i = start; i <= end; i++) {
 		   if(arr[i] != value)
