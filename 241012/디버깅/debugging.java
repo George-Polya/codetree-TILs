@@ -16,9 +16,13 @@ public class Main {
     		board[a][b] = true;
     	}
     	
+    	if(m == 0) {
+    		System.out.println(0);
+    		return;
+    	}
     	
     	solve(1, 0);
-    	System.out.println(ans);
+    	System.out.println(ans == INT_MAX ? -1 : ans);
     }
     
     static int INT_MAX = Integer.MAX_VALUE;
@@ -66,6 +70,10 @@ public class Main {
     static void solve(int cur, int cnt) {
 //    	System.out.println("-----");
 //    	printBoard(board);
+    	
+    	if(cnt >= ans)
+    		return;
+    	
     	if(check()) {
     		ans = Math.min(ans, cnt);
     	}
