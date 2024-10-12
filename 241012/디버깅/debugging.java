@@ -94,7 +94,7 @@ public class Main {
      * x == 1이면 오른쪽만 체크하면 되고, x == (n-1)이면 왼쪽만 체크하면 됨 
      */
     static boolean exist(int y,int x) {
-    	System.out.printf("%d %d\n", y,x);
+//    	System.out.printf("%d %d\n", y,x);
     	if(x == 1 && (OOB(y,x+1) || board[y][x+1]))
     		return false;
     	if(x == n - 1 && (OOB(y,x-1) || board[y][x-1]))
