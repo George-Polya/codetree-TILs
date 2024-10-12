@@ -85,14 +85,19 @@ public class Main {
     	}
     }
     
+    static boolean OOB(int y,int x) {
+    	return y<=0 || y > n || x <= 0 || x > n-1;
+    }
+    
     /*
      * (y,x) 왼쪽 혹은 오른쪽에 유실선이 있는지 여부 
      * x == 1이면 오른쪽만 체크하면 되고, x == (n-1)이면 왼쪽만 체크하면 됨 
      */
     static boolean exist(int y,int x) {
-    	if(x == 1 && board[y][x+1])
+    	System.out.printf("%d %d\n", y,x);
+    	if(x == 1 && (OOB(y,x+1) || board[y][x+1]))
     		return false;
-    	if(x == n - 1 && board[y][x-1])
+    	if(x == n - 1 && (OOB(y,x-1) || board[y][x-1]))
     		return false;
     	
     	if( (1< x && x<(n-1)) && (board[y][x-1] || board[y][x+1]))
