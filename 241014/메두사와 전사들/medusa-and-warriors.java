@@ -80,6 +80,8 @@ public class Main {
     		x = nxt.x;
     		
     		for(int i = 1; i<=m;i++) {
+    			if(warriors[i] == DEAD)
+    				continue;
     			if( (wBoard[y][x] & (1<<i) )!=0 ) {
     				wBoard[y][x] -= (1<<i);
     				warriors[i] = DEAD;
