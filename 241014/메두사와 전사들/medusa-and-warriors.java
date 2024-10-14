@@ -75,10 +75,11 @@ public class Main {
     		bfs();
     		
     		Pair nxt = getNxtPos();
+//    		System.out.printf("%d %d\n", y,x);
 //    		System.out.println("nxt: "+nxt);
     		y = nxt.y;
     		x = nxt.x;
-    		
+//    		System.out.printf("%d %d\n", y,x);
     		for(int i = 1; i<=m;i++) {
     			if(warriors[i] == DEAD)
     				continue;
@@ -135,17 +136,16 @@ public class Main {
     	}
     }
     
-    static int[] moveAll(ArrayList<Warrior> warriors, int visited[][]) {
-    	int distSum = 0;
-    	int attackerCnt = 0;
-    	for(Warrior w : warriors) {
-    		Move move = w.move(visited);
-    		if(move.attack) {
-    			attackerCnt++;
-    		}
-    		distSum += move.dist;
+    static Light findBestLight() {
+    	Light ret = WORST;
+    	
+    	for(int dir = 0; dir < 8; dir+=2) {
+    		Light light = makeLight(dir);
+//    		System.out.println("light: " +light);
+    		if(light.isHigher(ret))
+    			ret = light;
     	}
-    	return new int[] {distSum, attackerCnt};
+    	return ret;
     }
     
     static Light makeLight(int dir) {
@@ -225,6 +225,21 @@ public class Main {
     	
     }
     
+    static int[] moveAll(ArrayList<Warrior> warriors, int visited[][]) {
+    	int distSum = 0;
+    	int attackerCnt = 0;
+    	for(Warrior w : warriors) {
+    		Move move = w.move(visited);
+    		if(move.attack) {
+    			attackerCnt++;
+    		}
+    		distSum += move.dist;
+    	}
+    	return new int[] {distSum, attackerCnt};
+    }
+    
+   
+    
     static void shadow(int y,int x, int dir, int visited[][]) {
     	if(y == monster.y || x == monster.x) {
     		for(int dist = 1; dist<=n; dist++) {
@@ -286,17 +301,7 @@ public class Main {
     	return new int[] {dir};
     }
     
-    static Light findBestLight() {
-    	Light ret = WORST;
-    	
-    	for(int dir = 0; dir < 8; dir+=2) {
-    		Light light = makeLight(dir);
-//    		System.out.println("light: " +light);
-    		if(light.isHigher(ret))
-    			ret = light;
-    	}
-    	return ret;
-    }
+  
     
     
     static Light WORST = new Light(5, -1, null, null);
@@ -427,7 +432,7 @@ public class Main {
     			int d = getDistance(ny,nx, monster.y, monster.x);
     			if(distance > d) {
     				distance = d;
-    				direction = dir;
+    				direction = nDir;
     			}
     		}
     		
