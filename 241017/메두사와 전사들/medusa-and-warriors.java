@@ -75,6 +75,10 @@ public class Main {
     		bfs();
     		
     		Pair nxt = getNxtPos();
+    		if(nxt == NO_POS) {
+    			System.out.println(-1);
+    			System.exit(0);
+    		}
 //    		System.out.printf("%d %d\n", y,x);
 //    		System.out.println("nxt: "+nxt);
     		y = nxt.y;
