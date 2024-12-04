@@ -121,7 +121,7 @@ public class Main {
 //    		System.out.println("cur: "+cur);
 //    		
     		
-    		anomalizeAll(cur.turn + 1, cur.plane);
+    		
     		
 //    		System.out.println("plane");
 //    		printBoard(board);
@@ -157,6 +157,8 @@ public class Main {
     				visited1[nxt.pair.y][nxt.pair.x] = cur.turn + 1;
     			}
     		}
+
+			anomalizeAll(cur.turn, cur.plane);
     	}
     }
     
