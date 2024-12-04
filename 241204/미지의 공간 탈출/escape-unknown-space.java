@@ -31,9 +31,11 @@ public class Main {
         for(int y=0;y<3*m;y++) {
         	for(int x=0; x<3*m;x++) {
         		idPlane[y][x] = visited1[y][x] = -1;
+        		plane[y][x] = -1;
         	}
         }
         
+        // 동
         for(int x=2*m; x< 3*m; x++) {
         	st = new StringTokenizer(br.readLine());
         	for(int y=2*m-1;y>=m; y--) {
@@ -42,14 +44,16 @@ public class Main {
         	}
         }
         
+        // 서
         for(int x = m -1; x>=0; x--) {
         	st = new StringTokenizer(br.readLine());
-        	for(int y=2*m-1;y>=m; y--) {
+        	for(int y= m;y< 2*m; y++) {
         		plane[y][x] = Integer.parseInt(st.nextToken());
         		idPlane[y][x] = 3;
         	}
         }
         
+        // 남
         for(int y = 2*m; y<3*m; y++) {
         	st = new StringTokenizer(br.readLine());
         	for(int x=m;x<2*m; x++) {
@@ -58,14 +62,16 @@ public class Main {
         	}
         }
         
-        for(int y = 0; y< m; y++) {
+        
+        // 북
+        for(int y = m - 1; y>=0; y--) {
         	st = new StringTokenizer(br.readLine());
-        	for(int x=m;x<2*m; x++) {
+        	for(int x = 2 * m - 1; x>=m; x--) {
         		plane[y][x] = Integer.parseInt(st.nextToken());
         		idPlane[y][x] = 4;
         	}
         }
-        
+        // 윗면
         for(int y = m; y<2*m; y++) {
         	st = new StringTokenizer(br.readLine());
         	for(int x=m ;x< 2*m; x++) {
@@ -94,16 +100,12 @@ public class Main {
         for(int row[] : visited2)
         	Arrays.fill(row, -1);
         
-        simulate();
+        
         
 //        printBoard(plane);
-//        printBoard(visited1);
-//        System.out.println("----");
-//        printBoard(visited2);
 //        
-//        System.out.println("----");
-//        printBoard(board);
-        
+//        System.out.println("simulate");
+        simulate();
         System.out.println(-1);
     }
     
@@ -127,6 +129,9 @@ public class Main {
 //    		printBoard(visited1);
 //    		System.out.println("visited2");
 //    		printBoard(visited2);
+//    		
+    		
+    		
     		if(cur.plane == 5 && board[cur.pair.y][cur.pair.x] == 4) {
     			System.out.println(cur.turn);
     			System.exit(0);
@@ -287,16 +292,18 @@ public class Main {
     			return;
     		int ny = pair.y + dy[d];
     		int nx = pair.x + dx[d];
-    		if(OOB(ny,nx,0,n) || board[ny][nx] == 1) // 격자밖을 벗어나거나 장애물을 만나면 확산 멈춤
+    		if(OOB(ny,nx,0,n)) // 격자밖을 벗어나거나 장애물을 만나면 확산 멈춤
     			return;
     		
     		if(board[ny][nx] == 3) {
     			System.out.println(-1);
     			System.exit(0);
     		}
-    		pair.y = ny;
-    		pair.x = nx;
-    		board[pair.y][pair.x] = 2;
+    		if(board[ny][nx] == 0 || board[ny][nx] == 2) {
+    			pair.y = ny;
+    			pair.x = nx;
+    			board[pair.y][pair.x] = 2;
+    		}
     	}
     }
     
