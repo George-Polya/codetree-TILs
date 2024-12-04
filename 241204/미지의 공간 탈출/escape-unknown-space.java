@@ -131,7 +131,7 @@ public class Main {
 //    		printBoard(visited2);
 //    		
     		
-    		
+    		// 현재 미지의 공간에 위치해있고 탈출구에 도달했다
     		if(cur.plane == 5 && board[cur.pair.y][cur.pair.x] == 4) {
     			System.out.println(cur.turn);
     			System.exit(0);
@@ -140,18 +140,18 @@ public class Main {
     		for(int dir = 0; dir < 4 ;dir++) {
     			Tuple nxt = getNxt(cur.pair.y, cur.pair.x, dir, cur.plane);
     			
-    			if(nxt.plane == 5 ) {
-    				if(OOB(nxt.pair.y, nxt.pair.x, 0, n) || 
-    						visited2[nxt.pair.y][nxt.pair.x] != -1)
+    			if(nxt.plane == 5 ) { // 다음 위치가 미지의 공간이라면 
+    				if(OOB(nxt.pair.y, nxt.pair.x, 0, n) || visited2[nxt.pair.y][nxt.pair.x] != -1)
     					continue;
+    				
+    				// 빈 공간 혹은 탈출구의 경우에만 이동할 수 있다
+    				// 즉, 1이거나 2인 경우이면 이동 불가 
     				if(board[nxt.pair.y][nxt.pair.x] == 0 || board[nxt.pair.y][nxt.pair.x] == 4 ) {
     					q.add(new State(nxt.pair.y, nxt.pair.x, cur.turn + 1, nxt.plane));
     					visited2[nxt.pair.y][nxt.pair.x] = cur.turn + 1;
     				}
-    			}else {
-    				if(OOB(nxt.pair.y, nxt.pair.x, 0, 3*m) || 
-    						visited1[nxt.pair.y][nxt.pair.x] != -1 || 
-    						plane[nxt.pair.y][nxt.pair.x] != 0)
+    			}else { // 다음 위치가 시간의 벽 안이라면 
+    				if(OOB(nxt.pair.y, nxt.pair.x, 0, 3*m) || visited1[nxt.pair.y][nxt.pair.x] != -1 || plane[nxt.pair.y][nxt.pair.x] != 0)
     					continue;
     				q.add(new State(nxt.pair.y, nxt.pair.x, cur.turn + 1, nxt.plane));
     				visited1[nxt.pair.y][nxt.pair.x] = cur.turn + 1;
@@ -187,10 +187,11 @@ public class Main {
     	int ny = y + dy[dir];
     	int nx = x + dx[dir];
     	
-    	if(plane == 5) {
+    	if(plane == 5) { // 미지의 공간에서의 이동인 경우
     		return new Tuple(ny,nx,dir, plane);
     	}
     	
+    	// 시간의 벽에서 미지의 공간으로의 이동인 경우 
     	if(plane < 5 && OOB(ny,nx, 0, 3*m)) {
     		if(ny >= 3*m)
     			ny -= m;
@@ -208,11 +209,13 @@ public class Main {
     		
     		return new Tuple(ny + py, nx + px, dir, 5); 
     	}
+
     	
+    	// 시간의 벽(평면도)에서의 이동 
     	int cur = idPlane[y][x];
     	int nxt = idPlane[ny][nx];
     	
-    	if(nxt == -1) {
+    	if(nxt == -1) { // 동->남, 북->동 처럼 평면의 변화가 발생한 경우 
     		if(cur == 1 && dir == 2)
     			return new Tuple(x,y,1,2);
 			if(cur == 2 && dir == 1)
@@ -237,6 +240,7 @@ public class Main {
     		
     	}
     	
+    	// 그 외의 경우 
     	return new Tuple(ny,nx,dir,nxt);
     }
     
@@ -295,10 +299,11 @@ public class Main {
     		if(OOB(ny,nx,0,n)) // 격자밖을 벗어나거나 장애물을 만나면 확산 멈춤
     			return;
     		
-    		if(board[ny][nx] == 3) {
+    		if(board[ny][nx] == 3) { // 시간의 벽을 빠져나오기 전에 출구가 막히면 4에 도달하지 못함
     			System.out.println(-1);
     			System.exit(0);
     		}
+    		// 빈 공간 또는 이미 이상현상이 다른 애에 의한 발생한 곳이라면 
     		if(board[ny][nx] == 0 || board[ny][nx] == 2) {
     			pair.y = ny;
     			pair.x = nx;
