@@ -122,8 +122,8 @@ public class Main {
     			this.gun = board[pos.y][pos.x].poll();
     			
     		}else {
-    			int otherId = idBoard[pos.y][pos.x];
-    			Player other = players[otherId];
+//    			int otherId = idBoard[pos.y][pos.x];
+    			Player other = players[idBoard[pos.y][pos.x]];
 //    			System.out.println("other: "+other);
     			if(isWin(other)) {
     				/*
@@ -158,7 +158,7 @@ public class Main {
     				 */
 //    				System.out.println("winner: "+otherId);
     				
-    				scores[otherId] += (other.gun + other.stat - (this.gun + this.stat));
+    				scores[other.id] += (other.gun + other.stat - (this.gun + this.stat));
     				
     				board[pos.y][pos.x].add(this.gun);
     				this.gun = 0;
