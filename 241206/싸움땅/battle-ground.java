@@ -64,8 +64,91 @@ public class Main {
     
     static void moveAll() {
     	for(int id = 1; id<=m; id++) {
-    		players[id].move();
+    		move(id);
     	}
+    }
+    
+    static void move(int id) {
+    	Player player = players[id];
+    	
+    	int y = player.pos.y;
+    	int x = player.pos.x;
+    	int dir = player.pos.dir;
+    	idBoard[y][x] = 0;
+    	Pos nxtPos = getNxtPos(y,x,dir);
+    	
+    	player.pos = nxtPos;
+    	y = nxtPos.y;
+    	x = nxtPos.x;
+    	
+    	if(idBoard[y][x] == 0) {
+    		idBoard[y][x] = id;
+    		board[y][x].add(player.gun);
+    		player.gun = board[y][x].poll();
+    	}else {
+    		Player other = players[idBoard[y][x]];
+    		
+    		if(player.isStronger(other)) {
+    			scores[id] += (player.gun + player.stat - (other.gun + other.stat));
+    			
+    			board[y][x].add(other.gun);
+    			other.gun = 0;
+    			
+    			loserMove(other);
+    			
+    			board[y][x].add(player.gun);
+    			player.gun = board[y][x].poll();
+    			idBoard[y][x] = id;
+    		}else {
+    			scores[other.id] += (other.gun + other.stat - (player.gun + player.stat));
+    			
+    			board[y][x].add(player.gun);
+    			player.gun = 0;
+    			
+    			loserMove(player);
+    			
+    			board[y][x].add(other.gun);
+    			other.gun = board[y][x].poll();
+    		}
+    		
+    	}
+    }
+    
+    static void loserMove(Player player) {
+    	int y = player.pos.y;
+    	int x = player.pos.x;
+    	int dir = player.pos.dir;
+    	
+    	for(int i = 0; i < 4; i++) {
+    		int moveDir = (dir + i) % 4;
+    		int ny = y + dy[moveDir];
+    		int nx = x + dx[moveDir];
+    		if(OOB(ny,nx) || idBoard[ny][nx] != 0)
+    			continue;
+    		y = ny;
+    		x = nx;
+    		dir = moveDir;
+    		break;
+    	}
+    	player.pos.y = y;
+    	player.pos.x = x;
+    	player.pos.dir = dir;
+    	
+    	idBoard[y][x] = player.id;
+    	board[y][x].add(player.gun);
+    	player.gun = board[y][x].poll();
+    }
+    
+    static Pos getNxtPos(int y,int x, int dir) {
+    	int ny = y + dy[dir];
+		int nx = x + dx[dir];
+		if(OOB(ny,nx)) {
+			dir = (dir + 2) % 4;
+			ny = y + dy[dir];
+			nx = x + dx[dir];
+		}
+		
+		return new Pos(ny,nx,dir);
     }
     
     static void printBoard(int board[][]) {
@@ -109,110 +192,18 @@ public class Main {
     		return String.format("id: %d | pos: %s | stat: %d | gun: %d", id, pos, stat,gun);
     	}
     	
-    	public void move() {
-    		idBoard[pos.y][pos.x] = 0; // 이전 위치
-    		Pos nxtPos = getNxtPos(pos.y, pos.x, pos.dir);
-//    		System.out.printf("move %d : %s\n", id, nxtPos);
-    		this.pos = nxtPos;
-    		
-    		if(idBoard[pos.y][pos.x] == 0) {
-    			idBoard[pos.y][pos.x] = id;
-    			
-    			board[pos.y][pos.x].add(this.gun);
-    			this.gun = board[pos.y][pos.x].poll();
-    			
-    		}else {
-//    			int otherId = idBoard[pos.y][pos.x];
-    			Player other = players[idBoard[pos.y][pos.x]];
-//    			System.out.println("other: "+other);
-    			if(isWin(other)) {
-    				/*
-    				 * id가 승자 
-    				 * 1. 점수 업데이트
-    				 * 2. loser(other)가 총을 내려놓고 패배 이동.
-    				 * 3. winner(this)는 쎈총 가져감 
-    				 */
-//    				System.out.println("winner: "+id);
-    				
-    				// 점수 업데이트 
-    				scores[id] += (this.gun + this.stat - (other.gun + other.stat));
-    				
-    				// loser가 총을 내려놓음 
-    				board[pos.y][pos.x].add(other.gun);
-    				other.gun = 0;
-    				
-    				// loser의 패배 이동
-    				other.loserMove();
-    				
-    				// winner가 쎈 총 가져감 
-    				board[pos.y][pos.x].add(this.gun);
-    				this.gun = board[pos.y][pos.x].poll();
-    				idBoard[pos.y][pos.x] = id;
-    				
-    			}else {
-    				/*
-    				 * other가 승자
-    				 * 1. 점수 업데이트
-    				 * 2. loser(this)가 총을 내려놓고 패배 이동
-    				 * 3. winner(other)는 쎈총 가져감
-    				 */
-//    				System.out.println("winner: "+otherId);
-    				
-    				scores[other.id] += (other.gun + other.stat - (this.gun + this.stat));
-    				
-    				board[pos.y][pos.x].add(this.gun);
-    				this.gun = 0;
-    				
-    				this.loserMove();
-    				
-    				board[other.pos.y][other.pos.x].add(other.gun);
-    				other.gun = board[other.pos.y][other.pos.x].poll();
-//    				idBoard[pos.y][pos.x] = otherId;
-    			}
-    		}
-    	}
-    	
-    	private Pos getNxtPos(int y,int x, int dir) {
-    		int ny = y + dy[dir];
-    		int nx = x + dx[dir];
-    		if(OOB(ny,nx)) {
-    			dir = (dir + 2) % 4;
-    			ny = y + dy[dir];
-    			nx = x + dx[dir];
-    		}
-    		
-    		return new Pos(ny,nx,dir);
-    	}
-    	
-    	private boolean isWin(Player target) {
+    	public boolean isStronger(Player o) {
     		int s1 = this.stat;
     		int g1 = this.gun;
     		
-    		int s2 = target.stat;
-    		int g2 = target.gun;
+    		int s2 = o.stat;
+    		int g2 = o.gun;
     		
     		if((s1 + g1 > s2 + g2) || (s1+g1==s2+g2 && s1 > s2))
     			return true;
     		else
     			return false;
-    	}
-    	
-    	private void loserMove() {
-    		for(int d = 0; d < 4; d++) {
-    			int moveDir = (pos.dir + d) % 4;
-    			int ny = pos.y + dy[moveDir];
-    			int nx = pos.x + dx[moveDir];
-    			if(OOB(ny,nx) || idBoard[ny][nx] != 0)
-    				continue;
-    			pos.y = ny;
-    			pos.x = nx;
-    			pos.dir = moveDir;
-    			break;
-    		}
-    		
-    		idBoard[pos.y][pos.x] = id;
-    		board[pos.y][pos.x].add(this.gun);
-    		this.gun = board[pos.y][pos.x].poll();
+    				
     	}
     }
     
