@@ -165,8 +165,8 @@ public class Main {
     				
     				this.loserMove();
     				
-    				board[pos.y][pos.x].add(other.gun);
-    				other.gun = board[pos.y][pos.x].poll();
+    				board[other.pos.y][other.pos.x].add(other.gun);
+    				other.gun = board[other.pos.y][other.pos.x].poll();
 //    				idBoard[pos.y][pos.x] = otherId;
     			}
     		}
