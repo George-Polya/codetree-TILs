@@ -18,7 +18,7 @@ public class Main {
     	for(int id = 1; id<=m; id++) {
     		int y = Integer.parseInt(st.nextToken());
     		int x = Integer.parseInt(st.nextToken());
-    		warriors[id] = new Warrior(id,y,x);
+    		warriors[id] = new Warrior(y,x);
     		wBoard[y][x]++;
     	}
     	
@@ -56,6 +56,8 @@ public class Main {
     
     static int dist[][];
     static Pair NO_POS = new Pair(-1,-1);
+    
+    
     static class Pair{
     	int y,x;
     	public Pair(int y,int x) {
@@ -208,10 +210,6 @@ public class Main {
     		
     		notStones.add(warriors[i]);
     	}
-    	
-//    	System.out.println("wList: "+wList);
-//    	printBoard(visited);
-//    	System.out.println("cnt: "+cnt);
     	
     	
     	if(dir == 2) {
@@ -375,18 +373,14 @@ public class Main {
     
     static int INT_MAX = Integer.MAX_VALUE;
     
-//    static Warrior DEAD = new Warrior(-2,-2,-2);
-    
     static class Warrior{
-    	int id;
     	Pair pair;
-    	public Warrior(int id, int y, int x) {
+    	public Warrior(int y, int x) {
     		this.pair = new Pair(y,x);
-    		this.id = id;
     	}
     	
     	public String toString() {
-    		return String.format("%d: (%d,%d)", id,pair.y,pair.x);
+    		return String.format("(%d,%d)", pair.y,pair.x);
     	}
     	
     	public Move move(int visited[][]) {
@@ -409,7 +403,6 @@ public class Main {
     			return new Move(0, false);
     		}
     		
-    		int value = 1<<id;
     		
     		wBoard[pair.y][pair.x]--;
     		
@@ -417,7 +410,7 @@ public class Main {
     		pair.x = pair.x + dx[direction];
     		
     		if(monster.isSame(pair.y, pair.x)) { // 첫번째 이동을 하고 메두사와 같은 칸에 도달했다
-    			warriors[id].pair = NO_POS;
+    			this.pair = NO_POS;
     			return new Move(1, true);
     		}
     		wBoard[pair.y][pair.x]++;
@@ -446,7 +439,7 @@ public class Main {
     		pair.x = pair.x + dx[direction];
     		
     		if(monster.isSame(pair.y, pair.x)) { // 두번째 이동을 하고 메두사와 같은칸에 도달했다 
-    			warriors[id].pair = NO_POS;
+    			this.pair = NO_POS;
     			return new Move(2, true);
     		}
     		wBoard[pair.y][pair.x]++; // 이동 후
