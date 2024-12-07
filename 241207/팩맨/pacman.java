@@ -13,11 +13,12 @@ public class Main {
     	
     	board = new List[n+1][n+1];
     	nxtBoard = new List[n+1][n+1];
-    	egg = new Queue[n+1][n+1];
+    	egg = new List[n+1][n+1];
+    	count = new int[n+1][n+1];
     	for(int y=1; y<=n; y++) {
     		for(int x=1; x<=n; x++) {
     			board[y][x] = new ArrayList<>();
-    			egg[y][x] = new ArrayDeque<>();
+    			egg[y][x] = new ArrayList<>();
     		}
     	}
     	for(int i = 0; i < m; i++) {
@@ -26,6 +27,7 @@ public class Main {
     		int x = Integer.parseInt(st.nextToken());
     		int dir = Integer.parseInt(st.nextToken()) - 1;
     		board[y][x].add(dir);
+    		count[y][x]++;
     	}
     	
 //    	printBoard(board);
@@ -73,7 +75,8 @@ public class Main {
     	for(int y=1; y<=n; y++) {
     		for(int x=1; x<=n; x++) {
     			board[y][x].addAll(egg[y][x]);
-    			egg[y][x] = new ArrayDeque<>();
+    			count[y][x] += egg[y][x].size(); 
+    			egg[y][x] = new ArrayList<>();
     		}
     	}
     }
@@ -95,16 +98,14 @@ public class Main {
      */
     static String bestDirection;
     static int eatCnt;
-    static boolean visited[][];
     static void packManMove() {
-    	bestDirection = "000";
+    	bestDirection = "999";
     	eatCnt = 0;
-    	visited = new boolean[n+1][n+1];
-    	findDirection(packMan.y, packMan.x, 0,0, "");
-//    	System.out.printf("eatCnt: %d, bestDirection: %s\n", eatCnt, bestDirection);
-    	
     	int y = packMan.y;
     	int x = packMan.x;
+    	findDirection(y, x, 0,0, "");
+//    	System.out.printf("eatCnt: %d, bestDirection: %s\n", eatCnt, bestDirection);
+    	
     	
     	for(char d : bestDirection.toCharArray()) {
     		int dir = d - '0';
@@ -113,6 +114,7 @@ public class Main {
     		if(!board[ny][nx].isEmpty()) {
     			board[ny][nx] = new ArrayList<>();
     			dead[ny][nx] = 3;
+    			count[ny][nx] = 0;
     		}
     		y = ny;
     		x = nx;
@@ -127,24 +129,23 @@ public class Main {
     static void findDirection(int y,int x, int depth,int sum, String d) {
     	if(depth == 3) {
 //    		System.out.printf("sum: %d, d: %s\n", sum,d);
-    		if(eatCnt < sum) {
+    		if(eatCnt < sum || (eatCnt == sum && d.compareTo(bestDirection) < 0) ) {
     			eatCnt = sum;
     			bestDirection = d;
-    		}else if(eatCnt == sum && d.compareTo(bestDirection) < 0) {
-    			bestDirection = d;
+    					
     		}
-    		
     		return;
     	}
     	
     	for(int dir = 0; dir< 8; dir+=2) {
     		int ny = y + dy[dir];
     		int nx = x + dx[dir];
-    		if(OOB(ny,nx) || visited[ny][nx])
+    		if(OOB(ny,nx))
     			continue;
-    		visited[ny][nx] = true;
-    		findDirection(ny,nx,depth+1, sum + board[ny][nx].size(), d+dir);
-    		visited[ny][nx] = false;
+    		int cnt = count[ny][nx];
+    		count[ny][nx]-=cnt;
+    		findDirection(ny,nx,depth+1, sum + cnt, d+dir);
+    		count[ny][nx]+=cnt;
     	}
     	
     	
@@ -184,8 +185,11 @@ public class Main {
      * 2. 이동 
      */
     static void move(int y,int x, int dir) {
-    	Tuple nxtPos = getNxtPos(y,x,dir);
-    	nxtBoard[nxtPos.y][nxtPos.x].add(nxtPos.dir);
+    	count[y][x]--;
+    	Tuple nxt = getNxtPos(y,x,dir);
+    	
+    	count[nxt.y][nxt.x]++;
+    	nxtBoard[nxt.y][nxt.x].add(nxt.dir);
     }
     
     /*
@@ -272,9 +276,8 @@ public class Main {
     	}
     }
     
-    static int dead[][];
-    static List<Integer> board[][], nxtBoard[][];
-    static Queue<Integer> egg[][];
+    static int dead[][], count[][];
+    static List<Integer> board[][], nxtBoard[][], egg[][];
     static int m,t;
     static int n = 4;
     static StringTokenizer st;
