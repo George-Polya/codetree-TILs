@@ -47,12 +47,14 @@ public class Main {
         
         StringBuilder sb = new StringBuilder();
         while(true) {
+//        	System.out.println("-----");
         	medusa.move();
         	if(medusa.end()) {
         		sb.append(0).append('\n');
         		break;
         	}
         	Sight bestSight = medusa.findBestSight();
+//        	printBoard(bestSight.sighted);
         	
         	int[] moved = moveAll(bestSight);
         	sb.append(moved[0]+" "+bestSight.cnt+" "+moved[1]).append('\n');
@@ -272,28 +274,37 @@ public class Main {
     	}
     	
     	private void shadow(Tuple freezed) {
-    		Queue<Tuple> q = new ArrayDeque<>();
-    		for(int nDir : getDirs(freezed.dir, this.sDir)) {
-    			int ny = freezed.y + dy2[nDir];
-    			int nx = freezed.x + dx2[nDir];
-    			if(OOB(ny,nx) || sighted[ny][nx] == 2)
-    				continue;
-    			q.add(new Tuple(ny,nx,nDir));
-    			sighted[ny][nx] = 2;
-    		}
-    		
-    		while(!q.isEmpty()) {
-    			Tuple cur = q.poll();
-    			
-    			for(int nDir : getDirs(cur.dir, this.sDir)) {
-    				int ny = cur.y + dy2[nDir];
-    				int nx = cur.x + dx2[nDir];
-    				
-    				if(OOB(ny,nx) || sighted[ny][nx] == 2)
+    		int y = freezed.y;
+    		int x = freezed.x;
+    		int dir = freezed.dir; 
+    		if(y == medusa.y || x == medusa.x) {
+    			for(int dist = 1; dist<=N; dist++) {
+    				int ny = y + dy2[dir] * dist;
+    				int nx = x + dx2[dir] * dist;
+    				if(OOB(ny,nx))
     					continue;
-    				q.add(new Tuple(ny,nx,nDir));
     				sighted[ny][nx] = 2;
     			}
+    		}else {
+    			Queue<Pair> q = new ArrayDeque<>();
+    			q.add(new Pair(y,x));
+    			sighted[y][x] = 2;
+    			
+    			while(!q.isEmpty()) {
+    				Pair cur = q.poll();
+    				
+    				for(int nDir : getDirs(y,x,dir)) {
+    					int ny = cur.y + dy2[nDir];
+    					int nx = cur.x + dx2[nDir];
+    					
+    					if(OOB(ny,nx) || sighted[ny][nx] == 2)
+    						continue;
+    					
+    					q.add(new Pair(ny,nx));
+    					sighted[ny][nx] = 2;
+    				}
+    			}
+    			sighted[y][x] = 1;
     		}
     		
     	}
@@ -311,6 +322,31 @@ public class Main {
     		}
     		return new int[] {dir};
     	}
+    	
+        private int[] getDirs(int wy, int wx, int dir) {
+        	if(dir == 0) {
+        		if(wy < medusa.y && wx < medusa.x)
+        			return new int[] {7,0};
+        		if(wy < medusa.y && wx > medusa.x)
+        			return new int[] {0,1};
+        	}else if(dir == 2) {
+        		if(wy < medusa.y && wx > medusa.x)
+        			return new int[] {1,2};
+        		if(wy > medusa.y && wx > medusa.x)
+        			return new int[] {2,3};
+        	}else if(dir == 4) {
+        		if(wy > medusa.y && wx > medusa.x)
+        			return new int[] {3,4};
+        		if(wy > medusa.y && wx < medusa.x)
+        			return new int[] {4,5};
+        	}else if(dir == 6) {
+        		if(wy > medusa.y && wx < medusa.x)
+        			return new int[] {5,6};
+        		if(wy < medusa.y && wx < medusa.x)
+        			return new int[] {6,7};
+        	}
+        	return new int[] {dir};
+        }
     	
     	private int[] getDirs(int cDir, int sDir) {
     		if(sDir == 0) {
