@@ -37,11 +37,12 @@ public class Main {
         
         init();
         
-        if(dist[sy][sx] == -1) {
+        if(dist[sy][sx] == INF) {
         	System.out.println(-1);
         	return;
         }
         
+//        medusa.move();
         
         
         StringBuilder sb = new StringBuilder();
@@ -51,11 +52,8 @@ public class Main {
         		sb.append(0).append('\n');
         		break;
         	}
-//        	System.out.println("medusa: "+medusa);
         	Sight bestSight = medusa.findBestSight();
-//        	System.out.println("bestSight: "+bestSight);
         	
-//        	printBoard(bestSight.sighted);
         	int[] moved = moveAll(bestSight);
         	sb.append(moved[0]+" "+bestSight.cnt+" "+moved[1]).append('\n');
         }
@@ -64,22 +62,18 @@ public class Main {
     
     static int[] moveAll(Sight bestSight){
     	int sighted[][] = bestSight.sighted;
-    	
+    	List<Warrior> notFreezed = bestSight.notFreezed;
     	
     	int distSum = 0;
     	int attackerCnt = 0;
-    	for(int i = 0; i < M; i++) {
-    		if(warriors[i] == NO_WARRIOR)
-    			continue;
-    		int wy = warriors[i].y;
-    		int wx = warriors[i].x;
-    		if(sighted[wy][wx] != 1) {
-    			Move move = warriors[i].move(sighted);
-    			if(move.attack)
-    				attackerCnt++;
-    			distSum += move.dist;
-    		}
+    	
+    	for(Warrior w : notFreezed) {
+    		Move move = w.move(sighted);
+    		if(move.attack)
+    			attackerCnt++;
+    		distSum += move.dist;
     	}
+    	
     	
     	
     	return new int[] {distSum, attackerCnt};
@@ -127,32 +121,33 @@ public class Main {
     		return String.format("(%d, %d)", y,x);
     	}
     	
-    	
+    	/*
+    	 * 메두사의 이동 
+    	 */
     	public void move() {
     		Pair nxt = findNxtPos();
-    		if(nxt == NO_PAIR) {
-    			System.out.println(-1);
-    			System.exit(0);
-    		}
     		y = nxt.y;
     		x = nxt.x;
     		
     		for(int i = 0; i < M;i++) {
     			if(warriors[i] == NO_WARRIOR)
     				continue;
-    			int y = warriors[i].y;
-    			int x = warriors[i].x;
-    			if(isSame(y,x)) {
-    				wBoard[y][x]--;
+    			int wy = warriors[i].y;
+    			int wx = warriors[i].x;
+    			if(isSame(wy,wx)) { // 전사가 있으면 공격받고 사라짐. 
+    				wBoard[wy][wx]--;
     				warriors[i] = NO_WARRIOR;
     			}
     		}
     	}
     	
+    	/*
+    	 * 다음 위치 정하기 
+    	 */
     	private Pair findNxtPos() {
     		int curDist = dist[y][x];
     		Pair ret = NO_PAIR;
-    		for(int dir = 0; dir < 4; dir++) {
+    		for(int dir = 0; dir < 4; dir++) { // 상하좌우 우선순위 
     			int ny = y + dy[dir];
     			int nx = x + dx[dir];
     			
@@ -169,10 +164,16 @@ public class Main {
     		return ret;
     	}
     	
+    	/*
+    	 * 메두사의 시선 
+    	 */
     	public Sight findBestSight() {
     		Sight ret = NO_SIGHT;
     		
-    		for(int sDir = 0; sDir < 4; sDir++) {
+    		/*
+    		 * sDir : 시선 방향 
+    		 */
+    		for(int sDir = 0; sDir < 4; sDir++) { 
     			Sight sight = new Sight(y,x,sDir);
     			if(sight.isHigher(ret))
     				ret = sight;
@@ -196,9 +197,11 @@ public class Main {
     static class Sight{
     	int cnt, sDir;
     	int sighted[][];
+    	List<Warrior> notFreezed;
     	
     	public Sight() {
-    		
+    		this.cnt = -1;
+    		this.sDir = 5;
     	}
     	/*
     	 * (N * N) / 4
@@ -207,8 +210,6 @@ public class Main {
     		this.sDir = sDir;
     		sighted = new int[N][N];
     		Queue<Tuple> q = new ArrayDeque<>();
-    		
-    		
     		int dir = sDir;
 			if(sDir == 1)
     			dir = 4;
@@ -217,6 +218,7 @@ public class Main {
     		else if(sDir == 3)
     			dir = 2;
 			
+			List<Tuple> freezeds = new ArrayList<>();
 			for(int nDir : getDirs(dir)) {
 				int ny = my + dy2[nDir];
 				int nx = mx + dx2[nDir];
@@ -224,15 +226,13 @@ public class Main {
 					continue;
 				sighted[ny][nx] = 1;
 				q.add(new Tuple(ny,nx,nDir));
+				if(wBoard[ny][nx] != 0) {
+					freezeds.add(new Tuple(ny,nx, nDir));
+				}
 			}
 			
 			while(!q.isEmpty()) {
 				Tuple cur = q.poll();
-				
-				if(wBoard[cur.y][cur.x] != 0) {
-					cnt += wBoard[cur.y][cur.x];
-					continue;
-				}
 				
 				for(int nDir : getDirs(cur.dir, sDir)) {
 					int ny = cur.y + dy2[nDir];
@@ -240,12 +240,62 @@ public class Main {
 					
 					if(OOB(ny,nx) || sighted[ny][nx] == 1)
 						continue;
+					if(wBoard[ny][nx] != 0)
+						freezeds.add(new Tuple(ny,nx, nDir));
+					
 					q.add(new Tuple(ny,nx,nDir));
 					sighted[ny][nx] = 1;
 				}
 			}
 			
+			for(Tuple freezed : freezeds) {
+				if(sighted[freezed.y][freezed.x] == 2)
+					continue;
+				shadow(freezed);
+			}
 			
+			
+			notFreezed = new ArrayList<>();
+			for(int i = 0; i < M; i++) {
+				if(warriors[i] == NO_WARRIOR)
+					continue;
+				int wy = warriors[i].y;
+				int wx = warriors[i].x;
+				if(sighted[wy][wx] == 1) {
+					cnt++;
+					continue;
+				}
+				notFreezed.add(warriors[i]);
+			}
+			
+			
+    	}
+    	
+    	private void shadow(Tuple freezed) {
+    		Queue<Tuple> q = new ArrayDeque<>();
+    		for(int nDir : getDirs(freezed.dir, this.sDir)) {
+    			int ny = freezed.y + dy2[nDir];
+    			int nx = freezed.x + dx2[nDir];
+    			if(OOB(ny,nx) || sighted[ny][nx] == 2)
+    				continue;
+    			q.add(new Tuple(ny,nx,nDir));
+    			sighted[ny][nx] = 2;
+    		}
+    		
+    		while(!q.isEmpty()) {
+    			Tuple cur = q.poll();
+    			
+    			for(int nDir : getDirs(cur.dir, this.sDir)) {
+    				int ny = cur.y + dy2[nDir];
+    				int nx = cur.x + dx2[nDir];
+    				
+    				if(OOB(ny,nx) || sighted[ny][nx] == 2)
+    					continue;
+    				q.add(new Tuple(ny,nx,nDir));
+    				sighted[ny][nx] = 2;
+    			}
+    		}
+    		
     	}
     	
     	public boolean isHigher(Sight s) {
@@ -429,8 +479,8 @@ public class Main {
     	while(!q.isEmpty()) {
     		Pair cur = q.poll();
     		
-    		if(cur.y == sy && cur.x == sx)
-    			return;
+    		if(medusa.isSame(cur.y, cur.x))
+    			break;
     		
     		for(int dir = 0; dir < 4; dir++) {
     			int ny = cur.y + dy[dir];
