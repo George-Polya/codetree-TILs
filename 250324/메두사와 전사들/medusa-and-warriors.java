@@ -130,6 +130,10 @@ public class Main {
     	
     	public void move() {
     		Pair nxt = findNxtPos();
+    		if(nxt == NO_PAIR) {
+    			System.out.println(-1);
+    			System.exit(0);
+    		}
     		y = nxt.y;
     		x = nxt.x;
     		
