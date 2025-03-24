@@ -253,7 +253,7 @@ public class Main {
 			for(Tuple freezed : freezeds) {
 				if(sighted[freezed.y][freezed.x] == 2)
 					continue;
-				shadow(freezed);
+				shadow(freezed.y, freezed.x, dir);
 			}
 			
 			
@@ -273,10 +273,7 @@ public class Main {
 			
     	}
     	
-    	private void shadow(Tuple freezed) {
-    		int y = freezed.y;
-    		int x = freezed.x;
-    		int dir = freezed.dir; 
+    	private void shadow(int y, int x, int dir) {
     		if(y == medusa.y || x == medusa.x) {
     			for(int dist = 1; dist<=N; dist++) {
     				int ny = y + dy2[dir] * dist;
@@ -300,8 +297,10 @@ public class Main {
     					if(OOB(ny,nx) || sighted[ny][nx] == 2)
     						continue;
     					
-    					q.add(new Pair(ny,nx));
-    					sighted[ny][nx] = 2;
+    					if(sighted[ny][nx] == 1) {
+    						q.add(new Pair(ny,nx));
+    						sighted[ny][nx] = 2;
+    					}
     				}
     			}
     			sighted[y][x] = 1;
